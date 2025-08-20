@@ -26,7 +26,7 @@
                                         style="background-image: url({{ $product->image }})"></span>
                                 </td>
                                 <td>{{ $product->name }}</td>
-                                <td>{{ $product->supplier->name }}</td>
+                                <td>{{ optional($product->supplier)->name ?? '-' }}</td>
                                 <td>{{ $product->category->name }}</td>
                                 <td>{{ $product->unit }}</td>
                                 <td>{{ $product->quantity }}</td>
