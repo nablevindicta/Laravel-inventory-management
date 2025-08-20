@@ -6,43 +6,45 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
     public function rules()
     {
-        if(request()->isMethod('POST')){
-            $data = [
-                'name' => 'required|unique:categories',
-                'image' => 'required|mimes:png,jpg,jpeg|max:2048',
-                'category_id' => 'required',
-                'supplier_id' => 'required',
-                'description' => 'required',
-                'unit' => 'required',
-            ];
-        }elseif(request()->isMethod('PUT')){
-            $data = [
-                'name' => 'required','unique:categories,name'.$this->id,
-                'image' => 'mimes:png,jpg,jpeg|max:2048',
-                'category_id' => 'required',
-                'supplier_id' => 'required',
-                'description' => 'required',
-                'unit' => 'required',
-            ];
+        $rules = [
+            'category_id' => 'required|exists:categories,id',
+            'description' => 'nullable|string', // ✅ Boleh kosong
+            'unit'        => 'required|string',
+            'supplier_id' => 'nullable|exists:suppliers,id', // ✅ Boleh kosong
+        ];
+
+        if ($this->isMethod('POST')) {
+            $rules['name']  = 'required|string|unique:products,name';
+            $rules['image'] = 'required|mimes:png,jpg,jpeg|max:2048';
+        } elseif ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            $productId = $this->route('id') ?? $this->id;
+            $rules['name']  = "required|string|unique:products,name,$productId,id";
+            $rules['image'] = 'nullable|mimes:png,jpg,jpeg|max:2048'; // boleh tidak upload ulang
         }
 
-        return $data;
+        return $rules;
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Nama produk wajib diisi.',
+            'name.unique'   => 'Nama produk sudah ada.',
+            'image.required' => 'Gambar wajib diupload saat menambah produk.',
+            'image.mimes'    => 'Gambar harus berformat PNG, JPG, atau JPEG.',
+            'image.max'      => 'Ukuran gambar maksimal 2MB.',
+            'category_id.required' => 'Kategori wajib dipilih.',
+            'category_id.exists'   => 'Kategori yang dipilih tidak valid.',
+            'supplier_id.exists'   => 'Supplier yang dipilih tidak valid.',
+            'unit.required'        => 'Satuan (unit) wajib diisi.',
+            // Tidak perlu pesan untuk description karena opsional
+        ];
     }
 }

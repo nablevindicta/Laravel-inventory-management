@@ -3325,9 +3325,9 @@ progress {
     display: none; }
 
 .navbar-light .navbar-brand {
-  color: #354052; }
+  color: #0260f9; }
   .navbar-light .navbar-brand:hover, .navbar-light .navbar-brand:focus {
-    color: #354052; }
+    color: #005ef5; }
 
 .navbar-light .navbar-nav .nav-link {
   color: rgba(53, 64, 82, 0.72); }
