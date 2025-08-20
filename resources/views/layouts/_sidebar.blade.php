@@ -18,7 +18,7 @@
                 <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="{{ route('logout') }}"
                         onclick="event.preventDefault();
-                document.getElementById('logout-form').submit();">
+                    document.getElementById('logout-form').submit();">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24"
                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -235,7 +235,7 @@
                             </a>
                         </li>
                     @endcan
-                    {{-- @can('index-vehicle')
+                    @can('index-vehicle')
                         <li class="nav-item">
                             <a class="nav-link {{ Route::is('admin.vehicle*') ? 'active' : '' }}"
                                 href="{{ route('admin.vehicle.index') }}">
@@ -257,7 +257,7 @@
                                 </span>
                             </a>
                         </li>
-                    @endcan --}}
+                    @endcan
                     <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Stok Produk</div>
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.stock*') ? 'active' : '' }}"
@@ -349,7 +349,7 @@
                             </span>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.transaction.vehicle') ? 'active' : '' }}"
                             href="{{ route('admin.transaction.vehicle') }}">
                             <span class="nav-link-icon d-md-none d-lg-inline-block mr-1">
@@ -369,7 +369,7 @@
                                 Kendaraan Keluar
                             </span>
                         </a>
-                    </li> --}}
+                    </li>
                     <div class="hr-text hr-text-left ml-2 mb-2 mt-2">User Manajemen</div>
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.permission*') ? 'active' : '' }}"
