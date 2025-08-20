@@ -181,7 +181,12 @@
                     position: 'top'
                 },
                 tooltip: {
-                    fillSeriesColor: true
+                    fillSeriesColor: true,
+                    y: {
+                        formatter: function(val) {
+                            return val + ' unit keluar';
+                        }
+                    }
                 },
                 dataLabels: {
                     enabled: true,

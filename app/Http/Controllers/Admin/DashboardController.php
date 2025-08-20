@@ -16,53 +16,50 @@ use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function __invoke(Request $request)
     {
         $categories = Category::count();
-
         $vehicles = Vehicle::count();
-
         $suppliers = Supplier::count();
-
         $products = Product::count();
-
         $customers = User::count();
-
         $transactions = TransactionDetail::sum('quantity');
-
-        $transactionThisMonth = TransactionDetail::whereMonth('created_at', date('m'))->sum('quantity');
-
+        $transactionThisMonth = TransactionDetail::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('quantity');
         $productsOutStock = Product::where('quantity', '<=', 10)->paginate(5);
-
         $orders = Order::where('status', 0)->get();
 
-        $bestProduct = DB::table('transaction_details')
-                        ->addSelect(DB::raw('products.name as name, sum(transaction_details.quantity) as total'))
-                        ->join('products', 'products.id', 'transaction_details.product_id')
-                        ->groupBy('transaction_details.product_id')
-                        ->orderBy('total', 'DESC')
-                        ->limit(5)->get();
+        // Ambil 5 produk terlaris (barang keluar terbanyak)
+        $bestProduct = TransactionDetail::with('product')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->selectRaw('product_id, SUM(quantity) as total')
+            ->groupBy('product_id')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
 
-        $label = [];
-
-        $total = [];
-
-        if(count($bestProduct)){
-            foreach($bestProduct as $data){
-                $label[] = $data->name;
-                $total[] = (int) $data->total;
-            }
-        }else{
-            $label[] = '';
-            $total[] = '';
+        if ($bestProduct->isNotEmpty()) {
+            $label = $bestProduct->map(fn($item) => $item->product?->name ?? 'Tidak Diketahui')->toArray();
+            $total = $bestProduct->map(fn($item) => (int)$item->total)->toArray();
+        } else {
+            $label = ['Tidak Ada Data'];
+            $total = [1]; // Agar chart tetap muncul
         }
 
-        return view('admin.dashboard', compact('categories', 'vehicles', 'suppliers', 'products', 'customers', 'transactions', 'transactionThisMonth', 'productsOutStock', 'orders', 'label', 'total'));
+        return view('admin.dashboard', compact(
+            'categories',
+            'vehicles',
+            'suppliers',
+            'products',
+            'customers',
+            'transactions',
+            'transactionThisMonth',
+            'productsOutStock',
+            'orders',
+            'label',
+            'total'
+        ));
     }
 }
