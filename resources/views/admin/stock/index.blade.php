@@ -31,8 +31,8 @@
                                 <td>{{ $product->unit }}</td>
                                 <td>{{ $product->quantity }}</td>
                                 <td>
-                                    {{-- Tombol Tambah Stok --}}
-                                    <x-button-modal :id="$product->id" icon="plus" style="mr-1" title="Edit Stok"
+                                    {{-- Tombol Edit Stok --}}
+                                    <x-button-modal :id="$product->id" icon="edit" style="mr-1" title="Edit Stok"
                                         class="btn bg-teal btn-sm text-white" />
                                     <x-modal :id="$product->id" title="Edit Stok Produk - {{ $product->name }}">
                                         <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">
@@ -40,11 +40,12 @@
                                             @method('PUT')
                                             <x-input title="Stok Saat Ini" name="quantity" type="number" min="0"
                                                 :value="$product->quantity" />
+                                                <small class="text-muted">Stok saat ini: {{ $product->quantity }}</small>
                                             <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
                                         </form>
                                     </x-modal>
 
-                                    {{-- Tombol Kurangi Stok --}}
+                                    <!-- {{-- Tombol Kurangi Stok --}}
                                     <x-button-modal :id="'reduce-' . $product->id" icon="minus" style="mr-1" title="Kurangi Stok"
                                         class="btn bg-red btn-sm text-white" />
                                     <x-modal :id="'reduce-' . $product->id" title="Kurangi Stok - {{ $product->name }}">
@@ -58,7 +59,7 @@
                                             <small class="text-muted">Stok saat ini: {{ $product->quantity }}</small>
                                             <x-button-save title="Kurangi" icon="minus" class="btn btn-danger mt-2" />
                                         </form>
-                                    </x-modal>
+                                    </x-modal> -->
                                 </td>
                             </tr>
                         @endforeach
