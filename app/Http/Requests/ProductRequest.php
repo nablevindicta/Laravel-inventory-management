@@ -15,9 +15,10 @@ class ProductRequest extends FormRequest
     {
         $rules = [
             'category_id' => 'required|exists:categories,id',
-            'description' => 'nullable|string', // ✅ Boleh kosong
+            'description' => 'nullable|string',
             'unit'        => 'required|string',
-            'supplier_id' => 'nullable|exists:suppliers,id', // ✅ Boleh kosong
+            'supplier_id' => 'nullable|exists:suppliers,id',
+            'quantity'    => 'required|numeric|min:0',
         ];
 
         if ($this->isMethod('POST')) {
@@ -26,7 +27,7 @@ class ProductRequest extends FormRequest
         } elseif ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $productId = $this->route('id') ?? $this->id;
             $rules['name']  = "required|string|unique:products,name,$productId,id";
-            $rules['image'] = 'nullable|mimes:png,jpg,jpeg|max:2048'; // boleh tidak upload ulang
+            $rules['image'] = 'nullable|mimes:png,jpg,jpeg|max:2048';
         }
 
         return $rules;

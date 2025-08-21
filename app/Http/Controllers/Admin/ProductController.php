@@ -58,9 +58,10 @@ class ProductController extends Controller
             'image' => $image->hashName(),
             'unit' => $request->unit,
             'description' => $request->description,
+            'quantity' => $request->quantity, // ✅ Sudah benar
         ]);
 
-        return redirect((route('admin.product.index')))->with('toast_success', 'Kategori Berhasil Ditambahkan');
+        return redirect(route('admin.product.index'))->with('toast_success', 'Produk berhasil ditambahkan');
     }
 
     /**
