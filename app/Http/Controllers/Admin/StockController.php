@@ -15,33 +15,52 @@ class StockController extends Controller
      */
     public function index()
     {
-        $products = Product::paginate(10);
+        $products = Product::with('supplier', 'category')->paginate(10);
 
         return view('admin.stock.index', compact('products'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
+ * Update the specified resource in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
+public function update(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
 
-        $product->update([
-            'quantity' => $request->quantity,
-        ]);
+    // Validasi jumlah stok
+    $request->validate([
+        'quantity' => 'required|integer|min:0',
+    ]);
 
-        return back()->with('toast_success', 'Berhasil Menambahkan Stok Produk');
+    $quantity = $request->input('quantity');
+
+    // Cek apakah ini aksi pengurangan
+    if ($request->filled('action') && $request->input('action') === 'reduce') {
+        if ($quantity > $product->quantity) {
+            return back()->with('toast_error', 'Jumlah pengurangan melebihi stok saat ini.');
+        }
+        $product->quantity -= $quantity;
+        $product->save();
+        return back()->with('toast_success', "Stok berhasil dikurangi sebanyak {$quantity}.");
     }
 
+    // Jika bukan reduce, maka lakukan replace langsung (set stok baru)
+    $product->quantity = $quantity;
+    $product->save();
+
+    return back()->with('toast_success', 'Stok berhasil diperbarui.');
+}
+
+    /**
+     * Display stock report.
+     */
     public function report()
     {
-        $products = Product::paginate(10);
-
+        $products = Product::with('supplier', 'category')->paginate(10);
         return view('admin.stock.report', compact('products'));
     }
 }

@@ -31,16 +31,32 @@
                                 <td>{{ $product->unit }}</td>
                                 <td>{{ $product->quantity }}</td>
                                 <td>
-                                    <x-button-modal :id="$product->id" icon="plus" style="mr-1" title="Stok"
+                                    {{-- Tombol Tambah Stok --}}
+                                    <x-button-modal :id="$product->id" icon="plus" style="mr-1" title="Edit Stok"
                                         class="btn bg-teal btn-sm text-white" />
-                                    <x-modal :id="$product->id" title="Tambah Stok Produk - {{ $product->name }}">
-                                        <form action="{{ route('admin.stock.update', $product->id) }}" method="POST"
-                                            enctype="multipart/form-data">
+                                    <x-modal :id="$product->id" title="Edit Stok Produk - {{ $product->name }}">
+                                        <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
-                                            <x-input title="Stok Produk" name="quantity" type="text"
-                                                placeholder="Stok Produk" :value="$product->quantity" />
+                                            <x-input title="Stok Saat Ini" name="quantity" type="number" min="0"
+                                                :value="$product->quantity" />
                                             <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
+                                        </form>
+                                    </x-modal>
+
+                                    {{-- Tombol Kurangi Stok --}}
+                                    <x-button-modal :id="'reduce-' . $product->id" icon="minus" style="mr-1" title="Kurangi Stok"
+                                        class="btn bg-red btn-sm text-white" />
+                                    <x-modal :id="'reduce-' . $product->id" title="Kurangi Stok - {{ $product->name }}">
+                                        <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="action" value="reduce">
+                                            <x-input title="Jumlah yang Dikurangi" name="quantity" type="number" min="1"
+                                                max="{{ $product->quantity }}" placeholder="Masukkan jumlah"
+                                                :value="1" />
+                                            <small class="text-muted">Stok saat ini: {{ $product->quantity }}</small>
+                                            <x-button-save title="Kurangi" icon="minus" class="btn btn-danger mt-2" />
                                         </form>
                                     </x-modal>
                                 </td>

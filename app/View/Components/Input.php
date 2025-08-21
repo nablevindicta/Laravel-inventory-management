@@ -13,13 +13,13 @@ class Input extends Component
      *
      * @return void
      */
-    public function __construct($title, $name, $type, $placeholder, $value)
+    public function __construct($title, $name, $type = 'text', $value = null, $placeholder = null)
     {
         $this->title = $title;
         $this->name = $name;
         $this->type = $type;
-        $this->placeholder = $placeholder;
         $this->value = $value;
+        $this->placeholder = $placeholder ?? "Masukkan {$title}"; // fallback otomatis
     }
 
     /**
