@@ -3,15 +3,15 @@
 @section('content')
     <x-container>
         <div class="col-12">
-            <x-card title="DAFTAR PRODUK" class="card-body p-0">
+            <x-card title="DAFTAR BARANG" class="card-body p-0">
                 <x-table>
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Foto</th>
-                            <th>Nama Produk</th>
+                            <th>Nama Barang</th>
                             <th>Nama Supplier</th>
-                            <th>Kategori Produk</th>
+                            <th>Kategori Barang</th>
                             <th>Satuan</th>
                             <th>Stok</th>
                             <th>Aksi</th>

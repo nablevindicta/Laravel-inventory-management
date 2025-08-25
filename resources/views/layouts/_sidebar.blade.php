@@ -258,7 +258,7 @@
                             </a>
                         </li>
                     @endcan --}} -->
-                    <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Stok Produk</div>
+                    <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Stok Barang</div>
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.stock*') ? 'active' : '' }}"
                             href="{{ route('admin.stock.index') }}">
@@ -280,7 +280,7 @@
                                 </svg>
                             </span>
                             <span class="nav-link-title">
-                                Stok Produk
+                                Stok Barang
                             </span>
                         </a>
                     </li>
@@ -328,6 +328,28 @@
                         </a>
                     </li> --}}
                     <li class="nav-item">
+                        <a class="nav-link {{ Route::is('admin.transaction.productin') ? 'active' : '' }}"
+                            href="{{ route('admin.transaction.productin') }}">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="icon icon-tabler icon-tabler-shopping-cart-x" width="24" height="24"
+                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <circle cx="6" cy="19" r="2"></circle>
+                                    <circle cx="17" cy="19" r="2"></circle>
+                                    <path d="M17 17h-11v-14h-2"></path>
+                                    <path d="M6 5l7.999 .571m5.43 4.43l-.429 2.999h-13"></path>
+                                    <path d="M17 3l4 4"></path>
+                                    <path d="M21 3l-4 4"></path>
+                                </svg>
+                            </span>
+                            <span class="nav-link-title">
+                                Barang Masuk
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.transaction.product') ? 'active' : '' }}"
                             href="{{ route('admin.transaction.product') }}">
                             <span class="nav-link-icon d-md-none d-lg-inline-block mr-1">
@@ -373,7 +395,7 @@
                 @endhasanyrole
                 @hasanyrole('Super Admin')
                     <div class="hr-text hr-text-left ml-2 mb-2 mt-2">User Manajemen</div>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.permission*') ? 'active' : '' }}"
                             href="{{ route('admin.permission.index') }}">
                             <span class="nav-link-icon d-md-none d-lg-inline-block mr-1">
@@ -392,7 +414,7 @@
                                 Permission
                             </span>
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.role*') ? 'active' : '' }}"
                             href="{{ route('admin.role.index') }}">

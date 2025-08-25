@@ -9,8 +9,8 @@
                         <tr>
                             <th>Tanggal</th>
                             <th>Foto</th>
-                            <th>Nama Produk</th>
-                            <th>Kategori Produk</th>
+                            <th>Nama Barang</th>
+                            <th>Kategori Barang</th>
                             <th>Kuantitas</th>
                             <th>Satuan Barang</th>
                         </tr>
@@ -28,22 +28,22 @@
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        <li>{{ $details->product->name }}</li>
+                                        {{ $details->product->name }}
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        <li>{{ $details->product->category->name }}</li>
+                                        {{ $details->product->category->name }}
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        <li>{{ $details->quantity }}</li>
+                                        {{ $details->quantity }}
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        <li>{{ $details->product->unit }}</li>
+                                        {{ $details->product->unit }}
                                     @endforeach
                                 </td>
                             </tr>

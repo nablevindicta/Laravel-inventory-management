@@ -4,14 +4,14 @@
     <x-container>
         <div class="row">
             <div class="col-12">
-                <x-card title="TAMBAH PRODUK" class="card-body">
+                <x-card title="TAMBAH BARANG" class="card-body">
                     <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <x-input name="name" type="text" title="Nama Produk" placeholder="Nama Produk" :value="old('name')" />
                         <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="old('unit')" />
 
-                        <x-select title="Supplier Produk" name="supplier_id">
+                        <x-select title="Supplier Barang" name="supplier_id">
                             <option value="">Silahkan Pilih</option>
                             @foreach ($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
@@ -20,7 +20,7 @@
                             @endforeach
                         </x-select>
 
-                        <x-select title="Kategori Produk" name="category_id">
+                        <x-select title="Kategori Barang" name="category_id">
                             <option value="">Silahkan Pilih</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -29,9 +29,9 @@
                             @endforeach
                         </x-select>
 
-                        <x-input name="image" type="file" title="Foto Produk" :value="old('image')" />
+                        <x-input name="image" type="file" title="Foto Barang" :value="old('image')" />
 
-                        <x-textarea name="description" title="Deskripsi Produk" placeholder="Deskripsi Produk">
+                        <x-textarea name="description" title="Deskripsi Barang" placeholder="Deskripsi Barang">
                             {{ old('description') }}
                         </x-textarea>
 
@@ -40,7 +40,7 @@
                             name="quantity" 
                             type="number" 
                             min="0" 
-                            title="Stok Awal Produk" 
+                            title="Stok Awal Barang" 
                             placeholder="Masukkan jumlah stok awal" 
                             :value="old('quantity', 0)" 
                         />

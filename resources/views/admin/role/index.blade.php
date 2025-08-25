@@ -7,7 +7,7 @@
                 <x-table>
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>No</th>
                             <th>Role</th>
                             <th>Permission</th>
                             <th>Aksi</th>

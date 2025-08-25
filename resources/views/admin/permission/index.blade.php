@@ -1,4 +1,4 @@
-@extends('layouts.master', ['title' => 'Permission'])
+{{-- @extends('layouts.master', ['title' => 'Permission'])
 
 @section('content')
     <x-container>
@@ -50,4 +50,4 @@
             </x-card>
         </div>
     </x-container>
-@endsection
+@endsection --}}
