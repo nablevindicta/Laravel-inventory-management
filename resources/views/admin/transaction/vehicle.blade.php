@@ -1,4 +1,4 @@
-@extends('layouts.master', ['title' => 'Kendaraan Keluar'])
+{{-- @extends('layouts.master', ['title' => 'Kendaraan Keluar'])
 
 @section('content')
     <x-container>
@@ -64,4 +64,4 @@
             <div class="d-flex justify-content-end">{{ $rents->links() }}</div>
         </div>
     </x-container>
-@endsection
+@endsection --}}

@@ -10,7 +10,7 @@
                 <x-table>
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>No</th>
                             <th>Foto</th>
                             <th>Nama Barang</th>
                             <th>Nama Supplier</th>

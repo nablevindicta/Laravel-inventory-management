@@ -7,7 +7,7 @@
                 <x-table>
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>No</th>
                             <th>Nama Supplier</th>
                             <th>No Hp</th>
                             <th>Alamat</th>
