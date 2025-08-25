@@ -7,11 +7,12 @@
                 <x-table>
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Nama Customer</th>
+                            <th>Tanggal</th>
+                            <th>Foto</th>
                             <th>Nama Produk</th>
                             <th>Kategori Produk</th>
                             <th>Kuantitas</th>
+                            <th>Satuan Barang</th>
                         </tr>
                     </thead>
                     <tbody>

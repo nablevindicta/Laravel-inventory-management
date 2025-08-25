@@ -370,6 +370,8 @@
                             </span>
                         </a>
                     </li> --}}
+                @endhasanyrole
+                @hasanyrole('Super Admin')
                     <div class="hr-text hr-text-left ml-2 mb-2 mt-2">User Manajemen</div>
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.permission*') ? 'active' : '' }}"
@@ -427,6 +429,7 @@
                             </span>
                         </a>
                     </li>
+                @endhasanyrole
                     <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Konfigurasi</div>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('admin.setting.index') }}">
@@ -446,7 +449,6 @@
                             </span>
                         </a>
                     </li>
-                @endhasanyrole
             </ul>
         </div>
     </div>
