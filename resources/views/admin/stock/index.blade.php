@@ -31,37 +31,84 @@
                                 <td>{{ $product->unit }}</td>
                                 <td>{{ $product->quantity }}</td>
                                 <td>
-                                    {{-- Tombol Edit Stok --}}
+                                    {{-- Tombol dan Modal Edit Stok --}}
                                     <x-button-modal :id="$product->id" icon="edit" style="mr-1" title="Edit Stok"
                                         class="btn bg-teal btn-sm text-white" />
+
                                     <x-modal :id="$product->id" title="Edit Stok Produk - {{ $product->name }}">
                                         <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
-                                            <x-input title="Stok Saat Ini" name="quantity" type="number" min="0"
-                                                :value="$product->quantity" />
-                                                <small class="text-muted">Stok saat ini: {{ $product->quantity }}</small>
-                                            <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
+
+                                            <!-- Stok Saat Ini -->
+                                            <div class="mb-3">
+                                                <label class="form-label">Stok Saat Ini</label>
+                                                <input type="text" class="form-control" value="{{ $product->quantity }}" readonly>
+                                            </div>
+
+                                            <!-- Tambah Stok -->
+                                            <div class="mb-3">
+                                                <label for="add_stock_{{ $product->id }}" class="form-label">Tambah Stok</label>
+                                                <input type="number"
+                                                       name="add_stock"
+                                                       id="add_stock_{{ $product->id }}"
+                                                       class="form-control @error('add_stock') is-invalid @enderror"
+                                                       min="0"
+                                                       value="{{ old('add_stock', 0) }}"
+                                                       placeholder="Masukkan jumlah untuk ditambahkan">
+                                                @error('add_stock')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                                <small class="text-muted">Stok akan bertambah. Harus 0 atau lebih.</small>
+                                            </div>
+
+                                            <!-- Kurangi Stok -->
+                                            <div class="mb-3">
+                                                <label for="reduce_stock_{{ $product->id }}" class="form-label">Kurangi Stok</label>
+                                                <input type="number"
+                                                       name="reduce_stock"
+                                                       id="reduce_stock_{{ $product->id }}"
+                                                       class="form-control @error('reduce_stock') is-invalid @enderror"
+                                                       min="0"
+                                                       max="{{ $product->quantity }}"
+                                                       value="{{ old('reduce_stock', 0) }}"
+                                                       placeholder="Masukkan jumlah untuk dikurangi">
+                                                @error('reduce_stock')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                                <small class="text-muted">Maksimal yang bisa dikurangi: {{ $product->quantity }}</small>
+                                            </div>
+
+                                            <!-- Tombol Simpan -->
+                                            <x-button-save title="Simpan Perubahan" icon="save" class="btn btn-primary" />
                                         </form>
                                     </x-modal>
-
-                                    <!-- {{-- Tombol Kurangi Stok --}}
-                                    <x-button-modal :id="'reduce-' . $product->id" icon="minus" style="mr-1" title="Kurangi Stok"
-                                        class="btn bg-red btn-sm text-white" />
-                                    <x-modal :id="'reduce-' . $product->id" title="Kurangi Stok - {{ $product->name }}">
-                                        <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="hidden" name="action" value="reduce">
-                                            <x-input title="Jumlah yang Dikurangi" name="quantity" type="number" min="1"
-                                                max="{{ $product->quantity }}" placeholder="Masukkan jumlah"
-                                                :value="1" />
-                                            <small class="text-muted">Stok saat ini: {{ $product->quantity }}</small>
-                                            <x-button-save title="Kurangi" icon="minus" class="btn btn-danger mt-2" />
-                                        </form>
-                                    </x-modal> -->
                                 </td>
                             </tr>
+
+                            @push('scripts')
+                            <script>
+                                // JavaScript untuk memastikan hanya satu input yang aktif
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const addInput = document.getElementById('add_stock_{{ $product->id }}');
+                                    const reduceInput = document.getElementById('reduce_stock_{{ $product->id }}');
+
+                                    if (addInput && reduceInput) {
+                                        addInput.addEventListener('input', function () {
+                                            if (this.value.trim() !== '' && parseInt(this.value) > 0) {
+                                                reduceInput.value = '';
+                                            }
+                                        });
+
+                                        reduceInput.addEventListener('input', function () {
+                                            if (this.value.trim() !== '' && parseInt(this.value) > 0) {
+                                                addInput.value = '';
+                                            }
+                                        });
+                                    }
+                                });
+                            </script>
+                            @endpush
                         @endforeach
                     </tbody>
                 </x-table>

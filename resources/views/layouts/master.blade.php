@@ -109,6 +109,8 @@
             });
         });
     </script>
+    <!-- Stack: Custom Scripts (untuk JS spesifik halaman, seperti modal stok) -->
+    @stack('scripts')
     @stack('js')
 </body>
 

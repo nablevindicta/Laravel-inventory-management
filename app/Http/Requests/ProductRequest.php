@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
 {
@@ -22,11 +23,18 @@ class ProductRequest extends FormRequest
         ];
 
         if ($this->isMethod('POST')) {
-            $rules['name']  = 'required|string|unique:products,name';
+            $rules['name'] = [
+                'required',
+                'string',
+                Rule::unique('products', 'name')
+            ];
             $rules['image'] = 'required|mimes:png,jpg,jpeg|max:2048';
         } elseif ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $productId = $this->route('id') ?? $this->id;
-            $rules['name']  = "required|string|unique:products,name,$productId,id";
+            $rules['name'] = [
+                'required',
+                'string',
+                Rule::unique('products', 'name')->ignore($this->route('product'))
+            ];
             $rules['image'] = 'nullable|mimes:png,jpg,jpeg|max:2048';
         }
 
@@ -45,7 +53,6 @@ class ProductRequest extends FormRequest
             'category_id.exists'   => 'Kategori yang dipilih tidak valid.',
             'supplier_id.exists'   => 'Supplier yang dipilih tidak valid.',
             'unit.required'        => 'Satuan (unit) wajib diisi.',
-            // Tidak perlu pesan untuk description karena opsional
         ];
     }
 }
