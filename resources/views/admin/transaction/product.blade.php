@@ -16,10 +16,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($transactions as $i => $transaction)
+                        @foreach ($transactions as $transaction)
                             <tr>
-                                <td>{{ $i + $transactions->firstItem() }}</td>
-                                <td>{{ $transaction->user->name }}</td>
+                                <td>{{ $transaction->created_at->format('d-m-Y H:i') }}</td>
+                                <td>
+                                    @foreach ($transaction->details as $details)
+                                        <div class="mb-2">
+                                            <span class="avatar rounded avatar-md" style="background-image: url({{ $details->product->image }})"></span>
+                                        </div>
+                                    @endforeach
+                                </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
                                         <li>{{ $details->product->name }}</li>
@@ -32,13 +38,18 @@
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        <li>{{ $details->quantity }} - {{ $details->product->unit }}</li>
+                                        <li>{{ $details->quantity }}</li>
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach ($transaction->details as $details)
+                                        <li>{{ $details->product->unit }}</li>
                                     @endforeach
                                 </td>
                             </tr>
                         @endforeach
                         <tr>
-                            <td colspan="4" class="font-weight-bold text-uppercase">
+                            <td colspan="5" class="font-weight-bold text-uppercase">
                                 Total Barang Keluar
                             </td>
                             <td class="font-weight-bold text-danger text-right">

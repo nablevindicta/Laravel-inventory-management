@@ -51,7 +51,7 @@
                         @enderror
                     </div>
                     <div class="form-footer">
-                        <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+                        <button type="submit"  class="btn btn-primary btn-block">Masuk</button>
                     </div>
                 </div>
             </form>
