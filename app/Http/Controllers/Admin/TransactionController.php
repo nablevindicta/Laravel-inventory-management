@@ -30,7 +30,7 @@ class TransactionController extends Controller
             ->latest()
             ->paginate(10)
             ->appends($request->except('page'));
-            
+
         $grandQuantity = TransactionDetail::whereHas('transaction', function($query) use ($startDate, $endDate) {
             $query->where('type', 'out')
                 ->when($startDate, function ($query, $startDate) {
@@ -62,7 +62,7 @@ class TransactionController extends Controller
             })
             ->latest()
             ->paginate(10)
-            ->withQueryString();
+            ->appends($request->except('page'));
 
         $grandQuantity = TransactionDetail::whereHas('transaction', function($query) use ($startDate, $endDate) {
             $query->where('type', 'in')
