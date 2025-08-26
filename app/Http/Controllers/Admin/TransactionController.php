@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\TransactionDetail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use PDF; // <-- Tambahkan baris ini
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransactionController extends Controller
 {
