@@ -22,7 +22,7 @@ class RoleSeeder extends Seeder
             'index-order', 'create-order', 'index-rent', 'create-rent', 'index-transaction', 'create-transaction'
         ])->get();
 
-        $role = Role::create(['name' => 'Customer']);
+        $role = Role::create(['name' => 'Super Admin']);
 
         $role->givePermissionTo($permissions);
     }

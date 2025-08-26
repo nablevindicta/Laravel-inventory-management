@@ -61,7 +61,7 @@ class ProductController extends Controller
             'quantity' => $request->quantity, // ✅ Sudah benar
         ]);
 
-        return redirect(route('admin.product.index'))->with('toast_success', 'Produk berhasil ditambahkan');
+        return redirect(route('admin.product.index'))->with('toast_success', 'Barang berhasil ditambahkan');
     }
 
     /**
@@ -104,7 +104,7 @@ class ProductController extends Controller
             );
         }
 
-        return redirect(route('admin.product.index'))->with('toast_success', 'Produk Berhasil Diubah');
+        return redirect(route('admin.product.index'))->with('toast_success', 'Barang Berhasil Diubah');
     }
 
     /**
