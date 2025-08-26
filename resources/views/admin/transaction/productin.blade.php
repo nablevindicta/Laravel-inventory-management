@@ -18,37 +18,51 @@
                     <tbody>
                         @foreach ($transactions as $transaction)
                             <tr>
+                                <!-- Kolom Tanggal: Gunakan data-timestamp untuk konversi lokal -->
                                 <td data-timestamp="{{ $transaction->created_at->toISOString() }}">
                                     {{ $transaction->created_at->format('d-m-Y H:i') }}
                                 </td>
+
+                                <!-- Kolom Foto -->
+                                <td>
                                     @foreach ($transaction->details as $details)
                                         <div class="mb-2">
                                             <span class="avatar rounded avatar-md" style="background-image: url({{ $details->product->image }})"></span>
                                         </div>
                                     @endforeach
                                 </td>
+
+                                <!-- Nama Barang -->
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        {{ $details->product->name }}
+                                        <div>{{ $details->product->name }}</div>
                                     @endforeach
                                 </td>
+
+                                <!-- Kategori Barang -->
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        {{ $details->product->category->name }}
+                                        <div>{{ $details->product->category->name }}</div>
                                     @endforeach
                                 </td>
+
+                                <!-- Kuantitas -->
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        {{ $details->quantity }}
+                                        <div>{{ $details->quantity }}</div>
                                     @endforeach
                                 </td>
+
+                                <!-- Satuan Barang -->
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        {{ $details->product->unit }}
+                                        <div>{{ $details->product->unit }}</div>
                                     @endforeach
                                 </td>
                             </tr>
                         @endforeach
+
+                        <!-- Baris Total -->
                         <tr>
                             <td colspan="5" class="font-weight-bold text-uppercase">
                                 Total Barang Masuk
@@ -60,7 +74,11 @@
                     </tbody>
                 </x-table>
             </x-card>
-            <div class="d-flex justify-content-end">{{ $transactions->links() }}</div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-end">
+                {{ $transactions->links() }}
+            </div>
         </div>
     </x-container>
 
