@@ -3,6 +3,9 @@
 @section('content')
     <x-container>
         <div class="col-12">
+            <form action="{{ route('admin.stock.index') }}" method="GET">
+                <x-search name="search" :value="$search" />
+            </form>
             <x-card title="DAFTAR BARANG" class="card-body p-0">
                 <x-table>
                     <thead>
