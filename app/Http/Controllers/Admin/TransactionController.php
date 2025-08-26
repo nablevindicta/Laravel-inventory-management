@@ -7,49 +7,96 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionDetail;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
-    public function product()
+    /**
+     * Menampilkan daftar transaksi barang keluar dengan filter tanggal.
+     */
+    public function product(Request $request)
     {
-        $transactions = Transaction::with('details.product')
-            ->where('type', 'out') // <-- Pastikan baris ini ada
-            ->latest()
-            ->paginate(10);
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        $grandQuantity = TransactionDetail::whereHas('transaction', function($query) {
-            $query->where('type', 'out');
+        $transactions = Transaction::with('details.product')
+            ->where('type', 'out')
+            ->when($startDate, function ($query, $startDate) {
+                return $query->whereDate('created_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query, $endDate) {
+                return $query->whereDate('created_at', '<=', $endDate);
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends($request->except('page'));
+            
+        $grandQuantity = TransactionDetail::whereHas('transaction', function($query) use ($startDate, $endDate) {
+            $query->where('type', 'out')
+                ->when($startDate, function ($query, $startDate) {
+                    return $query->whereDate('created_at', '>=', $startDate);
+                })
+                ->when($endDate, function ($query, $endDate) {
+                    return $query->whereDate('created_at', '<=', $endDate);
+                });
         })->sum('quantity');
 
-        return view('admin.transaction.product', compact('transactions', 'grandQuantity'));
+        return view('admin.transaction.product', compact('transactions', 'grandQuantity', 'startDate', 'endDate'));
     }
 
-    // di file App/Http/Controllers/Admin/TransactionController.php
-
-    public function productin()
+    /**
+     * Menampilkan daftar transaksi barang masuk dengan filter tanggal.
+     */
+    public function productin(Request $request)
     {
-        $transactions = Transaction::with('details.product')
-            ->where('type', 'in') // <-- Pastikan baris ini ada
-            ->latest()
-            ->paginate(10);
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        $grandQuantity = TransactionDetail::whereHas('transaction', function($query) {
-            $query->where('type', 'in');
+        $transactions = Transaction::with('details.product')
+            ->where('type', 'in')
+            ->when($startDate, function ($query, $startDate) {
+                return $query->whereDate('created_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query, $endDate) {
+                return $query->whereDate('created_at', '<=', $endDate);
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $grandQuantity = TransactionDetail::whereHas('transaction', function($query) use ($startDate, $endDate) {
+            $query->where('type', 'in')
+                ->when($startDate, function ($query, $startDate) {
+                    return $query->whereDate('created_at', '>=', $startDate);
+                })
+                ->when($endDate, function ($query, $endDate) {
+                    return $query->whereDate('created_at', '<=', $endDate);
+                });
         })->sum('quantity');
 
-        return view('admin.transaction.productin', compact('transactions', 'grandQuantity'));
+        return view('admin.transaction.productin', compact('transactions', 'grandQuantity', 'startDate', 'endDate'));
     }
 
-    // public function vehicle()
-    // {
-    //     $rents = Rent::with('vehicle', 'user')->when(request()->q, function($search){
-    //         $search = $search->whereHas('user', function($query){
-    //             $query->where('name', 'like', '%'.request()->q.'%');
-    //         })->orWhereHas('vehicle', function($query){
-    //             $query->where('name', 'like', '%'.request()->q.'%');
-    //         });
-    //     })->latest()->paginate(10);
+    /**
+     * Menghapus transaksi dan mengembalikan stok produk.
+     */
+    public function destroy(Transaction $transaction)
+    {
+        DB::transaction(function () use ($transaction) {
+            $transactionDetail = $transaction->details->first();
+            $product = $transactionDetail->product;
+            
+            if ($transaction->type === 'in') {
+                $product->quantity -= $transactionDetail->quantity;
+            } elseif ($transaction->type === 'out') {
+                $product->quantity += $transactionDetail->quantity;
+            }
+            
+            $product->save();
+            $transactionDetail->delete();
+            $transaction->delete();
+        });
 
-    //     return view('admin.transaction.vehicle', compact('rents'));
-    // }
+        return back()->with('toast_success', 'Transaksi berhasil dihapus dan stok telah disesuaikan.');
+    }
 }
