@@ -16,11 +16,16 @@ class StockController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    
+    public function index(Request $request)
     {
-        $products = Product::with('supplier', 'category')->paginate(10);
+        $search = $request->search;
 
-        return view('admin.stock.index', compact('products'));
+        $products = Product::when($search, function($query) use($search){
+            $query = $query->where('name', 'like', '%'.$search.'%');
+        })->paginate(10)->withQueryString();
+
+        return view('admin.stock.index', compact('products', 'search'));
     }
 
     /**
