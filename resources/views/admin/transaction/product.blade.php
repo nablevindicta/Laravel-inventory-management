@@ -18,7 +18,11 @@
                     <tbody>
                         @foreach ($transactions as $transaction)
                             <tr>
-                                <td>{{ $transaction->created_at->format('d-m-Y H:i') }}</td>
+                                <!-- Kolom Tanggal: Gunakan data-timestamp untuk konversi lokal -->
+                                <td data-timestamp="{{ $transaction->created_at->toISOString() }}">
+                                    {{ $transaction->created_at->format('d-m-Y H:i') }}
+                                </td>
+
                                 <td>
                                     @foreach ($transaction->details as $details)
                                         <div class="mb-2">
@@ -28,26 +32,28 @@
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        {{ $details->product->name }}
+                                        <div>{{ $details->product->name }}</div>
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        {{ $details->product->category->name }}
+                                        <div>{{ $details->product->category->name }}</div>
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        {{ $details->quantity }}
+                                        <div>{{ $details->quantity }}</div>
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        {{ $details->product->unit }}
+                                        <div>{{ $details->product->unit }}</div>
                                     @endforeach
                                 </td>
                             </tr>
                         @endforeach
+
+                        <!-- Baris Total -->
                         <tr>
                             <td colspan="5" class="font-weight-bold text-uppercase">
                                 Total Barang Keluar
@@ -59,7 +65,36 @@
                     </tbody>
                 </x-table>
             </x-card>
-            <div class="d-flex justify-content-end">{{ $transactions->links() }}</div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-end">
+                {{ $transactions->links() }}
+            </div>
         </div>
     </x-container>
+
+    <!-- Script untuk konversi waktu ke lokal pengguna -->
+    @push('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ambil semua <td> yang memiliki data-timestamp
+            document.querySelectorAll('td[data-timestamp]').forEach(function (td) {
+                const isoTime = td.getAttribute('data-timestamp');
+                const date = new Date(isoTime);
+
+                // Format tanggal sesuai lokal pengguna (Indonesia)
+                const options = {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+
+                // Ubah teks menjadi waktu lokal
+                td.textContent = date.toLocaleString('id-ID', options);
+            });
+        });
+    </script>
+    @endpush
 @endsection
