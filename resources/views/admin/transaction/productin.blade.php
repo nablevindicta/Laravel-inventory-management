@@ -3,6 +3,29 @@
 @section('content')
     <x-container>
         <div class="col-12">
+<<<<<<< HEAD
+=======
+            <form action="{{ route('admin.transaction.productin') }}" method="GET" class="mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="start_date" class="form-label">Tanggal Mulai</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ old('start_date', $startDate) }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="end_date" class="form-label">Tanggal Selesai</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ old('end_date', $endDate) }}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ route('admin.transaction.productin') }}" class="btn btn-secondary w-100">Reset</a>
+                        <a href="{{ route('admin.transaction.pdf', ['type' => 'in'] + request()->query()) }}" class="btn btn-primary mb-4">Export PDF</a>
+                    </div>
+                </div>
+            </form>
+
+>>>>>>> eee5634aa8f82b23e3e25f682e1f131d0674731a
             <x-card title="DAFTAR BARANG MASUK" class="card-body p-0">
                 <x-table>
                     <thead>
@@ -13,17 +36,25 @@
                             <th>Kategori Barang</th>
                             <th>Kuantitas</th>
                             <th>Satuan Barang</th>
+<<<<<<< HEAD
+=======
+                            <th>Aksi</th>
+>>>>>>> eee5634aa8f82b23e3e25f682e1f131d0674731a
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($transactions as $transaction)
                             <tr>
+<<<<<<< HEAD
                                 <!-- Kolom Tanggal: Gunakan data-timestamp untuk konversi lokal -->
                                 <td data-timestamp="{{ $transaction->created_at->toISOString() }}">
                                     {{ $transaction->created_at->format('d-m-Y H:i') }}
                                 </td>
 
                                 <!-- Kolom Foto -->
+=======
+                                <td>{{ $transaction->created_at->format('d-m-Y H:i') }}</td>
+>>>>>>> eee5634aa8f82b23e3e25f682e1f131d0674731a
                                 <td>
                                     @foreach ($transaction->details as $details)
                                         <div class="mb-2">
@@ -31,6 +62,7 @@
                                         </div>
                                     @endforeach
                                 </td>
+<<<<<<< HEAD
 
                                 <!-- Nama Barang -->
                                 <td>
@@ -63,6 +95,37 @@
                         @endforeach
 
                         <!-- Baris Total -->
+=======
+                                <td>
+                                    @foreach ($transaction->details as $details)
+                                        {{ $details->product->name }}
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach ($transaction->details as $details)
+                                        {{ $details->product->category->name }}
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach ($transaction->details as $details)
+                                        {{ $details->quantity }}
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach ($transaction->details as $details)
+                                        {{ $details->product->unit }}
+                                    @endforeach
+                                </td>
+                                <td>
+                                    <form action="{{ route('admin.transaction.destroy', $transaction->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini? Stok akan dikembalikan.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+>>>>>>> eee5634aa8f82b23e3e25f682e1f131d0674731a
                         <tr>
                             <td colspan="5" class="font-weight-bold text-uppercase">
                                 Total Barang Masuk
@@ -70,6 +133,7 @@
                             <td class="font-weight-bold text-success text-right">
                                 {{ $grandQuantity }} Barang
                             </td>
+<<<<<<< HEAD
                         </tr>
                     </tbody>
                 </x-table>
@@ -106,4 +170,13 @@
         });
     </script>
     @endpush
+=======
+                            <td></td> </tr>
+                    </tbody>
+                </x-table>
+            </x-card>
+            <div class="d-flex justify-content-end">{{ $transactions->links() }}</div>
+        </div>
+    </x-container>
+>>>>>>> eee5634aa8f82b23e3e25f682e1f131d0674731a
 @endsection

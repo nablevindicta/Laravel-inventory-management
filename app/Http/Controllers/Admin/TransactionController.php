@@ -7,10 +7,15 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionDetail;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use PDF; // <-- Tambahkan baris ini
 
 class TransactionController extends Controller
 {
-    public function product()
+    /**
+     * Menampilkan daftar transaksi barang keluar dengan filter tanggal.
+     */
+    public function product(Request $request)
     {
         $transactions = Transaction::with('details.product')
             ->where('type', 'out') // <-- Pastikan baris ini ada
@@ -21,7 +26,17 @@ class TransactionController extends Controller
             $query->where('type', 'out');
         })->sum('quantity');
 
-        return view('admin.transaction.product', compact('transactions', 'grandQuantity'));
+        $grandQuantity = TransactionDetail::whereHas('transaction', function($query) use ($startDate, $endDate) {
+            $query->where('type', 'out')
+                ->when($startDate, function ($query, $startDate) {
+                    return $query->whereDate('created_at', '>=', $startDate);
+                })
+                ->when($endDate, function ($query, $endDate) {
+                    return $query->whereDate('created_at', '<=', $endDate);
+                });
+        })->sum('quantity');
+
+        return view('admin.transaction.product', compact('transactions', 'grandQuantity', 'startDate', 'endDate'));
     }
 
     // di file App/Http/Controllers/Admin/TransactionController.php
