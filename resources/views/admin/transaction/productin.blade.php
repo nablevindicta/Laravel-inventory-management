@@ -18,6 +18,7 @@
                     </div>
                     <div class="col-md-2">
                         <a href="{{ route('admin.transaction.productin') }}" class="btn btn-secondary w-100">Reset</a>
+                        <a href="{{ route('admin.transaction.pdf', ['type' => 'in'] + request()->query()) }}" class="btn btn-primary mb-4">Export PDF</a>
                     </div>
                 </div>
             </form>

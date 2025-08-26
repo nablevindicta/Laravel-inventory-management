@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\TransactionDetail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use PDF; // <-- Tambahkan baris ini
 
 class TransactionController extends Controller
 {
@@ -98,5 +99,42 @@ class TransactionController extends Controller
         });
 
         return back()->with('toast_success', 'Transaksi berhasil dihapus dan stok telah disesuaikan.');
+    }
+
+    /**
+     * Ekspor daftar transaksi ke format PDF.
+     */
+    public function exportPdf(Request $request, $type)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $transactions = Transaction::with('details.product')
+            ->where('type', $type)
+            ->when($startDate, function ($query, $startDate) {
+                return $query->whereDate('created_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query, $endDate) {
+                return $query->whereDate('created_at', '<=', $endDate);
+            })
+            ->latest()
+            ->get();
+
+        $grandQuantity = TransactionDetail::whereHas('transaction', function($query) use ($startDate, $endDate, $type) {
+            $query->where('type', $type)
+                ->when($startDate, function ($query, $startDate) {
+                    return $query->whereDate('created_at', '>=', $startDate);
+                })
+                ->when($endDate, function ($query, $endDate) {
+                    return $query->whereDate('created_at', '<=', $endDate);
+                });
+        })->sum('quantity');
+
+        $title = ($type === 'in') ? 'Laporan Barang Masuk' : 'Laporan Barang Keluar';
+        $fileName = str_replace(' ', '_', strtolower($title)) . '_' . now()->format('Y-m-d_H-i-s') . '.pdf';
+
+        $pdf = PDF::loadView('admin.transaction.report.pdf', compact('transactions', 'grandQuantity', 'title'));
+        
+        return $pdf->download($fileName);
     }
 }

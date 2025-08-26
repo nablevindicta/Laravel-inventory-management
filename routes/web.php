@@ -67,10 +67,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         ->only('index', 'update')
         ->middleware('permission:index-stock');
 
-    Route::resource('/vehicle', VehicleController::class)
-        ->except('show', 'create', 'edit')
-        ->middleware('permission:index-vehicle');
-
     Route::resource('/order', OrderController::class)
         ->middleware('permission:index-order');
 
@@ -88,6 +84,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         Route::get('/transaction/product', 'product')->name('transaction.product');
         Route::get('/transaction/productin', 'productin')->name('transaction.productin');
         Route::delete('/transaction/{transaction}', 'destroy')->name('transaction.destroy');
+
+        Route::get('/transaction/{type}/pdf', 'exportPdf')->name('transaction.pdf');
     });
 
     // Route::controller(ReportController::class)->group(function(){

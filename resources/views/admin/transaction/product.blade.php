@@ -3,7 +3,7 @@
 @section('content')
     <x-container>
         <div class="col-12">
-            
+
             <form action="{{ route('admin.transaction.product') }}" method="GET" class="mb-4">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4">
@@ -19,6 +19,7 @@
                     </div>
                     <div class="col-md-2">
                         <a href="{{ route('admin.transaction.product') }}" class="btn btn-secondary w-100">Reset</a>
+                        <a href="{{ route('admin.transaction.pdf', ['type' => 'out'] + request()->query()) }}" class="btn btn-primary mb-4">Export PDF</a>
                     </div>
                 </div>
             </form>
