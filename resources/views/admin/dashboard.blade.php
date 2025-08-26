@@ -79,7 +79,7 @@
             </x-widget>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <x-widget title="Permintaan Barang" :subTitle="0" class="bg-green">
+            <x-widget title="Barang Masuk" :subTitle="0" class="bg-green">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-plus"
                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                     fill="none" stroke-linecap="round" stroke-linejoin="round">
