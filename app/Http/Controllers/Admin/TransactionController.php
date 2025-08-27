@@ -83,23 +83,33 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        DB::transaction(function () use ($transaction) {
+    DB::transaction(function () use ($transaction) {
+        // Cek apakah transaksi memiliki detail
+        if ($transaction->details->isNotEmpty()) {
+            // Jika ada detail, proses pembaruan stok
             $transactionDetail = $transaction->details->first();
             $product = $transactionDetail->product;
             
+            // Lakukan penyesuaian stok berdasarkan tipe transaksi
             if ($transaction->type === 'in') {
                 $product->quantity -= $transactionDetail->quantity;
             } elseif ($transaction->type === 'out') {
                 $product->quantity += $transactionDetail->quantity;
             }
             
+            // Simpan perubahan stok
             $product->save();
-            $transactionDetail->delete();
-            $transaction->delete();
-        });
 
-        return back()->with('toast_success', 'Transaksi berhasil dihapus dan stok telah disesuaikan.');
-    }
+            // Hapus detail transaksi
+            $transactionDetail->delete();
+        }
+        
+        // Hapus transaksi utama (header)
+        $transaction->delete();
+    });
+
+    return back()->with('toast_success', 'Transaksi berhasil dihapus dan stok telah disesuaikan.');
+}
 
     /**
      * Ekspor daftar transaksi ke format PDF.

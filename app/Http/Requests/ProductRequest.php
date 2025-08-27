@@ -18,8 +18,8 @@ class ProductRequest extends FormRequest
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'unit'        => 'required|string',
-            'supplier_id' => 'nullable|exists:suppliers,id',
-            'quantity'    => 'required|numeric|min:0',
+            'supplier_id' => 'required|exists:suppliers,id', // <-- Ubah 'nullable' menjadi 'required'
+            // 'quantity'    => 'required|numeric|min:0',
         ];
 
         if ($this->isMethod('POST')) {
@@ -44,13 +44,14 @@ class ProductRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'Nama produk wajib diisi.',
-            'name.unique'   => 'Nama produk sudah ada.',
-            'image.required' => 'Gambar wajib diupload saat menambah produk.',
-            'image.mimes'    => 'Gambar harus berformat PNG, JPG, atau JPEG.',
-            'image.max'      => 'Ukuran gambar maksimal 2MB.',
+            'name.required'        => 'Nama produk wajib diisi.',
+            'name.unique'          => 'Nama produk sudah ada.',
+            'image.required'       => 'Gambar wajib diupload saat menambah produk.',
+            'image.mimes'          => 'Gambar harus berformat PNG, JPG, atau JPEG.',
+            'image.max'            => 'Ukuran gambar maksimal 2MB.',
             'category_id.required' => 'Kategori wajib dipilih.',
             'category_id.exists'   => 'Kategori yang dipilih tidak valid.',
+            'supplier_id.required' => 'Supplier wajib dipilih.', 
             'supplier_id.exists'   => 'Supplier yang dipilih tidak valid.',
             'unit.required'        => 'Satuan (unit) wajib diisi.',
         ];

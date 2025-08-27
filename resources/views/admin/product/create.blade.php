@@ -36,14 +36,14 @@
                         </x-textarea>
 
                         <!-- 🔽 Input Stok Awal -->
-                        <x-input 
+                        {{-- <x-input 
                             name="quantity" 
                             type="number" 
                             min="0" 
                             title="Stok Awal Barang" 
                             placeholder="Masukkan jumlah stok awal" 
                             :value="old('quantity', 0)" 
-                        />
+                        /> --}}
 
                         <div class="mt-3">
                             <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
