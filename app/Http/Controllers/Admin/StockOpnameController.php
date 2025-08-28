@@ -3,34 +3,30 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Product;
-use App\Models\StockOpnameLog;
 use Illuminate\Http\Request;
+use App\Models\StockOpnameLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\DomPDF\Facade\Pdf; // <-- Tetap ada untuk fitur PDF
 
 class StockOpnameController extends Controller
 {
     /**
-     * Menampilkan daftar log stok opname dengan filter tanggal.
+     * Menampilkan daftar log stok opname dengan filter bulan dan tahun.
      */
     public function index(Request $request)
     {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $selectedMonth = $request->input('month', now()->month);
+        $selectedYear = $request->input('year', now()->year);
 
         $logs = StockOpnameLog::with('product')
-            ->when($startDate, function ($query, $startDate) {
-                return $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                return $query->whereDate('created_at', '<=', $endDate);
-            })
+            ->whereYear('created_at', $selectedYear)
+            ->whereMonth('created_at', $selectedMonth)
             ->latest()
             ->paginate(10)
-            ->appends($request->except('page'));
+            ->withQueryString();
 
-        return view('admin.stockopname.index', compact('logs', 'startDate', 'endDate'));
+        return view('admin.stockopname.index', compact('logs', 'selectedMonth', 'selectedYear'));
     }
 
     /**
@@ -39,7 +35,6 @@ class StockOpnameController extends Controller
     public function create()
     {
         $products = Product::with('category', 'supplier')->get();
-
         return view('admin.stockopname.create', compact('products'));
     }
 
@@ -83,26 +78,24 @@ class StockOpnameController extends Controller
         return redirect()->route('admin.stockopname.index')->with('toast_success', 'Stok Opname berhasil disimpan!');
     }
 
+    /**
+     * Mengekspor log stok opname ke PDF dengan filter bulan dan tahun.
+     */
     public function exportPdf(Request $request)
     {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $selectedMonth = $request->input('month');
+        $selectedYear = $request->input('year');
 
         $logs = StockOpnameLog::with('product')
-            ->when($startDate, function ($query, $startDate) {
-                return $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                return $query->whereDate('created_at', '<=', $endDate);
-            })
+            ->whereYear('created_at', $selectedYear)
+            ->whereMonth('created_at', $selectedMonth)
             ->latest()
             ->get();
-
+        
         $title = 'Laporan Stok Opname';
         $fileName = str_replace(' ', '_', strtolower($title)) . '_' . now()->format('Y-m-d_H-i-s') . '.pdf';
 
         $pdf = PDF::loadView('admin.stockopname.report.pdf', compact('logs', 'title'));
-
         return $pdf->download($fileName);
     }
 }

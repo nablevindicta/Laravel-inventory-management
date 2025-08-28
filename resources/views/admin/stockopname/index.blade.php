@@ -3,20 +3,34 @@
 @section('content')
     <x-container>
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="{{ route('admin.stockopname.create') }}" class="btn btn-primary">Mulai Stok Opname</a>
-            <a href="{{ route('admin.stockopname.pdf', request()->query()) }}" class="btn btn-success">Export PDF</a>
+            <div>
+                <a href="{{ route('admin.stockopname.create') }}" class="btn btn-primary">Mulai Stok Opname</a>
+                <a href="{{ route('admin.stockopname.pdf', ['month' => $selectedMonth, 'year' => $selectedYear]) }}" class="btn btn-success">Export PDF</a>
+                </div>
         </div>
-        
-        <x-card title="" class="card-body">
-            <form action="{{ route('admin.stockopname.index') }}" method="GET" class="mb-4">
+
+        <x-card title="Filter Data" class="card-body mb-3">
+            <form action="{{ route('admin.stockopname.index') }}" method="GET">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4">
-                        <label for="start_date" class="form-label">Tanggal Mulai</label>
-                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ old('start_date', $startDate) }}">
+                        <label for="month" class="form-label">Bulan</label>
+                        <select name="month" id="month" class="form-select">
+                            @foreach (range(1, 12) as $month)
+                                <option value="{{ $month }}" {{ $selectedMonth == $month ? 'selected' : '' }}>
+                                    {{ \Carbon\Carbon::create()->month($month)->monthName }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-4">
-                        <label for="end_date" class="form-label">Tanggal Selesai</label>
-                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ old('end_date', $endDate) }}">
+                        <label for="year" class="form-label">Tahun</label>
+                        <select name="year" id="year" class="form-select">
+                            @foreach (range(now()->year, 2020) as $year)
+                                <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
+                                    {{ $year }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">Filter</button>
