@@ -18,8 +18,8 @@
                         <button type="submit" class="btn btn-primary w-100">Filter</button>
                     </div>
                     <div class="col-md-2">
+                        <a href="{{ route('admin.transaction.pdf', ['type' => 'out'] + request()->query()) }}" class="btn btn-primary mb-3">Export PDF</a>
                         <a href="{{ route('admin.transaction.product') }}" class="btn btn-secondary w-100">Reset</a>
-                        <a href="{{ route('admin.transaction.pdf', ['type' => 'out'] + request()->query()) }}" class="btn btn-primary mb-4">Export PDF</a>
                     </div>
                 </div>
             </form>
@@ -86,7 +86,7 @@
                             </td>
                         </tr>
                     </tbody>
-                </x-table>
+                </x-table> 
             </x-card>
             <div class="d-flex justify-content-end">{{ $transactions->links() }}</div>
         </div>

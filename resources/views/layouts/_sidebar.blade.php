@@ -260,7 +260,7 @@
                     @endcan --}} -->
                     <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Stok Barang</div>
                     <li class="nav-item">
-                        <a class="nav-link {{ Route::is('admin.stock*') ? 'active' : '' }}"
+                        <a class="nav-link {{ Route::is('admin.stock.*') ? 'active' : '' }}"
                             href="{{ route('admin.stock.index') }}">
                             <span class="nav-link-icon d-md-none d-lg-inline-block mr-1">
                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -371,27 +371,26 @@
                             </span>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <a class="nav-link {{ Route::is('admin.transaction.vehicle') ? 'active' : '' }}"
-                            href="{{ route('admin.transaction.vehicle') }}">
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('admin.stockopname.*') ? 'active' : '' }}"
+                            href="{{ route('admin.stockopname.index') }}">
                             <span class="nav-link-icon d-md-none d-lg-inline-block mr-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-car-off"
-                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                                    stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clipboard-list" width="24"
+                                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <circle cx="7" cy="17" r="2"></circle>
-                                    <path d="M15.584 15.588a2 2 0 0 0 2.828 2.83"></path>
-                                    <path
-                                        d="M5 17h-2v-6l2 -5h1m4 0h4l4 5h1a2 2 0 0 1 2 2v4m-6 0h-6m-6 -6h8m4 0h3m-6 -3v-2">
-                                    </path>
-                                    <path d="M3 3l18 18"></path>
+                                    <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
+                                    <rect x="9" y="3" width="6" height="4" rx="2"></rect>
+                                    <line x1="9" y1="12" x2="15" y2="12"></line>
+                                    <line x1="9" y1="16" x2="15" y2="16"></line>
                                 </svg>
                             </span>
                             <span class="nav-link-title">
-                                Kendaraan Keluar
+                                Stok Opname
                             </span>
                         </a>
-                    </li> --}}
+                    </li>
                 @endhasanyrole
                 @hasanyrole('Super Admin')
                     <div class="hr-text hr-text-left ml-2 mb-2 mt-2">User Manajemen</div>

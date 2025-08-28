@@ -37,7 +37,7 @@
                             <p>{{ $product->quantity }} {{ $product->unit }}</p>
                         </div>
                     </div>
-                    <div class="py-2">
+                    {{-- <div class="py-2">
                         <form action="{{ route('cart.store', $product->slug) }}" method="POST">
                             @csrf
                             @if ($product->quantity > 0)
@@ -59,7 +59,7 @@
                                 </div>
                             @endif
                         </form>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <div class="flex flex-col mb-5">
@@ -83,7 +83,7 @@
                             <div class="text-sm text-gray-500">
                                 {{ Str::limit($product->description, 35) }}
                             </div>
-                            @if ($product->quantity > 0)
+                            {{-- @if ($product->quantity > 0)
                                 <form action="{{ route('cart.store', $product->slug) }}" method="POST">
                                     @csrf
                                     <button
@@ -97,7 +97,7 @@
                                     class="text-gray-700 bg-gray-200 p-2 rounded-lg text-sm text-center hover:bg-gray-300 w-full cursor-not-allowed">
                                     Barang Tidak Tersedia
                                 </button>
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
                 @endforeach

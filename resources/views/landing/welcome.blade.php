@@ -37,19 +37,7 @@
                                         {{ Str::limit($product->description, 35) }}
                                     </div>
                                     @if ($product->quantity > 0)
-                                        <form action="{{ route('cart.store', $product->slug) }}" method="POST">
-                                            @csrf
-                                            <button
-                                                class="text-gray-700 bg-gray-200 p-2 rounded-lg text-sm text-center hover:bg-gray-300 w-full"
-                                                type="submit">
-                                                Tambah ke keranjang
-                                            </button>
-                                        </form>
-                                    @else
-                                        <button
-                                            class="text-gray-700 bg-gray-200 p-2 rounded-lg text-sm text-center hover:bg-gray-300 w-full cursor-not-allowed">
-                                            Barang Tidak Tersedia
-                                        </button>
+                                        @else
                                     @endif
                                 </div>
                             </div>
