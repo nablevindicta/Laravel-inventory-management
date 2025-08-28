@@ -7,6 +7,7 @@ use App\Traits\HasImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class SettingController extends Controller
 {
@@ -20,29 +21,35 @@ class SettingController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $image = $this->uploadImage($request, $path = 'public/avatars/', $name = 'avatar');
+        // Upload avatar jika ada
+        $image = $this->uploadImage($request, 'public/avatars/', 'avatar');
 
+        // ✅ Validasi: nama wajib, password konfirmasi wajib dan harus benar
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'department' => 'required',
+            'name' => 'required|string|max:255',
+            'password' => 'required', // Hanya untuk konfirmasi
+        ], [
+            'password.required' => 'Password diperlukan untuk konfirmasi perubahan.'
         ]);
 
-        $password = !empty($request->password) ? bcrypt($request->password) : $user->password;
-
-        $user->update([
-            'name' => $request->name,
-            'department' => $request->department,
-            'email' => $request->email,
-            'password' => $password,
-        ]);
-
-        if($request->file($name)){
-            $this->updateImage(
-                $path = 'public/avatars/', $name = 'avatar', $data = $user, $url = $image->hashName()
-            );
+        // 🔑 Cek apakah password yang dimasukkan benar
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors([
+                'password' => 'Password Anda salah. Perubahan tidak dapat disimpan.'
+            ])->withInput($request->only('name'));
         }
 
-        return back()->with('toast_success', 'Akun Berhasil Diubah');
+        // ✅ Update hanya nama (dan avatar), password TETAP SAMA
+        $user->update([
+            'name' => $request->name,
+            // 'password' => $user->password, // tidak diubah
+        ]);
+
+        // Simpan avatar jika diupload
+        if ($request->file('avatar')) {
+            $this->updateImage('public/avatars/', 'avatar', $user, $image->hashName());
+        }
+
+        return back()->with('toast_success', 'Akun berhasil diperbarui.');
     }
 }
