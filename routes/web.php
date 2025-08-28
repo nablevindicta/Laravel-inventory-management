@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Admin\{
     DashboardController, CategoryController, PermissionController, SupplierController,
-    ProductController, RoleController, StockController, VehicleController, TransactionController,
+    ProductController, RoleController, StockController, TransactionController,
     UserController, OrderController,
-    ReportController,
-    SettingController
+    SettingController,
+    StockOpnameController
 };
 use App\Http\Controllers\Customer\{
     DashboardController as CustomerDashboardController, OrderController as CustomerOrderController, TransactionController as CustomerTransactionController, RentController as CustomerRentController,
@@ -13,7 +13,7 @@ use App\Http\Controllers\Customer\{
 };
 use App\Http\Controllers\{
     LandingController, ProductController as LandingProductController,
-    CartController, TransactionController as LandingTransactionController,
+    TransactionController as LandingTransactionController,
     CategoryController as LandingCategoryController, VehicleController as LandingVehicleController
 };
 use Illuminate\Support\Facades\Route;
@@ -35,13 +35,6 @@ Route::controller(LandingVehicleController::class)->as('vehicle.')->group(functi
     Route::post('/vehicle', 'store')->name('store')->middleware(['permission:create-rent','auth']);
 });
 
-Route::controller(CartController::class)->middleware(['permission:create-transaction','auth'])->group(function(){
-    Route::get('/cart', 'index')->name('cart.index');
-    Route::post('/cart/{product:slug}', 'store')->name('cart.store');
-    Route::delete('/cart/destroy/{cart:id}', 'destroy')->name('cart.destroy');
-    Route::put('/cart/update/{cart:id}', 'update')->name('cart.update');
-    Route::post('/cart/order/{product:slug}', 'order')->name('cart.order');
-});
 
 Route::post('/transaction', [LandingTransactionController::class, 'store'])
     ->middleware(['permission:create-transaction','auth'])->name('transaction.store');
@@ -86,6 +79,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         Route::delete('/transaction/{transaction}', 'destroy')->name('transaction.destroy');
 
         Route::get('/transaction/{type}/pdf', 'exportPdf')->name('transaction.pdf');
+
+
+        
     });
 
     // Route::controller(ReportController::class)->group(function(){
@@ -96,6 +92,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         Route::get('/setting', 'index')->name('setting.index');
         Route::put('/setting/update/{user}', 'update')->name('setting.update');
     });
+
+    Route::controller(StockOpnameController::class)->group(function() {
+        Route::get('/stock-opname', 'index')->name('stockopname.index');
+        Route::get('/stock-opname/create', 'create')->name('stockopname.create'); // <-- BARIS INI DITAMBAHKAN
+        Route::post('/stock-opname', 'store')->name('stockopname.store');
+        Route::get('/stock-opname/pdf', 'exportPdf')->name('stockopname.pdf');
+    });
+
 });
 
 Route::group(['prefix' => 'customer', 'as' => 'customer.', 'middleware' => ['auth', 'role:Customer']], function (){
