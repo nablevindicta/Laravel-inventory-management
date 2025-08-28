@@ -7,15 +7,6 @@ use App\Http\Controllers\Admin\{
     SettingController,
     StockOpnameController
 };
-use App\Http\Controllers\Customer\{
-    DashboardController as CustomerDashboardController, OrderController as CustomerOrderController, TransactionController as CustomerTransactionController, RentController as CustomerRentController,
-    SettingController as CustomerSettingController
-};
-use App\Http\Controllers\{
-    LandingController, ProductController as LandingProductController,
-    TransactionController as LandingTransactionController,
-    CategoryController as LandingCategoryController, VehicleController as LandingVehicleController
-};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -26,7 +17,7 @@ Route::redirect('/', '/login')->name('landing');
 // === Halaman Login (GET) ===
 Route::get('/login', function () {
     return view('auth.login');
-})->name('login'); // ⚠️ Nama route HARUS 'login' karena blade pakai {{ route('login') }}
+})->name('login');
 
 // === Proses Login (POST) ===
 Route::post('/login', function (Request $request) {
@@ -40,20 +31,20 @@ Route::post('/login', function (Request $request) {
 
         $user = Auth::user();
 
-        // Redirect berdasarkan role
         if ($user->hasRole('Admin') || $user->hasRole('Super Admin')) {
             return redirect()->intended('/admin/dashboard');
-        } elseif ($user->hasRole('Customer')) {
-            return redirect()->intended('/customer/dashboard');
         }
 
-        return redirect()->intended('/'); // fallback
+        Auth::logout();
+        return back()->withErrors([
+            'email' => 'Anda tidak memiliki akses ke panel admin.',
+        ]);
     }
 
     return back()->withErrors([
         'email' => 'Email atau password salah.',
     ])->withInput($request->only('email'));
-})->name('login'); // ⚠️ Gunakan name 'login' untuk POST juga (bisa, karena method beda)
+})->name('login');
 
 // === Logout ===
 Route::post('/logout', function () {
@@ -63,30 +54,17 @@ Route::post('/logout', function () {
     return redirect('/');
 })->name('logout');
 
-Route::controller(LandingCategoryController::class)->as('category.')->group(function(){
-    Route::get('/category', 'index')->name('index');
-    Route::get('/category/{slug}', 'show')->name('show');
-});
-
-Route::controller(LandingProductController::class)->as('product.')->group(function(){
-    Route::get('/product', 'index')->name('index');
-    Route::get('/product/{slug}', 'show')->name('show');
-});
-
-Route::controller(LandingVehicleController::class)->as('vehicle.')->group(function(){
-    Route::get('/vehicle', 'index')->name('index')->middleware('permission:index-rent');
-    Route::post('/vehicle', 'store')->name('store')->middleware(['permission:create-rent','auth']);
-});
-
-
-Route::post('/transaction', [LandingTransactionController::class, 'store'])
-    ->middleware(['permission:create-transaction','auth'])->name('transaction.store');
+// ========================================================================
+// === ADMIN PANEL (Hanya untuk Admin dan Super Admin)
+// ========================================================================
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'role:Admin|Super Admin']], function () {
+    // Dashboard
     Route::get('/dashboard', DashboardController::class)
         ->name('dashboard')
         ->middleware('permission:index-dashboard');
 
+    // Resource dengan permission
     Route::resource('/category', CategoryController::class)
         ->except('show', 'create', 'edit')
         ->middleware('permission:index-category');
@@ -106,52 +84,65 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::resource('/order', OrderController::class)
         ->middleware('permission:index-order');
 
+    // ====================================================================
+    // === USER MANAGEMENT (Hanya Super Admin untuk create/update/delete)
+    // ====================================================================
+
+    // Hanya Super Admin yang bisa akses seluruh CRUD user
     Route::resource('/user', UserController::class)
+        ->only('index') // Admin hanya bisa lihat daftar
         ->middleware('permission:index-user');
 
+    // Super Admin: CRUD penuh
+    Route::group(['middleware' => ['role:Super Admin']], function () {
+        Route::get('/user', [UserController::class, 'index'])->name('user.index'); // tetap bisa akses index
+        Route::post('/user', [UserController::class, 'store'])->name('user.store');
+        Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update');
+        Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+
+        // Jika Anda ingin tetap gunakan resource, bisa uncomment baris ini:
+        // Route::resource('/user', UserController::class)->except('index');
+    });
+
+    // ====================================================================
+    // === ROLE & PERMISSION (Hanya Super Admin)
+    // ====================================================================
+
     Route::resource('/role', RoleController::class)
-        ->middleware('permission:index-role');
+        ->middleware('role:Super Admin');
 
     Route::resource('/permission', PermissionController::class)
         ->except('show', 'create', 'edit')
-        ->middleware('permission:index-permission');
+        ->middleware('role:Super Admin');
 
-    Route::controller(TransactionController::class)->group(function(){
+    // ====================================================================
+    // === TRANSACTION
+    // ====================================================================
+
+    Route::controller(TransactionController::class)->group(function () {
         Route::get('/transaction/product', 'product')->name('transaction.product');
         Route::get('/transaction/productin', 'productin')->name('transaction.productin');
         Route::delete('/transaction/{transaction}', 'destroy')->name('transaction.destroy');
-
         Route::get('/transaction/{type}/pdf', 'exportPdf')->name('transaction.pdf');
-
-
-        
     });
 
-    // Route::controller(ReportController::class)->group(function(){
-    //     Route::get('/report', 'index')->name('report');
-    // });
+    // ====================================================================
+    // === SETTINGS
+    // ====================================================================
 
-    Route::controller(SettingController::class)->group(function(){
+    Route::controller(SettingController::class)->group(function () {
         Route::get('/setting', 'index')->name('setting.index');
         Route::put('/setting/update/{user}', 'update')->name('setting.update');
     });
 
-    Route::controller(StockOpnameController::class)->group(function() {
+    // ====================================================================
+    // === STOCK OPNAME
+    // ====================================================================
+
+    Route::controller(StockOpnameController::class)->group(function () {
         Route::get('/stock-opname', 'index')->name('stockopname.index');
-        Route::get('/stock-opname/create', 'create')->name('stockopname.create'); // <-- BARIS INI DITAMBAHKAN
+        Route::get('/stock-opname/create', 'create')->name('stockopname.create');
         Route::post('/stock-opname', 'store')->name('stockopname.store');
         Route::get('/stock-opname/pdf', 'exportPdf')->name('stockopname.pdf');
-    });
-
-});
-
-Route::group(['prefix' => 'customer', 'as' => 'customer.', 'middleware' => ['auth', 'role:Customer']], function (){
-    Route::get('/dashboard', CustomerDashboardController::class)->name('dashboard');
-    Route::get('/transaction', CustomerTransactionController::class)->name('transaction');
-    Route::resource('/order', CustomerOrderController::class);
-    Route::resource('/rent', CustomerRentController::class);
-    Route::controller(CustomerSettingController::class)->group(function(){
-        Route::get('/setting', 'index')->name('setting.index');
-        Route::put('/setting/update/{user}', 'update')->name('setting.update');
     });
 });

@@ -29,6 +29,9 @@
     <!-- Tabler Plugins -->
     <link href="{{ asset('dist/css/demo.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('dist/libs/selectize/dist/css/selectize.css') }}" rel="stylesheet" />
+    
+    <!-- Bootstrap JS Bundle (termasuk Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
     @stack('css')

@@ -4,7 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class PermissionSeeder extends Seeder
 {
@@ -15,42 +16,83 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        Permission::create(['name' => 'index-dashboard']);
-        Permission::create(['name' => 'index-product']);
-        Permission::create(['name' => 'create-product']);
-        Permission::create(['name' => 'delete-product']);
-        Permission::create(['name' => 'update-product']);
-        Permission::create(['name' => 'index-category']);
-        Permission::create(['name' => 'create-category']);
-        Permission::create(['name' => 'delete-category']);
-        Permission::create(['name' => 'update-category']);
-        Permission::create(['name' => 'index-supplier']);
-        Permission::create(['name' => 'create-supplier']);
-        Permission::create(['name' => 'delete-supplier']);
-        Permission::create(['name' => 'update-supplier']);
-        Permission::create(['name' => 'index-vehicle']);
-        Permission::create(['name' => 'create-vehicle']);
-        Permission::create(['name' => 'delete-vehicle']);
-        Permission::create(['name' => 'update-vehicle']);
-        Permission::create(['name' => 'index-stock']);
-        Permission::create(['name' => 'create-stock']);
-        Permission::create(['name' => 'index-permission']);
-        Permission::create(['name' => 'create-permission']);
-        Permission::create(['name' => 'delete-permission']);
-        Permission::create(['name' => 'update-permission']);
-        Permission::create(['name' => 'index-role']);
-        Permission::create(['name' => 'create-role']);
-        Permission::create(['name' => 'delete-role']);
-        Permission::create(['name' => 'update-role']);
-        Permission::create(['name' => 'index-user']);
-        Permission::create(['name' => 'create-user']);
-        Permission::create(['name' => 'delete-user']);
-        Permission::create(['name' => 'update-user']);
-        Permission::create(['name' => 'index-order']);
-        Permission::create(['name' => 'create-order']);
-        Permission::create(['name' => 'index-rent']);
-        Permission::create(['name' => 'create-rent']);
-        Permission::create(['name' => 'index-transaction']);
-        Permission::create(['name' => 'create-transaction']);
+        // Reset cache
+        app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+        // === Daftar Permission ===
+        $permissions = [
+            'index-dashboard',
+
+            'index-product', 'create-product', 'update-product', 'delete-product',
+            'index-category', 'create-category', 'update-category', 'delete-category',
+            'index-supplier', 'create-supplier', 'update-supplier', 'delete-supplier',
+            'index-stock', 'create-stock', 'update-stock', 'delete-stock',
+            'index-order', 'create-order', 'update-order', 'delete-order',
+            'index-transaction', 'delete-transaction', 'export-transaction-pdf',
+            'index-stockopname', 'create-stockopname', 'export-stockopname-pdf',
+
+            // Kelola sistem (hanya Super Admin)
+            'index-user', 'create-user', 'update-user', 'delete-user',
+            'index-role', 'create-role', 'update-role', 'delete-role',
+            'index-permission', 'create-permission', 'update-permission', 'delete-permission',
+            'update-setting',
+        ];
+
+        // Buat semua permission
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
+        }
+
+        // === Buat Role ===
+        $superAdmin = Role::firstOrCreate(['name' => 'Super Admin']);
+        $admin = Role::firstOrCreate(['name' => 'Admin']);
+
+        // === Assign Permission ===
+
+        // Super Admin: semua permission
+        $superAdmin->syncPermissions($permissions);
+
+        // Admin: semua permission kecuali manajemen user, role, permission
+        $adminPermissions = collect($permissions)->reject(function ($permission) {
+            return str_starts_with($permission, 'index-user') ||
+                   str_starts_with($permission, 'create-user') ||
+                   str_starts_with($permission, 'update-user') ||
+                   str_starts_with($permission, 'delete-user') ||
+                   str_starts_with($permission, 'index-role') ||
+                   str_starts_with($permission, 'create-role') ||
+                   str_starts_with($permission, 'update-role') ||
+                   str_starts_with($permission, 'delete-role') ||
+                   str_starts_with($permission, 'index-permission') ||
+                   str_starts_with($permission, 'create-permission') ||
+                   str_starts_with($permission, 'update-permission') ||
+                   str_starts_with($permission, 'delete-permission');
+        })->toArray();
+
+        $admin->syncPermissions($adminPermissions);
+
+        // === Opsional: Buat Super Admin User Otomatis ===
+        $user = \App\Models\User::firstOrCreate(
+            ['email' => 'superadmin@example.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => Hash::make('password'),
+                'department' => 'Umum',
+            ]
+        );
+
+        $user->assignRole('Super Admin');
+
+        $adminUser = \App\Models\User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+                'department' => 'Umum',
+            ]
+        );
+
+        $adminUser->assignRole('Admin');
+
+        $this->command->info('Roles, Permissions, and Users created successfully.');
     }
 }
