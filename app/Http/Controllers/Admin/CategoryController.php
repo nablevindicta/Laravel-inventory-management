@@ -7,7 +7,10 @@ use App\Traits\HasImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
-use Illuminate\Support\Facades\Storage;
+// use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+// use App\Models\Product; 
+use App\Models\TransactionDetail; 
 
 class CategoryController extends Controller
 {
@@ -77,12 +80,25 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+     public function destroy(Category $category)
     {
-        $category->delete();
+        // Gunakan DB Transaction untuk memastikan semua operasi berhasil atau gagal bersamaan
+        DB::transaction(function () use ($category) {
+            // 1. Hapus semua produk yang terkait dengan kategori ini
+            $products = $category->products;
 
-        Storage::disk('local')->delete('public/categories/'. basename($category->image));
+            foreach ($products as $product) {
+                // 2. Hapus semua transaction_details yang terkait dengan produk
+                TransactionDetail::where('product_id', $product->id)->delete();
+                
+                // 3. Hapus produk itu sendiri
+                $product->delete();
+            }
 
-        return back()->with('toast_success', 'Kategori Berhasil Dihapus');
+            // 4. Setelah semua produk dan detail transaksinya dihapus, barulah hapus kategori
+            $category->delete();
+        });
+
+        return back()->with('toast_success', 'Kategori dan semua produk terkait berhasil dihapus!');
     }
 }

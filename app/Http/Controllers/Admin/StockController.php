@@ -16,21 +16,26 @@ class StockController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    
+    public function index(Request $request)
     {
-        $products = Product::with('supplier', 'category')->paginate(10);
+        $search = $request->search;
 
-        return view('admin.stock.index', compact('products'));
+        $products = Product::when($search, function($query) use($search){
+            $query = $query->where('name', 'like', '%'.$search.'%');
+        })->paginate(10)->withQueryString();
+
+        return view('admin.stock.index', compact('products', 'search'));
     }
 
-/**
- * Update the specified resource in storage.
- *
- * @param  \Illuminate\Http\Request  $request
- * @param  int  $id
- * @return \Illuminate\Http\Response
- */
-public function update(Request $request, $id)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
 
@@ -60,13 +65,30 @@ public function update(Request $request, $id)
 
         // Gunakan DB Transaction untuk memastikan kedua operasi berhasil atau gagal bersamaan
         DB::transaction(function () use ($product, $add, $reduce) {
+            // Jika ada penambahan stok, catat sebagai 'barang masuk'
+            if ($add > 0) {
+                // Buat catatan utama (header) barang masuk
+                $transaction = Transaction::create([
+                    'user_id' => auth()->id(),
+                    'transaction_date' => now(),
+                    'type' => 'in', // <-- MENAMBAHKAN TIPE TRANSAKSI
+                ]);
+
+                // Catat detail barang yang masuk
+                TransactionDetail::create([
+                    'transaction_id' => $transaction->id,
+                    'product_id' => $product->id,   
+                    'quantity' => $add, // Menggunakan $add untuk jumlah barang masuk
+                ]);
+            }
+
             // Jika ada pengurangan stok, catat sebagai 'barang keluar'
             if ($reduce > 0) {
                 // Buat catatan utama (header) barang keluar
                 $transaction = Transaction::create([
-                    'user_id' => auth()->id(), // Mencatat user yang melakukan aksi ini
+                    'user_id' => auth()->id(),
                     'transaction_date' => now(),
-                    // 'type' => 'out', // Tambahkan kolom 'type' di tabel transactions
+                    'type' => 'out', // <-- MENAMBAHKAN TIPE TRANSAKSI
                 ]);
 
                 // Catat detail barang yang keluar

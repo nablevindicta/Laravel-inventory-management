@@ -1,10 +1,9 @@
-@extends('layouts.master', ['title' => 'Barang Keluar'])
+@extends('layouts.master', ['title' => 'Barang Masuk'])
 
 @section('content')
     <x-container>
         <div class="col-12">
-
-            <form action="{{ route('admin.transaction.product') }}" method="GET" class="mb-4">
+            <form action="{{ route('admin.transaction.productin') }}" method="GET" class="mb-4">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4">
                         <label for="start_date" class="form-label">Tanggal Mulai</label>
@@ -18,13 +17,13 @@
                         <button type="submit" class="btn btn-primary w-100">Filter</button>
                     </div>
                     <div class="col-md-2">
-                        <a href="{{ route('admin.transaction.product') }}" class="btn btn-secondary w-100">Reset</a>
-                        <a href="{{ route('admin.transaction.pdf', ['type' => 'out'] + request()->query()) }}" class="btn btn-primary mb-4">Export PDF</a>
+                        <a href="{{ route('admin.transaction.productin') }}" class="btn btn-secondary w-100">Reset</a>
+                        <a href="{{ route('admin.transaction.pdf', ['type' => 'in'] + request()->query()) }}" class="btn btn-primary mb-4">Export PDF</a>
                     </div>
                 </div>
             </form>
 
-            <x-card title="DAFTAR BARANG KELUAR" class="card-body p-0">
+            <x-card title="DAFTAR BARANG MASUK" class="card-body p-0">
                 <x-table>
                     <thead>
                         <tr>
@@ -40,11 +39,7 @@
                     <tbody>
                         @foreach ($transactions as $transaction)
                             <tr>
-                                <!-- Kolom Tanggal: Gunakan data-timestamp untuk konversi lokal -->
-                                <td data-timestamp="{{ $transaction->created_at->toISOString() }}">
-                                    {{ $transaction->created_at->format('d-m-Y H:i') }}
-                                </td>
-
+                                <td>{{ $transaction->created_at->format('d-m-Y H:i') }}</td>
                                 <td>
                                     @foreach ($transaction->details as $details)
                                         <div class="mb-2">
@@ -54,22 +49,22 @@
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        <div>{{ $details->product->name }}</div>
+                                        {{ $details->product->name }}
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        <div>{{ $details->product->category->name }}</div>
+                                        {{ $details->product->category->name }}
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        <div>{{ $details->quantity }}</div>
+                                        {{ $details->quantity }}
                                     @endforeach
                                 </td>
                                 <td>
                                     @foreach ($transaction->details as $details)
-                                        <div>{{ $details->product->unit }}</div>
+                                        {{ $details->product->unit }}
                                     @endforeach
                                 </td>
                                 <td>
@@ -81,49 +76,18 @@
                                 </td>
                             </tr>
                         @endforeach
-
-                        <!-- Baris Total -->
                         <tr>
                             <td colspan="5" class="font-weight-bold text-uppercase">
-                                Total Barang Keluar
+                                Total Barang Masuk
                             </td>
-                            <td class="font-weight-bold text-danger text-right">
+                            <td class="font-weight-bold text-success text-right">
                                 {{ $grandQuantity }} Barang
                             </td>
-                        </tr>
+                            <td></td> </tr>
                     </tbody>
                 </x-table>
             </x-card>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-end">
-                {{ $transactions->links() }}
-            </div>
+            <div class="d-flex justify-content-end">{{ $transactions->links() }}</div>
         </div>
     </x-container>
-
-    <!-- Script untuk konversi waktu ke lokal pengguna -->
-    @push('js')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Ambil semua <td> yang memiliki data-timestamp
-            document.querySelectorAll('td[data-timestamp]').forEach(function (td) {
-                const isoTime = td.getAttribute('data-timestamp');
-                const date = new Date(isoTime);
-
-                // Format tanggal sesuai lokal pengguna (Indonesia)
-                const options = {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                };
-
-                // Ubah teks menjadi waktu lokal
-                td.textContent = date.toLocaleString('id-ID', options);
-            });
-        });
-    </script>
-    @endpush
 @endsection

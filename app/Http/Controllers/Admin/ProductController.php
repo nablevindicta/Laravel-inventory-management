@@ -16,7 +16,7 @@ class ProductController extends Controller
     use HasImage;
 
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar semua produk.
      *
      * @return \Illuminate\Http\Response
      */
@@ -28,97 +28,127 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan formulir untuk membuat produk baru.
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
         $suppliers = Supplier::get();
-
         $categories = Category::get();
 
         return view('admin.product.create', compact('suppliers', 'categories'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan produk baru ke dalam penyimpanan.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ProductRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(ProductRequest $request)
     {
-        $image = $this->uploadImage($request, $path = 'public/products/', $name = 'image');
+        // Unggah gambar hanya jika ada file yang dikirim
+        $image = $request->hasFile('image') ? $this->uploadImage($request, 'public/products/', 'image') : null;
 
         Product::create([
             'category_id' => $request->category_id,
             'supplier_id' => $request->supplier_id,
             'name' => $request->name,
-            'image' => $image->hashName(),
+            'image' => $image ? $image->hashName() : null,
             'unit' => $request->unit,
             'description' => $request->description,
-            'quantity' => $request->quantity, // ✅ Sudah benar
+            'quantity' => 0,
         ]);
 
         return redirect(route('admin.product.index'))->with('toast_success', 'Barang berhasil ditambahkan');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Menampilkan formulir untuk mengedit produk yang ditentukan.
      *
-     * @param  int  $id
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
     public function edit(Product $product)
     {
         $suppliers = Supplier::get();
-
         $categories = Category::get();
 
         return view('admin.product.edit', compact('product', 'suppliers', 'categories'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Memperbarui produk yang ditentukan dalam penyimpanan.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Http\Requests\ProductRequest  $request
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
+
+
     public function update(ProductRequest $request, Product $product)
     {
-        $image = $this->uploadImage($request, $path = 'public/products/', $name = 'image');
-
-        $product->update([
+        // Siapkan data untuk di-update
+        $data = [
             'category_id' => $request->category_id,
             'supplier_id' => $request->supplier_id,
             'name' => $request->name,
             'unit' => $request->unit,
             'description' => $request->description,
-        ]);
+            'quantity' => $request->quantity,
+        ];
 
-        if($request->file($name)){
-            $this->updateImage(
-                $path = 'public/products/', $name = 'image', $data = $product, $url = $image->hashName()
-            );
+        // Periksa apakah ada file gambar baru yang diunggah
+        if ($request->hasFile('image')) {
+            // Hapus gambar lama jika ada (menggunakan path dari database)
+            if ($product->getOriginal('image')) {
+                Storage::disk('local')->delete('public/products/' . $product->getOriginal('image'));
+            }
+            // Unggah gambar baru dan tambahkan ke array data
+            $image = $this->uploadImage($request, 'public/products/', 'image');
+            $data['image'] = $image->hashName();
         }
+
+        // Perbarui data produk
+        $product->update($data);
 
         return redirect(route('admin.product.index'))->with('toast_success', 'Barang Berhasil Diubah');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus produk yang ditentukan dari penyimpanan.
      *
-     * @param  int  $id
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
-    {
-        $product->delete();
+    public function destroy(Transaction $transaction)
+{
+    DB::transaction(function () use ($transaction) {
+        // Cek apakah transaksi memiliki detail
+        if ($transaction->details->isNotEmpty()) {
+            // Jika ada detail, proses pembaruan stok
+            $transactionDetail = $transaction->details->first();
+            $product = $transactionDetail->product;
+            
+            // Lakukan penyesuaian stok berdasarkan tipe transaksi
+            if ($transaction->type === 'in') {
+                $product->quantity -= $transactionDetail->quantity;
+            } elseif ($transaction->type === 'out') {
+                $product->quantity += $transactionDetail->quantity;
+            }
+            
+            // Simpan perubahan stok
+            $product->save();
 
-        Storage::disk('local')->delete('public/products/'. basename($product->image));
+            // Hapus detail transaksi
+            $transactionDetail->delete();
+        }
+        
+        // Hapus transaksi utama (header)
+        $transaction->delete();
+    });
 
-        return back()->with('toast_success', 'Kategori Berhasil Dihapus');
-    }
+    return back()->with('toast_success', 'Transaksi berhasil dihapus dan stok telah disesuaikan.');
+}
 }
