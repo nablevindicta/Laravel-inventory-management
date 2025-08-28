@@ -16,9 +16,52 @@ use App\Http\Controllers\{
     TransactionController as LandingTransactionController,
     CategoryController as LandingCategoryController, VehicleController as LandingVehicleController
 };
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', LandingController::class)->name('landing');
+// === Redirect landing ke login ===
+Route::redirect('/', '/login')->name('landing');
+
+// === Halaman Login (GET) ===
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login'); // ⚠️ Nama route HARUS 'login' karena blade pakai {{ route('login') }}
+
+// === Proses Login (POST) ===
+Route::post('/login', function (Request $request) {
+    $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        // Redirect berdasarkan role
+        if ($user->hasRole('Admin') || $user->hasRole('Super Admin')) {
+            return redirect()->intended('/admin/dashboard');
+        } elseif ($user->hasRole('Customer')) {
+            return redirect()->intended('/customer/dashboard');
+        }
+
+        return redirect()->intended('/'); // fallback
+    }
+
+    return back()->withErrors([
+        'email' => 'Email atau password salah.',
+    ])->withInput($request->only('email'));
+})->name('login'); // ⚠️ Gunakan name 'login' untuk POST juga (bisa, karena method beda)
+
+// === Logout ===
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+})->name('logout');
 
 Route::controller(LandingCategoryController::class)->as('category.')->group(function(){
     Route::get('/category', 'index')->name('index');
