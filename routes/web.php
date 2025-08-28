@@ -28,17 +28,8 @@ Route::post('/login', function (Request $request) {
 
     if (Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
         $request->session()->regenerate();
-
-        $user = Auth::user();
-
-        if ($user->hasRole('Admin') || $user->hasRole('Super Admin')) {
-            return redirect()->intended('/admin/dashboard');
-        }
-
-        Auth::logout();
-        return back()->withErrors([
-            'email' => 'Anda tidak memiliki akses ke panel admin.',
-        ]);
+        // Middleware akan menangani pengecekan peran. Langsung arahkan ke dashboard.
+        return redirect()->intended('/admin/dashboard');
     }
 
     return back()->withErrors([
@@ -51,7 +42,7 @@ Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect('/');
+    return redirect()->route('login');
 })->name('logout');
 
 // ========================================================================
@@ -59,12 +50,10 @@ Route::post('/logout', function () {
 // ========================================================================
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'role:Admin|Super Admin']], function () {
-    // Dashboard
     Route::get('/dashboard', DashboardController::class)
         ->name('dashboard')
         ->middleware('permission:index-dashboard');
 
-    // Resource dengan permission
     Route::resource('/category', CategoryController::class)
         ->except('show', 'create', 'edit')
         ->middleware('permission:index-category');
@@ -81,32 +70,18 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         ->only('index', 'update')
         ->middleware('permission:index-stock');
 
-    Route::resource('/order', OrderController::class)
-        ->middleware('permission:index-order');
+    // Route::resource('/order', OrderController::class)
+    //     ->middleware('permission:index-order');
 
-    // ====================================================================
-    // === USER MANAGEMENT (Hanya Super Admin untuk create/update/delete)
-    // ====================================================================
-
-    // Hanya Super Admin yang bisa akses seluruh CRUD user
     Route::resource('/user', UserController::class)
-        ->only('index') // Admin hanya bisa lihat daftar
         ->middleware('permission:index-user');
 
-    // Super Admin: CRUD penuh
     Route::group(['middleware' => ['role:Super Admin']], function () {
-        Route::get('/user', [UserController::class, 'index'])->name('user.index'); // tetap bisa akses index
+        Route::get('/user/create', [UserController::class, 'create'])->name('user.create');
         Route::post('/user', [UserController::class, 'store'])->name('user.store');
         Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update');
         Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
-
-        // Jika Anda ingin tetap gunakan resource, bisa uncomment baris ini:
-        // Route::resource('/user', UserController::class)->except('index');
     });
-
-    // ====================================================================
-    // === ROLE & PERMISSION (Hanya Super Admin)
-    // ====================================================================
 
     Route::resource('/role', RoleController::class)
         ->middleware('role:Super Admin');
@@ -115,10 +90,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         ->except('show', 'create', 'edit')
         ->middleware('role:Super Admin');
 
-    // ====================================================================
-    // === TRANSACTION
-    // ====================================================================
-
     Route::controller(TransactionController::class)->group(function () {
         Route::get('/transaction/product', 'product')->name('transaction.product');
         Route::get('/transaction/productin', 'productin')->name('transaction.productin');
@@ -126,18 +97,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         Route::get('/transaction/{type}/pdf', 'exportPdf')->name('transaction.pdf');
     });
 
-    // ====================================================================
-    // === SETTINGS
-    // ====================================================================
-
     Route::controller(SettingController::class)->group(function () {
         Route::get('/setting', 'index')->name('setting.index');
         Route::put('/setting/update/{user}', 'update')->name('setting.update');
     });
-
-    // ====================================================================
-    // === STOCK OPNAME
-    // ====================================================================
 
     Route::controller(StockOpnameController::class)->group(function () {
         Route::get('/stock-opname', 'index')->name('stockopname.index');

@@ -43,10 +43,15 @@
                                             @csrf
                                             @method('PUT')
 
-                                            <!-- Stok Saat Ini -->
+                                           <!-- Stok Saat Ini (Bisa Diedit Langsung) -->
                                             <div class="mb-3">
                                                 <label class="form-label">Stok Saat Ini</label>
-                                                <input type="text" class="form-control" value="{{ $product->quantity }}" readonly>
+                                                <input type="number"
+                                                       name="current_stock"
+                                                       class="form-control"
+                                                       min="0"
+                                                       value="{{ old('current_stock', $product->quantity) }}"
+                                                       placeholder="Masukkan stok terbaru">
                                             </div>
 
                                             <!-- Tambah Stok -->

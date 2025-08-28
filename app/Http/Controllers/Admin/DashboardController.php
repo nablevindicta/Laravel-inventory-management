@@ -39,7 +39,6 @@ class DashboardController extends Controller
         ->whereYear('created_at', now()->year)
         ->sum('quantity');
         $productsOutStock = Product::where('quantity', '<=', 10)->paginate(5);
-        $orders = Order::where('status', 0)->get();
 
         // Ambil 5 produk terlaris (barang keluar terbanyak)
         $bestProduct = TransactionDetail::with('product')
@@ -60,7 +59,7 @@ class DashboardController extends Controller
             $total = $bestProduct->map(fn($item) => (int)$item->total)->toArray();
         } else {
             $label = ['Tidak Ada Data'];
-            $total = [1]; // Agar chart tetap muncul
+            $total = [1];
         }
 
         return view('admin.dashboard', compact(
@@ -72,7 +71,6 @@ class DashboardController extends Controller
             'outboundGoodsCount',
             'outboundThisMonthCount',
             'productsOutStock',
-            'orders',
             'label',
             'total'
         ));
