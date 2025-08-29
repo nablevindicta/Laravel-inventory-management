@@ -60,7 +60,7 @@
                 </li>
 
                 <!-- Menu -->
-                <li class="nav-divider mt-3 mb-2 text-uppercase text-muted small">Menu</li>
+                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Menu</div>
 
                 @can('index-product')
                     <li class="nav-item">
@@ -93,7 +93,7 @@
                 @endcan
 
                 <!-- Stok -->
-                <li class="nav-divider mt-3 mb-2 text-uppercase text-muted small">Stok</li>
+                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Stok</div>
 
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.stock.*') ? 'active' : '' }}"
@@ -112,7 +112,7 @@
                 </li>
 
                 <!-- Transaksi -->
-                <li class="nav-divider mt-3 mb-2 text-uppercase text-muted small">Transaksi</li>
+                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Transaksi</div>
 
                 <!-- Barang Masuk -->
                 <li class="nav-item">
@@ -154,7 +154,7 @@
 
                 <!-- Super Admin Only -->
                 @hasanyrole('Super Admin')
-                    <li class="nav-divider mt-3 mb-2 text-uppercase text-muted small">Admin</li>
+                    <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Admin</div>
 
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.user*') ? 'active' : '' }}"
