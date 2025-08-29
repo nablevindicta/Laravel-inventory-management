@@ -105,25 +105,33 @@
     <!-- Script untuk konversi waktu ke lokal pengguna -->
     @push('js')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Ambil semua <td> yang memiliki data-timestamp
-            document.querySelectorAll('td[data-timestamp]').forEach(function (td) {
-                const isoTime = td.getAttribute('data-timestamp');
-                const date = new Date(isoTime);
+    document.addEventListener('DOMContentLoaded', function () {
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        console.log('Zona waktu pengguna:', userTimeZone);
 
-                // Format tanggal sesuai lokal pengguna (Indonesia)
-                const options = {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                };
+        const formatOptions = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: userTimeZone
+        };
 
-                // Ubah teks menjadi waktu lokal
-                td.textContent = date.toLocaleString('id-ID', options);
-            });
+        document.querySelectorAll('td[data-timestamp]').forEach(function (td) {
+            const isoTime = td.getAttribute('data-timestamp');
+            const date = new Date(isoTime);
+
+            if (isNaN(date.getTime())) {
+                console.error('Invalid date:', isoTime);
+                return;
+            }
+
+            // Format sesuai zona waktu pengguna
+            td.textContent = new Intl.DateTimeFormat('id-ID', formatOptions).format(date);
         });
+    });
     </script>
     @endpush
 @endsection
