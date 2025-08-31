@@ -116,8 +116,8 @@
 
                 <!-- Barang Masuk -->
                 <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.transaction.productin') ? 'active' : '' }}"
-                       href="{{ route('admin.transaction.productin') }}">
+                    <a class="nav-link {{ request()->fullUrlIs('*type=in') ? 'active' : '' }}"
+                       href="{{ route('admin.transaction.product') }}?type=in">
                         <span class="nav-link-icon d-md-none d-lg-inline-block me-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -135,17 +135,17 @@
 
                 <!-- Barang Keluar -->
                 <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.transaction.product') ? 'active' : '' }}"
-                       href="{{ route('admin.transaction.product') }}">
+                    <a class="nav-link {{ request()->fullUrlIs('*type=out') ? 'active' : '' }}"
+                       href="{{ route('admin.transaction.product') }}?type=out">
                         <span class="nav-link-icon d-md-none d-lg-inline-block me-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Ikon untuk barang keluar, misal minus -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-minus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <circle cx="6" cy="19" r="2"></circle>
                                 <circle cx="17" cy="19" r="2"></circle>
                                 <path d="M17 17h-11v-14h-2"></path>
-                                <path d="M6 5l7.999 .571m5.43 4.43l-.429 2.999h-13"></path>
-                                <path d="M17 3l4 4"></path>
-                                <path d="M21 3l-4 4"></path>
+                                <path d="M6 5l6.005 .429m7.138 6.573l-.143 .998h-13"></path>
+                                <path d="M15 6h6"></path>
                             </svg>
                         </span>
                         <span class="nav-link-title">Barang Keluar</span>

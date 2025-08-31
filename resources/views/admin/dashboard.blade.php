@@ -79,7 +79,7 @@
             </x-widget>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <x-widget title="Barang Masuk" :subTitle="0" class="bg-green">
+            <x-widget title="Total Barang Masuk" :subTitle="$productInQuantity" class="bg-green">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-plus"
                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -93,7 +93,7 @@
             </x-widget>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <x-widget title="Barang Keluar" :subTitle="$transactions" class="bg-cyan">
+            <x-widget title="Total Barang Keluar" :subTitle="$productOutQuantity" class="bg-cyan">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-x"
                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -108,16 +108,31 @@
             </x-widget>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <x-widget title="Barang Keluar Bulan ini" :subTitle="$transactionThisMonth" class="bg-teal">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-off"
+            <x-widget title="Barang Masuk Bulan ini" :subTitle="$productInThisMonth" class="bg-teal">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-plus"
                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                     fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                     <circle cx="6" cy="19" r="2"></circle>
-                    <path d="M17 17a2 2 0 1 0 2 2"></path>
-                    <path d="M17 17h-11v-11"></path>
-                    <path d="M9.239 5.231l10.761 .769l-1 7h-2m-4 0h-7"></path>
-                    <path d="M3 3l18 18"></path>
+                    <circle cx="17" cy="19" r="2"></circle>
+                    <path d="M17 17h-11v-14h-2"></path>
+                    <path d="M6 5l6.005 .429m7.138 6.573l-.143 .998h-13"></path>
+                    <path d="M15 6h6m-3 -3v6"></path>
+                </svg>
+            </x-widget>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <x-widget title="Barang Keluar Bulan ini" :subTitle="$productOutThisMonth" class="bg-teal">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-x"
+                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <circle cx="6" cy="19" r="2"></circle>
+                    <circle cx="17" cy="19" r="2"></circle>
+                    <path d="M17 17h-11v-14h-2"></path>
+                    <path d="M6 5l7.999 .571m5.43 4.43l-.429 2.999h-13"></path>
+                    <path d="M17 3l4 4"></path>
+                    <path d="M21 3l-4 4"></path>
                 </svg>
             </x-widget>
         </div>
