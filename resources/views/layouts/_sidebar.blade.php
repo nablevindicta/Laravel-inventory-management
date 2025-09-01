@@ -284,6 +284,25 @@
                             </span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('admin.stockopname.*') ? 'active' : '' }}"
+                            href="{{ route('admin.stockopname.index') }}">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clipboard-list" width="24"
+                                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
+                                    <rect x="9" y="3" width="6" height="4" rx="2"></rect>
+                                    <line x1="9" y1="12" x2="15" y2="12"></line>
+                                    <line x1="9" y1="16" x2="15" y2="16"></line>
+                                </svg>
+                            </span>
+                            <span class="nav-link-title">
+                                Stok Opname
+                            </span>
+                        </a>
+                    </li>
                     {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ route('admin.report') }}">
                             <span class="nav-link-icon d-md-none d-lg-inline-block mr-1">
@@ -369,26 +388,6 @@
                             </span>
                         </a>
                     </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link {{ Route::is('admin.stockopname.*') ? 'active' : '' }}"
-                            href="{{ route('admin.stockopname.index') }}">
-                            <span class="nav-link-icon d-md-none d-lg-inline-block mr-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clipboard-list" width="24"
-                                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
-                                    <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-                                    <line x1="9" y1="12" x2="15" y2="12"></line>
-                                    <line x1="9" y1="16" x2="15" y2="16"></line>
-                                </svg>
-                            </span>
-                            <span class="nav-link-title">
-                                Stok Opname
-                            </span>
-                        </a>
-                    </li>
                 @endhasanyrole
                 @hasanyrole('Super Admin')
                     <div class="hr-text hr-text-left ml-2 mb-2 mt-2">User Manajemen</div>
@@ -412,7 +411,7 @@
                             </span>
                         </a>
                     </li> --}}
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.role*') ? 'active' : '' }}"
                             href="{{ route('admin.role.index') }}">
                             <span class="   nav-link-icon d-md-none d-lg-inline-block mr-1">
@@ -429,7 +428,7 @@
                                 Role
                             </span>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.user*') ? 'active' : '' }}"
                             href="{{ route('admin.user.index') }}">
