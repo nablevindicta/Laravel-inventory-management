@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Department</label>
-                                    <input type="text" name="department" class="form-control" placeholder="Masukkan department">
+                                    <input type="text" name="department" class="form-control" value="Umum" disabled>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Role</label>

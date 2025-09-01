@@ -36,7 +36,7 @@
                                 <td>
                                     {{-- Tombol dan Modal Edit Stok --}}
                                     <x-button-modal :id="$product->id" icon="edit" style="mr-1" title="Edit Stok"
-                                        class="btn bg-teal btn-sm text-white" />
+                                        class="btn btn-primary btn-sm text-white" />
 
                                     <x-modal :id="$product->id" title="Edit Stok Produk - {{ $product->name }}">
                                         <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">

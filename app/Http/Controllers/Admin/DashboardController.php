@@ -23,21 +23,29 @@ class DashboardController extends Controller
         $suppliers = Supplier::count();
         $products = Product::count();
         $customers = User::count();
-        $inboundGoodsCount = TransactionDetail::whereHas('transaction', function ($query) {
+
+        $productInQuantity = TransactionDetail::whereHas('transaction', function ($query) {
             $query->where('type', 'in');
         })->sum('quantity');
 
-        $outboundGoodsCount = TransactionDetail::whereHas('transaction', function ($query) {
+        $productOutQuantity = TransactionDetail::whereHas('transaction', function ($query) {
             $query->where('type', 'out');
         })->sum('quantity');
 
-        // 3. Hitung jumlah barang keluar bulan ini
-        $outboundThisMonthCount = TransactionDetail::whereHas('transaction', function ($query) {
+        $productInThisMonth = TransactionDetail::whereHas('transaction', function ($query) {
+            $query->where('type', 'in');
+        })
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('quantity');
+        
+        $productOutThisMonth = TransactionDetail::whereHas('transaction', function ($query) {
             $query->where('type', 'out');
         })
-        ->whereMonth('created_at', now()->month)
-        ->whereYear('created_at', now()->year)
-        ->sum('quantity');
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('quantity');
+        
         $productsOutStock = Product::where('quantity', '<=', 10)->paginate(5);
 
         // Ambil 5 produk terlaris (barang keluar terbanyak)
@@ -67,9 +75,10 @@ class DashboardController extends Controller
             'suppliers',
             'products',
             'customers',
-            'inboundGoodsCount',
-            'outboundGoodsCount',
-            'outboundThisMonthCount',
+            'productInQuantity',
+            'productOutQuantity',
+            'productInThisMonth',
+            'productOutThisMonth',
             'productsOutStock',
             'label',
             'total'
