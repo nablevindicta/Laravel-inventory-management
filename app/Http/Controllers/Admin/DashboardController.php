@@ -23,10 +23,29 @@ class DashboardController extends Controller
         $suppliers = Supplier::count();
         $products = Product::count();
         $customers = User::count();
-        $transactions = TransactionDetail::sum('quantity');
-        $transactionThisMonth = TransactionDetail::whereMonth('created_at', now()->month)
+
+        $productInQuantity = TransactionDetail::whereHas('transaction', function ($query) {
+            $query->where('type', 'in');
+        })->sum('quantity');
+
+        $productOutQuantity = TransactionDetail::whereHas('transaction', function ($query) {
+            $query->where('type', 'out');
+        })->sum('quantity');
+
+        $productInThisMonth = TransactionDetail::whereHas('transaction', function ($query) {
+            $query->where('type', 'in');
+        })
+            ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('quantity');
+        
+        $productOutThisMonth = TransactionDetail::whereHas('transaction', function ($query) {
+            $query->where('type', 'out');
+        })
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('quantity');
+        
         $productsOutStock = Product::where('quantity', '<=', 10)->paginate(5);
         $orders = Order::where('status', 0)->get();
 
@@ -54,8 +73,10 @@ class DashboardController extends Controller
             'suppliers',
             'products',
             'customers',
-            'transactions',
-            'transactionThisMonth',
+            'productInQuantity',
+            'productOutQuantity',
+            'productInThisMonth',
+            'productOutThisMonth',
             'productsOutStock',
             'orders',
             'label',

@@ -13,15 +13,20 @@ use Barryvdh\DomPDF\Facade\PDF;
 class TransactionController extends Controller
 {
     /**
-     * Menampilkan daftar transaksi barang keluar dengan filter tanggal.
-     */
+    * Menampilkan daftar transaksi (in/out) berdasarkan query parameter `type`
+    */
     public function product(Request $request)
     {
+        // Validasi parameter type
+        $type = $request->query('type', 'in'); // default: 'in' jika tidak ada
+        $type = in_array($type, ['in', 'out']) ? $type : 'in';
+
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
+        // Ambil transaksi berdasarkan type
         $transactions = Transaction::with('details.product')
-            ->where('type', 'out')
+            ->where('type', $type)
             ->when($startDate, function ($query, $startDate) {
                 return $query->whereDate('created_at', '>=', $startDate);
             })
@@ -32,50 +37,18 @@ class TransactionController extends Controller
             ->paginate(10)
             ->appends($request->except('page'));
 
-        $grandQuantity = TransactionDetail::whereHas('transaction', function($query) use ($startDate, $endDate) {
-            $query->where('type', 'out')
-                ->when($startDate, function ($query, $startDate) {
-                    return $query->whereDate('created_at', '>=', $startDate);
-                })
-                ->when($endDate, function ($query, $endDate) {
-                    return $query->whereDate('created_at', '<=', $endDate);
-                });
+        // Hitung total quantity dari detail transaksi
+        $grandQuantity = TransactionDetail::whereHas('transaction', function ($query) use ($type, $startDate, $endDate) {
+            $query->where('type', $type);
+            if ($startDate) {
+                $query->whereDate('transactions.created_at', '>=', $startDate);
+            }
+            if ($endDate) {
+                $query->whereDate('transactions.created_at', '<=', $endDate);
+            }
         })->sum('quantity');
 
-        return view('admin.transaction.product', compact('transactions', 'grandQuantity', 'startDate', 'endDate'));
-    }
-
-    /**
-     * Menampilkan daftar transaksi barang masuk dengan filter tanggal.
-     */
-    public function productin(Request $request)
-    {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-
-        $transactions = Transaction::with('details.product')
-            ->where('type', 'in')
-            ->when($startDate, function ($query, $startDate) {
-                return $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                return $query->whereDate('created_at', '<=', $endDate);
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends($request->except('page'));
-
-        $grandQuantity = TransactionDetail::whereHas('transaction', function($query) use ($startDate, $endDate) {
-            $query->where('type', 'in')
-                ->when($startDate, function ($query, $startDate) {
-                    return $query->whereDate('created_at', '>=', $startDate);
-                })
-                ->when($endDate, function ($query, $endDate) {
-                    return $query->whereDate('created_at', '<=', $endDate);
-                });
-        })->sum('quantity');
-
-        return view('admin.transaction.productin', compact('transactions', 'grandQuantity', 'startDate', 'endDate'));
+        return view('admin.transaction.product', compact('transactions', 'grandQuantity', 'type', 'startDate', 'endDate'));
     }
 
     /**
@@ -116,25 +89,31 @@ class TransactionController extends Controller
      */
     public function exportPdf(Request $request, $type)
     {
+        $type = in_array($type, ['in', 'out']) ? $type : 'in';
+    
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-
+    
         $transactions = Transaction::with('details.product')
             ->where('type', $type)
-            ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-            ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+            ->when($startDate, fn($q) => $q->whereDate('transactions.created_at', '>=', $startDate))
+            ->when($endDate, fn($q) => $q->whereDate('transactions.created_at', '<=', $endDate))
             ->latest()
             ->get();
-
-        $grandQuantity = TransactionDetail::whereHas('transaction', function ($query) use ($startDate, $endDate, $type) {
+    
+        $grandQuantity = TransactionDetail::whereHas('transaction', function ($query) use ($type, $startDate, $endDate) {
             $query->where('type', $type);
-            if ($startDate) $query->whereDate('created_at', '>=', $startDate);
-            if ($endDate) $query->whereDate('created_at', '<=', $endDate);
+            if ($startDate) {
+                $query->whereDate('transactions.created_at', '>=', $startDate);
+            }
+            if ($endDate) {
+                $query->whereDate('transactions.created_at', '<=', $endDate);
+            }
         })->sum('quantity');
-
+    
         $title = $type === 'in' ? 'Laporan Barang Masuk' : 'Laporan Barang Keluar';
         $fileName = strtolower(str_replace(' ', '_', $title)) . '_' . now()->format('Y-m-d_H-i-s') . '.pdf';
-
+    
         $pdf = PDF::loadView('admin.transaction.report.pdf', compact('transactions', 'grandQuantity', 'title'));
         
         return $pdf->download($fileName);
