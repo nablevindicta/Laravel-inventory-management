@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class StockController extends Controller
 {
@@ -105,7 +106,7 @@ class StockController extends Controller
 
         return back()->with('toast_success', $add > 0 ? "Stok berhasil ditambahkan sebanyak {$add}." : "Stok berhasil dikurangi sebanyak {$reduce}.");
         } catch (\Exception $e) {
-            \Log::error('Stock update failed: ' . $e->getMessage());
+            Log::error('Stock update failed: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])->withInput();
     }
 }

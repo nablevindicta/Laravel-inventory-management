@@ -51,6 +51,19 @@ class ProductController extends Controller
         // Unggah gambar hanya jika ada file yang dikirim
         $image = $request->hasFile('image') ? $this->uploadImage($request, 'public/products/', 'image') : null;
 
+        // Ambil data kategori yang dipilih
+        $category = Category::findOrFail($request->category_id);
+        
+        // Hitung jumlah produk yang sudah ada di kategori ini
+        $productCount = Product::where('category_id', $category->id)->count();
+        $newNumber = $productCount + 1;
+
+        // Ambil 3 huruf pertama dari nama kategori
+        $categoryCode = strtoupper(substr($category->name, 0, 15));
+        
+        // Buat kode barang otomatis
+        $productCode = "{$categoryCode}-1.1.7.{$newNumber}";
+
         Product::create([
             'category_id' => $request->category_id,
             'supplier_id' => $request->supplier_id,
@@ -59,6 +72,7 @@ class ProductController extends Controller
             'unit' => $request->unit,
             'description' => $request->description,
             'quantity' => 0,
+            'code' => $productCode,
         ]);
 
         return redirect(route('admin.product.index'))->with('toast_success', 'Barang berhasil ditambahkan');
