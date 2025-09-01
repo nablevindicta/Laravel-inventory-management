@@ -36,17 +36,22 @@
                                 <td>
                                     {{-- Tombol dan Modal Edit Stok --}}
                                     <x-button-modal :id="$product->id" icon="edit" style="mr-1" title="Edit Stok"
-                                        class="btn bg-teal btn-sm text-white" />
+                                        class="btn btn-primary btn-sm text-white" />
 
                                     <x-modal :id="$product->id" title="Edit Stok Produk - {{ $product->name }}">
                                         <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
 
-                                            <!-- Stok Saat Ini -->
+                                           <!-- Stok Saat Ini (Bisa Diedit Langsung) -->
                                             <div class="mb-3">
                                                 <label class="form-label">Stok Saat Ini</label>
-                                                <input type="text" class="form-control" value="{{ $product->quantity }}" readonly>
+                                                <input type="number"
+                                                       name="current_stock"
+                                                       class="form-control"
+                                                       min="0"
+                                                       value="{{ old('current_stock', $product->quantity) }}"
+                                                       placeholder="Masukkan stok terbaru">
                                             </div>
 
                                             <!-- Tambah Stok -->

@@ -1,10 +1,11 @@
-@extends('layouts.master', ['title' => 'Barang Keluar'])
+@extends('layouts.master', ['title' => $type === 'in' ? 'Barang Masuk' : 'Barang Keluar'])
 
 @section('content')
     <x-container>
         <div class="col-12">
 
             <form action="{{ route('admin.transaction.product') }}" method="GET" class="mb-4">
+                <input type="hidden" name="type" value="{{ $type }}"> <!-- Pertahankan type saat filter -->
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4">
                         <label for="start_date" class="form-label">Tanggal Mulai</label>
@@ -18,13 +19,20 @@
                         <button type="submit" class="btn btn-primary w-100">Filter</button>
                     </div>
                     <div class="col-md-2">
-                        <a href="{{ route('admin.transaction.pdf', ['type' => 'out'] + request()->query()) }}" class="btn btn-primary mb-3">Export PDF</a>
-                        <a href="{{ route('admin.transaction.product') }}" class="btn btn-secondary w-100">Reset</a>
+                        <!-- Export PDF sesuai type -->
+                        <a href="{{ route('admin.transaction.pdf', ['type' => $type] + request()->query()) }}" class="btn btn-primary w-100 mb-2">Export PDF</a>
+                        <a href="{{ route('admin.transaction.product') }}?type={{ $type }}" class="btn btn-secondary w-100">Reset</a>
                     </div>
                 </div>
             </form>
 
-            <x-card title="DAFTAR BARANG KELUAR" class="card-body p-0">
+            @php
+                $title = $type === 'in' ? 'DAFTAR BARANG MASUK' : 'DAFTAR BARANG KELUAR';
+                $totalLabel = $type === 'in' ? 'Total Barang Masuk' : 'Total Barang Keluar';
+                $icon = $type === 'in' ? 'shopping-cart-plus' : 'shopping-cart-minus';
+            @endphp
+
+            <x-card :title="$title" class="card-body p-0">
                 <x-table>
                     <thead>
                         <tr>
@@ -40,7 +48,6 @@
                     <tbody>
                         @foreach ($transactions as $transaction)
                             <tr>
-                                <!-- Kolom Tanggal: Gunakan data-timestamp untuk konversi lokal -->
                                 <td data-timestamp="{{ $transaction->created_at->toISOString() }}">
                                     {{ $transaction->created_at->format('d-m-Y H:i') }}
                                 </td>
@@ -82,22 +89,24 @@
                             </tr>
                         @endforeach
 
-                        <!-- Baris Total -->
+                        <!-- Baris Total (dinamis) -->
                         <tr>
                             <td colspan="5" class="font-weight-bold text-uppercase">
-                                Total Barang Keluar
+                                {{ $totalLabel }}
                             </td>
-                            <td class="font-weight-bold text-danger text-right">
-                                {{ $grandQuantity }} Barang
+                            <td class="font-weight-bold text-right">
+                                <span class="text-{{ $type === 'in' ? 'success' : 'danger' }}">
+                                    {{ $grandQuantity }} Barang
+                                </span>
                             </td>
                         </tr>
                     </tbody>
-                </x-table> 
+                </x-table>
             </x-card>
 
             <!-- Pagination -->
             <div class="d-flex justify-content-end">
-                {{ $transactions->links() }}
+                {{ $transactions->appends(['type' => $type, 'start_date' => $startDate, 'end_date' => $endDate])->links() }}
             </div>
         </div>
     </x-container>
@@ -106,22 +115,27 @@
     @push('js')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Ambil semua <td> yang memiliki data-timestamp
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const formatOptions = {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+                timeZone: userTimeZone
+            };
+
             document.querySelectorAll('td[data-timestamp]').forEach(function (td) {
                 const isoTime = td.getAttribute('data-timestamp');
                 const date = new Date(isoTime);
 
-                // Format tanggal sesuai lokal pengguna (Indonesia)
-                const options = {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                };
+                if (isNaN(date.getTime())) {
+                    console.error('Invalid date:', isoTime);
+                    return;
+                }
 
-                // Ubah teks menjadi waktu lokal
-                td.textContent = date.toLocaleString('id-ID', options);
+                td.textContent = new Intl.DateTimeFormat('id-ID', formatOptions).format(date);
             });
         });
     </script>
