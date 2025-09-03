@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use App\Models\TransactionDetail;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -139,15 +142,25 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Hapus file gambar dari penyimpanan
-        if ($product->getOriginal('image')) {
-            Storage::disk('local')->delete('public/products/' . basename($product->getOriginal('image')));
+        // Gunakan DB Transaction untuk memastikan semua operasi berhasil atau gagal bersamaan
+        try {
+            DB::transaction(function () use ($product) {
+                // 1. Hapus semua detail transaksi yang terkait dengan produk ini
+                TransactionDetail::where('product_id', $product->id)->delete();
+                
+                // 2. Hapus file gambar dari penyimpanan
+                if ($product->getOriginal('image')) {
+                    Storage::disk('local')->delete('public/products/' . $product->getOriginal('image'));
+                }
+
+                // 3. Hapus produk itu sendiri
+                $product->delete();
+            });
+
+            return back()->with('toast_success', 'Barang Berhasil Dihapus');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete product: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus barang: ' . $e->getMessage()]);
         }
-
-        // Hapus data produk dari database
-        $product->delete();
-
-        // Perbaiki pesan notifikasi.
-        return back()->with('toast_success', 'Barang Berhasil Dihapus');
     }
 }
