@@ -139,15 +139,18 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Hapus file gambar dari penyimpanan
-        if ($product->getOriginal('image')) {
-            Storage::disk('local')->delete('public/products/' . basename($product->getOriginal('image')));
+        // Cek apakah produk masih digunakan di transaction_details
+        if (\DB::table('transaction_details')->where('product_id', $product->id)->exists()) {
+            return back()->with('toast_error', 'Gagal hapus: Produk ini sudah digunakan dalam transaksi.');
         }
-
-        // Hapus data produk dari database
+    
+        // Hapus gambar
+        if ($product->getOriginal('image')) {
+            Storage::delete('public/products/' . basename($product->getOriginal('image')));
+        }
+    
         $product->delete();
-
-        // Perbaiki pesan notifikasi.
-        return back()->with('toast_success', 'Barang Berhasil Dihapus');
+    
+        return back()->with('toast_success', 'Barang berhasil dihapus');
     }
 }
