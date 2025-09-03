@@ -37,11 +37,11 @@
                                     <span class="avatar rounded avatar-md"
                                         style="background-image: url({{ $product->image }})"></span>
                                 </td>
-                                <td>{{ $product->code }}</td>
-                                <td>{{ $product->name }}</td>
-                                <td>{{ optional($product->supplier)->name ?? '-' }}</td>
-                                <td>{{ $product->category->name }}</td>
-                                <td>{{ $product->unit }}</td>
+                                <td class="text-center">{{ $product->code }}</td>
+                                <td class="text-center">{{ $product->name }}</td>
+                                <td class="text-center">{{ optional($product->supplier)->name ?? '-' }}</td>
+                                <td class="text-center">{{ $product->category->name }}</td>
+                                <td class="text-center">{{ $product->unit }}</td>
                                 <td class="text-center">
                                     @can('update-product')
                                         {{-- Tombol modal edit --}}

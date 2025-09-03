@@ -38,6 +38,7 @@
                         <tr>
                             <th>Tanggal</th>
                             <th>Foto</th>
+                            <th>Kode</th>
                             <th>Nama Barang</th>
                             <th>Kategori Barang</th>
                             <th>Kuantitas</th>
@@ -57,6 +58,11 @@
                                         <div class="mb-2">
                                             <span class="avatar rounded avatar-md" style="background-image: url({{ $details->product->image }})"></span>
                                         </div>
+                                    @endforeach
+                                </td>
+                                 <td>
+                                    @foreach ($transaction->details as $details)
+                                        <div>{{ $details->product->code }}</div>
                                     @endforeach
                                 </td>
                                 <td>

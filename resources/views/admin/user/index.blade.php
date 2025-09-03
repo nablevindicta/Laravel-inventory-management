@@ -38,10 +38,10 @@
                                     <label class="form-label">Konfirmasi Password</label>
                                     <input type="password" name="password_confirmation" class="form-control" placeholder="Ulangi password" required>
                                 </div>
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label class="form-label">Department</label>
                                     <input type="text" name="department" class="form-control" value="Umum" disabled>
-                                </div>
+                                </div> --}}
                                 <div class="mb-3">
                                     <label class="form-label">Role</label>
                                     <input type="text" class="form-control" value="Admin" disabled>
@@ -62,23 +62,23 @@
             <!-- Tabel Daftar User -->
             <x-card title="DAFTAR USER" class="card-body p-0">
                 <x-table>
-                    <thead>
+                    <thead class="text-center">
                         <tr>
                             <th>No</th>
                             <th>Nama</th>
                             <th>Email</th>
-                            <th>Department</th>
+                            {{-- <th>Department</th> --}}
                             <th>Role</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-center">
                         @foreach ($users as $i => $user)
                             <tr>
                                 <td>{{ $i + $users->firstItem() }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
-                                <td>{{ $user->department }}</td>
+                                {{-- <td>{{ $user->department }}</td> --}}
                                 <td>
                                     @foreach ($user->roles as $role)
                                         <span class="badge bg-primary">{{ $role->name }}</span>

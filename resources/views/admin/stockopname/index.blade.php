@@ -82,10 +82,16 @@
     {{-- PERULANGAN KEDUA: HANYA UNTUK MEMBUAT SEMUA MODAL --}}
     @foreach ($sessions as $session)
     <x-modal :id="'detail-modal-' . $session->id" title="Detail Log - {{ $session->title }}">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{{ route('admin.stockopname.pdf_detail', $session->id) }}" class="btn btn-success btn-sm" target="_blank">
+                <i class="fas fa-file-pdf"></i> Export PDF
+            </a>
+        </div>
         <x-table>
             <thead>
                 <tr>
                     <th>No</th>
+                    <th>Kode</th>
                     <th>Nama Barang</th>
                     <th>Stok Sistem</th>
                     <th>Stok Fisik</th>
@@ -97,6 +103,7 @@
                 @foreach ($session->logs as $log)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
+                        <td>{{ optional($log->product)->code }}</td>
                         <td>{{ optional($log->product)->name }}</td>
                         <td>{{ $log->stock_sistem }}</td>
                         <td>{{ $log->stock_fisik }}</td>

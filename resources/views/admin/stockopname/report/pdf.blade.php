@@ -41,7 +41,7 @@
         <tbody>
             @foreach ($logs as $log)
             <tr>
-                <td>{{ $log->created_at->format('d-m-Y H:i') }}</td>
+                <td>{{ $log->created_at->format('d F Y H:i') }}</td>
                 <td>{{ optional($log->product)->name }}</td>
                 <td>{{ $log->stock_sistem }}</td>
                 <td>{{ $log->stock_fisik }}</td>
