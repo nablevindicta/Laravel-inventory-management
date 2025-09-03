@@ -10,11 +10,11 @@
                 <x-table>
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Nama Supplier</th>
-                            <th>No Hp</th>
-                            <th>Alamat</th>
-                            <th>Aksi</th>
+                            <th class="text-center">No</th>
+                            <th class="text-center">Nama Supplier</th>
+                            <th class="text-center">No Hp</th>
+                            <th class="text-center">Alamat</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>

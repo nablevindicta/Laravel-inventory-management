@@ -70,9 +70,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         ->only('index', 'update')
         ->middleware('permission:index-stock');
 
-    // Route::resource('/order', OrderController::class)
-    //     ->middleware('permission:index-order');
-
     Route::resource('/user', UserController::class)
         ->middleware('permission:index-user');
 
