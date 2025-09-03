@@ -3,10 +3,13 @@
 @section('content')
     <x-container>
         <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5">Daftar Sesi Stok Opname</h2>
             <div>
-                <a href="{{ route('admin.stockopname.create') }}" class="btn btn-primary">Mulai Stok Opname</a>
-                <a href="{{ route('admin.stockopname.pdf', ['month' => $selectedMonth, 'year' => $selectedYear]) }}" class="btn btn-success">Export PDF</a>
-                </div>
+                {{-- Tombol "Mulai Stok Opname" diubah menjadi modal --}}
+                <x-button-modal id="create-opname-modal" title="Mulai Stok Opname" icon="plus" 
+                    class="btn btn-primary mr-2" style="" />
+                <a href="{{ route('admin.stockopname.pdf', ['month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}" class="btn btn-success mr-2">Export PDF</a>
+            </div>
         </div>
 
         <x-card title="Filter Data" class="card-body mb-3">
@@ -16,7 +19,7 @@
                         <label for="month" class="form-label">Bulan</label>
                         <select name="month" id="month" class="form-select">
                             @foreach (range(1, 12) as $month)
-                                <option value="{{ $month }}" {{ $selectedMonth == $month ? 'selected' : '' }}>
+                                <option value="{{ $month }}" {{ request('month', now()->month) == $month ? 'selected' : '' }}>
                                     {{ \Carbon\Carbon::create()->month($month)->monthName }}
                                 </option>
                             @endforeach
@@ -26,7 +29,7 @@
                         <label for="year" class="form-label">Tahun</label>
                         <select name="year" id="year" class="form-select">
                             @foreach (range(now()->year, 2020) as $year)
-                                <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
+                                <option value="{{ $year }}" {{ request('year', now()->year) == $year ? 'selected' : '' }}>
                                     {{ $year }}
                                 </option>
                             @endforeach
@@ -46,20 +49,54 @@
             <x-table>
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Tanggal Opname</th>
-                        <th>Nama Barang</th>
-                        <th>Stok Sistem</th>
-                        <th>Stok Fisik</th>
-                        <th>Selisih</th>
-                        <th>Keterangan</th>
+                        <th>No</th>
+                        <th>Judul Sesi</th>
+                        <th>Tanggal Dibuat</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($logs as $i => $log)
+                    {{-- PERULANGAN PERTAMA: HANYA UNTUK MEMBUAT BARIS TABEL (tr) --}}
+                    @forelse ($sessions as $i => $session)
                     <tr>
-                        <td>{{ $logs->firstItem() + $i }}</td>
-                        <td>{{ $log->created_at->format('d-m-Y H:i') }}</td>
+                        <td>{{ $sessions->firstItem() + $i }}</td>
+                        <td>{{ $session->title }}</td>
+                        <td>{{ $session->created_at->format('d-m-Y H:i') }}</td>
+                        <td class="text-center">
+                            <x-button-modal :id="'detail-modal-' . $session->id" title="Detail" icon="eye" style=""
+                                class="btn btn-primary btn-sm" />
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="text-center">Belum ada sesi stok opname.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </x-table>
+        </x-card>
+        <div class="d-flex justify-content-end mt-3">{{ $sessions->links() }}</div>
+    </x-container>
+    
+    {{-- KUMPULAN MODAL DETAIL DIPINDAHKAN KE SINI (DI LUAR TABEL) --}}
+    {{-- PERULANGAN KEDUA: HANYA UNTUK MEMBUAT SEMUA MODAL --}}
+    @foreach ($sessions as $session)
+    <x-modal :id="'detail-modal-' . $session->id" title="Detail Log - {{ $session->title }}">
+        <x-table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Barang</th>
+                    <th>Stok Sistem</th>
+                    <th>Stok Fisik</th>
+                    <th>Selisih</th>
+                    <th>Keterangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($session->logs as $log)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ optional($log->product)->name }}</td>
                         <td>{{ $log->stock_sistem }}</td>
                         <td>{{ $log->stock_fisik }}</td>
@@ -74,10 +111,78 @@
                             @endif
                         </td>
                     </tr>
+                @endforeach
+            </tbody>
+        </x-table>
+    </x-modal>
+    @endforeach
+
+    {{-- Modal untuk membuat stok opname baru (posisinya sudah benar) --}}
+    <x-modal id="create-opname-modal" title="Mulai Stok Opname">
+        <form action="{{ route('admin.stockopname.store') }}" method="POST">
+            @csrf
+            {{-- Dropdown untuk Bulan dan Tahun Opname --}}
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="opname_month" class="form-label">Bulan Opname</label>
+                    <select name="opname_month" id="opname_month" class="form-select">
+                        @foreach (range(1, 12) as $month)
+                            <option value="{{ $month }}" {{ now()->month == $month ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($month)->monthName }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label for="opname_year" class="form-label">Tahun Opname</label>
+                    <select name="opname_year" id="opname_year" class="form-select">
+                        @foreach (range(now()->year, 2020) as $year)
+                            <option value="{{ $year }}" {{ now()->year == $year ? 'selected' : '' }}>
+                                {{ $year }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            
+            {{-- Tabel Daftar Barang untuk Stok Fisik --}}
+            <x-table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Barang</th>
+                        <th>Kategori</th>
+                        <th>Stok Sistem</th>
+                        <th>Stok Fisik</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($products as $i => $product)
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td>{{ $product->name }}</td>
+                        <td>{{ optional($product->category)->name }}</td>
+                        <td>{{ $product->quantity }}</td>
+                        <td>
+                            <input
+                                type="number"
+                                name="stock_fisik[{{ $product->id }}]"
+                                value="{{ old('stock_fisik.' . $product->id, $product->quantity) }}"
+                                class="form-control @error('stock_fisik.' . $product->id) is-invalid @enderror"
+                                min="0"
+                                required
+                            >
+                            @error('stock_fisik.' . $product->id)
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </x-table>
-        </x-card>
-        <div class="d-flex justify-content-end mt-3">{{ $logs->links() }}</div>
-    </x-container>
+            <div class="mt-4 p-4">
+                <button type="submit" class="btn btn-primary">Simpan Stok Opname</button>
+            </div>
+        </form>
+    </x-modal>
 @endsection

@@ -15,10 +15,16 @@ class StockOpnameLog extends Model
         'stock_fisik',
         'selisih',
         'keterangan',
+        'stock_opname_session_id', 
     ];
 
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function session()
+    {
+        return $this->belongsTo(StockOpnameSession::class, 'stock_opname_session_id');
     }
 }
