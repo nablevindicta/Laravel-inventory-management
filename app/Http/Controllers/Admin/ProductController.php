@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Supplier;
 use App\Traits\HasImage;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Storage;
@@ -23,27 +23,38 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request) // Diubah untuk menerima Request
     {
-        $products = Product::paginate(10);
+        // 1. Ambil input 'search' dari URL query string
+        $search = $request->input('search');
+
+        // Ambil data suppliers dan categories untuk modal
         $suppliers = Supplier::get();
         $categories = Category::get();
 
-        return view('admin.product.index', compact('products', 'suppliers', 'categories'));
+        // 2. Mulai query builder untuk model Product dengan eager loading
+        $query = Product::with(['category', 'supplier']);
+
+        // 3. Jika ada input pencarian, tambahkan kondisi WHERE
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')      // Cari berdasarkan nama produk
+                ->orWhere('code', 'like', '%' . $search . '%')      // Cari berdasarkan kode produk
+                ->orWhereHas('supplier', function ($subQ) use ($search) { // Cari berdasarkan nama supplier
+                    $subQ->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('category', function ($subQ) use ($search) { // Cari berdasarkan nama kategori
+                    $subQ->where('name', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        // 4. Eksekusi query dengan paginasi dan tambahkan parameter search ke link paginasi
+        $products = $query->latest()->paginate(10)->appends($request->query());
+
+        // 5. Kirim semua data yang dibutuhkan ke view
+        return view('admin.product.index', compact('products', 'suppliers', 'categories', 'search'));
     }
-
-    /**
-     * Menampilkan formulir untuk membuat produk baru.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    // public function create()
-    // {
-    //     $suppliers = Supplier::get();
-    //     $categories = Category::get();
-
-    //     return view('admin.product.create', compact('suppliers', 'categories'));
-    // }
 
     /**
      * Menyimpan produk baru ke dalam penyimpanan.
@@ -82,20 +93,8 @@ class ProductController extends Controller
 
         return redirect(route('admin.product.index'))->with('toast_success', 'Barang berhasil ditambahkan');
     }
-
-    /**
-     * Menampilkan formulir untuk mengedit produk yang ditentukan.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        $suppliers = Supplier::get();
-        $categories = Category::get();
-
-        return view('admin.product.edit', compact('product', 'suppliers', 'categories'));
-    }
+    
+    // ... sisa method (update, destroy, dll) tidak perlu diubah ...
 
     /**
      * Memperbarui produk yang ditentukan dalam penyimpanan.
@@ -104,8 +103,6 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-
-
     public function update(ProductRequest $request, Product $product)
     {
         // Siapkan data untuk di-update
