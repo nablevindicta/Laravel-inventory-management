@@ -3,10 +3,16 @@
 @section('content')
     <x-container>
         <div class="col-12">
+            {{-- PERUBAHAN KRITIS: Arahkan form ke route yang benar agar controller product terpanggil --}}
+            <form action="{{ route('admin.product.index') }}" method="GET">
+                {{-- Variabel $search sudah dikirim dari controller yang baru --}}
+                <x-search name="search" :value="$search ?? ''" />
+            </form>
+
             @can('create-product')
                 {{-- Tombol Tambah Barang diubah menjadi modal --}}
-                <x-button-modal id="create-product-modal" title="Tambah Barang" icon="plus" 
-                    class="btn btn-primary mb-3 mr-1" style=""/>
+                <x-button-modal id="create-product-modal" title="Tambah Barang" icon="plus"
+                    class="btn btn-primary mb-3 mr-1" style="" />
             @endcan
             <x-card title="DAFTAR BARANG" class="card-body p-0">
                 <x-table>
@@ -23,24 +29,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($products as $i => $product)
+                        {{-- PENYEMPURNAAN: Gunakan @forelse untuk menangani data kosong --}}
+                        @forelse ($products as $i => $product)
                             <tr>
                                 <td class="text-center">{{ $i + $products->firstItem() }}</td>
                                 <td class="text-center">
                                     <span class="avatar rounded avatar-md"
                                         style="background-image: url({{ $product->image }})"></span>
                                 </td>
-                                <td>{{ $product->code }}</td> 
+                                <td>{{ $product->code }}</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ optional($product->supplier)->name ?? '-' }}</td>
                                 <td>{{ $product->category->name }}</td>
                                 <td>{{ $product->unit }}</td>
                                 <td class="text-center">
                                     @can('update-product')
-                                        {{-- Tombol edit sekarang adalah modal --}}
+                                        {{-- Tombol modal edit --}}
                                         <x-button-modal :id="'edit-product-modal-' . $product->id" title="" icon="edit" style=""
                                             class="btn btn-info btn-sm mr-1" />
-                                        
+
                                         {{-- Modal Edit Produk --}}
                                         <x-modal :id="'edit-product-modal-' . $product->id" title="Edit Produk - {{ $product->name }}">
                                             <form action="{{ route('admin.product.update', $product->id) }}" method="POST" enctype="multipart/form-data">
@@ -87,7 +94,11 @@
                                     @endcan
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="9" class="text-center">Data barang tidak ditemukan.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </x-table>
             </x-card>
@@ -96,22 +107,20 @@
             </div>
         </div>
     </x-container>
-    
+
     {{-- Modal Tambah Barang --}}
     <x-modal id="create-product-modal" title="Tambah Barang">
         <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-    
+            
             <x-input name="name" type="text" title="Nama Produk" placeholder="Nama Produk" :value="old('name')" />
             @error('name')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-    
             <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="old('unit')" />
             @error('unit')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-    
             <x-select title="Supplier Barang" name="supplier_id">
                 <option value="">Silahkan Pilih</option>
                 @foreach ($suppliers as $supplier)
@@ -123,7 +132,6 @@
             @error('supplier_id')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-    
             <x-select title="Kategori Barang" name="category_id">
                 <option value="">Silahkan Pilih</option>
                 @foreach ($categories as $category)
@@ -135,19 +143,16 @@
             @error('category_id')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-    
             <x-input name="image" type="file" title="Foto Barang" />
             @error('image')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-    
             <x-textarea name="description" title="Deskripsi Barang" placeholder="Deskripsi Barang">
                 {{ old('description') }}
             </x-textarea>
             @error('description')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-    
             <div class="mt-3">
                 <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
             </div>

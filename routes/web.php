@@ -101,7 +101,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
 
     Route::controller(StockOpnameController::class)->group(function () {
         Route::get('/stock-opname', 'index')->name('stockopname.index');
-        Route::get('/stock-opname/create', 'create')->name('stockopname.create');
         Route::post('/stock-opname', 'store')->name('stockopname.store');
         Route::get('/stock-opname/pdf', 'exportPdf')->name('stockopname.pdf');
     });
