@@ -82,6 +82,11 @@
     {{-- PERULANGAN KEDUA: HANYA UNTUK MEMBUAT SEMUA MODAL --}}
     @foreach ($sessions as $session)
     <x-modal :id="'detail-modal-' . $session->id" title="Detail Log - {{ $session->title }}">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{{ route('admin.stockopname.pdf_detail', $session->id) }}" class="btn btn-success btn-sm" target="_blank">
+                <i class="fas fa-file-pdf"></i> Export PDF
+            </a>
+        </div>
         <x-table>
             <thead>
                 <tr>
