@@ -43,15 +43,27 @@
                                             @csrf
                                             @method('PUT')
 
-                                           <!-- Stok Saat Ini (Bisa Diedit Langsung) -->
+                                           <!-- Stok Saat Ini & Koreksi Langsung -->
                                             <div class="mb-3">
                                                 <label class="form-label">Stok Saat Ini</label>
-                                                <input type="number"
-                                                       name="current_stock"
-                                                       class="form-control"
-                                                       min="0"
-                                                       value="{{ old('current_stock', $product->quantity) }}"
-                                                       placeholder="Masukkan stok terbaru">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-primary text-white">
+                                                        {{ $product->quantity }}
+                                                    </span>
+                                                    <input type="number"
+                                                           name="corrected_stock"
+                                                           class="form-control @error('corrected_stock') is-invalid @enderror"
+                                                           min="0"
+                                                           value=""
+                                                           placeholder="Masukkan stok yang benar">
+                                                </div>
+                                                @error('corrected_stock')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                                <small class="text-muted">
+                                                    Isi field di samping untuk <strong>koreksi stok manual</strong>. 
+                                                    Tidak akan dicatat sebagai barang masuk/keluar.
+                                                </small>
                                             </div>
 
                                             <!-- Tambah Stok -->
@@ -94,27 +106,32 @@
                                 </td>
                             </tr>
 
-                            @push('scripts')
+                           @push('scripts')
                             <script>
-                                // JavaScript untuk memastikan hanya satu input yang aktif
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const addInput = document.getElementById('add_stock_{{ $product->id }}');
-                                    const reduceInput = document.getElementById('reduce_stock_{{ $product->id }}');
-
-                                    if (addInput && reduceInput) {
-                                        addInput.addEventListener('input', function () {
-                                            if (this.value.trim() !== '' && parseInt(this.value) > 0) {
-                                                reduceInput.value = '';
-                                            }
-                                        });
-
-                                        reduceInput.addEventListener('input', function () {
-                                            if (this.value.trim() !== '' && parseInt(this.value) > 0) {
-                                                addInput.value = '';
-                                            }
-                                        });
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const correctInput = document.querySelector('input[name="corrected_stock"]');
+                                const addInput = document.getElementById('add_stock_{{ $product->id }}');
+                                const reduceInput = document.getElementById('reduce_stock_{{ $product->id }}');
+                            
+                                if (!correctInput) return;
+                            
+                                const clearAddReduce = () => {
+                                    if (correctInput.value.trim() !== '') {
+                                        addInput.value = '';
+                                        reduceInput.value = '';
                                     }
-                                });
+                                };
+                            
+                                const clearCorrect = () => {
+                                    if (addInput.value.trim() !== '' || reduceInput.value.trim() !== '') {
+                                        correctInput.value = '';
+                                    }
+                                };
+                            
+                                correctInput.addEventListener('input', clearAddReduce);
+                                addInput.addEventListener('input', clearCorrect);
+                                reduceInput.addEventListener('input', clearCorrect);
+                            });
                             </script>
                             @endpush
                         @endforeach

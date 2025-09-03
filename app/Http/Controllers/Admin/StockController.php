@@ -36,42 +36,58 @@ class StockController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+public function update(Request $request, $id)
 {
     $product = Product::findOrFail($id);
 
     $request->validate([
         'add_stock' => ['nullable', 'integer', 'min:0'],
         'reduce_stock' => ['nullable', 'integer', 'min:0'],
+        'corrected_stock' => ['nullable', 'integer', 'min:0'],
     ], [
         'reduce_stock.min' => 'Jumlah yang dikurangi harus 0 atau lebih.',
         'add_stock.min' => 'Jumlah tambahan stok harus 0 atau lebih.',
+        'corrected_stock.min' => 'Stok koreksi tidak boleh negatif.',
     ]);
 
     $add = (int) $request->add_stock;
     $reduce = (int) $request->reduce_stock;
+    $corrected = $request->corrected_stock;
 
-    if ($add === 0 && $reduce === 0) {
+    $filled = 0;
+    $filled += $add > 0 ? 1 : 0;
+    $filled += $reduce > 0 ? 1 : 0;
+    $filled += $corrected !== null ? 1 : 0;
+
+    if ($filled === 0) {
         return back()->withErrors([
-            'add_stock' => 'Silakan isi salah satu: tambah stok atau kurangi stok.'
+            'error' => 'Silakan isi salah satu: tambah, kurangi, atau koreksi stok.'
         ])->withInput();
     }
 
-    if ($add > 0 && $reduce > 0) {
+    if ($filled > 1) {
         return back()->withErrors([
-            'add_stock' => 'Tidak bisa menambah dan mengurangi stok dalam satu waktu.'
-        ])->withInput();
-    }
-
-    // Tambahkan cek stok sebelum reduce
-    if ($reduce > $product->quantity) {
-        return back()->withErrors([
-            'reduce_stock' => "Jumlah yang dikurangi tidak boleh lebih dari stok saat ini ({$product->quantity})."
+            'error' => 'Hanya boleh menggunakan satu metode perubahan stok.'
         ])->withInput();
     }
 
     try {
-        DB::transaction(function () use ($product, $add, $reduce) {
+        DB::transaction(function () use ($product, $add, $reduce, $corrected) {
+            if ($corrected !== null) {
+                $product->quantity = $corrected;
+                $product->save();
+
+                return;
+            }
+
+            if ($add > 0 && $reduce > 0) {
+                throw new \Exception('Tidak bisa tambah dan kurang sekaligus.');
+            }
+
+            if ($reduce > $product->quantity) {
+                throw new \Exception("Stok tidak cukup. Tersedia: {$product->quantity}");
+            }
+
             if ($add > 0) {
                 $transaction = Transaction::create([
                     'user_id' => auth()->id(),
@@ -104,10 +120,17 @@ class StockController extends Controller
             $product->save();
         });
 
-        return back()->with('toast_success', $add > 0 ? "Stok berhasil ditambahkan sebanyak {$add}." : "Stok berhasil dikurangi sebanyak {$reduce}.");
-        } catch (\Exception $e) {
-            Log::error('Stock update failed: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])->withInput();
+        if ($corrected !== null) {
+            return back()->with('toast_success', "Stok berhasil dikoreksi menjadi {$corrected}.");
+        }
+
+        return back()->with('toast_success', $add > 0
+            ? "Stok berhasil ditambahkan sebanyak {$add}."
+            : "Stok berhasil dikurangi sebanyak {$reduce}.");
+
+    } catch (\Exception $e) {
+        Log::error('Stock update failed: ' . $e->getMessage());
+        return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])->withInput();
     }
 }
 }
