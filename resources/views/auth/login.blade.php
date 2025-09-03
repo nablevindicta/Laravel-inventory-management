@@ -35,7 +35,7 @@
             justify-content: center;
             width: 100%;
             height: 100vh;
-            background: linear-gradient(135deg, #556B2F 0%, #15457a 100%);
+            background: linear-gradient(135deg, #16A75C 0%, #BCB937 100%);
         }
 
         .login-card-wrapper {
@@ -73,14 +73,15 @@
     <div class="login-container">
         <div class="login-card-wrapper d-flex">
             <div class="login-image-side d-none d-md-block col-6">
-                </div>
+                <img src="{{ asset('logo.png') }}" alt="Logo DISTANHORTI" style="max-width: 100%; height: auto;">
+            </div>
             <div class="login-form-side col-md-6 col-12">
                 <form action="{{ route('login') }}" method="POST">
                     @csrf
                     <div class="text-center mb-4">
                         <img src="{{ asset('logo.png') }}" alt="logo" height="40" class="mb-2">
                         <h3 class="mb-3 font-weight-medium">
-                            Selamat Datang
+                            Selamat Datang 
                         </h3>
                     </div>
                     <div class="mb-3">

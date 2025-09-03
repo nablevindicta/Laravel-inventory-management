@@ -23,8 +23,10 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::paginate(10);
+        $suppliers = Supplier::get();
+        $categories = Category::get();
 
-        return view('admin.product.index', compact('products'));
+        return view('admin.product.index', compact('products', 'suppliers', 'categories'));
     }
 
     /**
@@ -32,13 +34,13 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        $suppliers = Supplier::get();
-        $categories = Category::get();
+    // public function create()
+    // {
+    //     $suppliers = Supplier::get();
+    //     $categories = Category::get();
 
-        return view('admin.product.create', compact('suppliers', 'categories'));
-    }
+    //     return view('admin.product.create', compact('suppliers', 'categories'));
+    // }
 
     /**
      * Menyimpan produk baru ke dalam penyimpanan.
