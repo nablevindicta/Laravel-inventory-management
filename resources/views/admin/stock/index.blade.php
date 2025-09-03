@@ -9,8 +9,8 @@
             <x-card title="DAFTAR BARANG" class="card-body p-0">
                 <x-table>
                     <thead>
-                        <tr>
-                            <th>#</th>
+                        <tr class="text-center">
+                            <th>No</th>
                             <th>Foto</th>
                             <th>Nama Barang</th>
                             <th>Nama Supplier</th>
@@ -23,12 +23,12 @@
                     <tbody>
                         @foreach ($products as $i => $product)
                             <tr>
-                                <td>{{ $i + $products->firstItem() }}</td>
-                                <td>
+                                <td class="text-center">{{ $i + $products->firstItem() }}</td>
+                                <td class="text-center">
                                     <span class="avatar rounded avatar-md"
                                         style="background-image: url({{ $product->image }})"></span>
                                 </td>
-                                <td>{{ $product->name }}</td>
+                                <td >{{ $product->name }}</td>
                                 <td>{{ optional($product->supplier)->name ?? '-' }}</td>
                                 <td>{{ $product->category->name }}</td>
                                 <td>{{ $product->unit }}</td>

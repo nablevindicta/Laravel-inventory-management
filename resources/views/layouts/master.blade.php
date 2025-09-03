@@ -17,7 +17,7 @@
     <meta name="MobileOptimized" content="320" />
     <meta name="robots" content="noindex,nofollow,noarchive" />
     <link rel="icon" href="{{ asset('icon.png') }}" type="image/x-icon" />
-    <link rel="shortcut icon" href="{{ asset('icon.png') }}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ asset('logo.png') }}" type="image/x-icon" />
 
     <!-- Font awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
