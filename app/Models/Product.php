@@ -20,6 +20,7 @@ class Product extends Model
         'description',
         'unit',
         'quantity',
+        'code',
     ];
 
     // ✅ Modern attribute casting
