@@ -12,6 +12,7 @@
                         <tr class="text-center">
                             <th>No</th>
                             <th>Foto</th>
+                            <th>Kode</th>
                             <th>Nama Barang</th>
                             <th>Nama Supplier</th>
                             <th>Kategori Barang</th>
@@ -28,6 +29,7 @@
                                     <span class="avatar rounded avatar-md"
                                         style="background-image: url({{ $product->image }})"></span>
                                 </td>
+                                <td>{{ $product->code }}</td>
                                 <td >{{ $product->name }}</td>
                                 <td>{{ optional($product->supplier)->name ?? '-' }}</td>
                                 <td>{{ $product->category->name }}</td>
