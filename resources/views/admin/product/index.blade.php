@@ -18,7 +18,6 @@
                             <th>Nama Barang</th>
                             <th>Nama Supplier</th>
                             <th>Kategori Barang</th>
-                            <th>Stok</th>
                             <th>Satuan</th>
                             <th>Aksi</th>
                         </tr>
@@ -35,7 +34,6 @@
                                 <td>{{ $product->name }}</td>
                                 <td>{{ optional($product->supplier)->name ?? '-' }}</td>
                                 <td>{{ $product->category->name }}</td>
-                                <td class="text-center">{{ $product->quantity }}</td>
                                 <td>{{ $product->unit }}</td>
                                 <td class="text-center">
                                     @can('update-product')
@@ -100,60 +98,59 @@
     </x-container>
     
     {{-- Modal Tambah Barang --}}
-    {{-- Modal Tambah Barang --}}
-<x-modal id="create-product-modal" title="Tambah Barang">
-    <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-
-        <x-input name="name" type="text" title="Nama Produk" placeholder="Nama Produk" :value="old('name')" />
-        @error('name')
-            <div class="invalid-feedback d-block">{{ $message }}</div>
-        @enderror
-
-        <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="old('unit')" />
-        @error('unit')
-            <div class="invalid-feedback d-block">{{ $message }}</div>
-        @enderror
-
-        <x-select title="Supplier Barang" name="supplier_id">
-            <option value="">Silahkan Pilih</option>
-            @foreach ($suppliers as $supplier)
-                <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
-                    {{ $supplier->name }}
-                </option>
-            @endforeach
-        </x-select>
-        @error('supplier_id')
-            <div class="invalid-feedback d-block">{{ $message }}</div>
-        @enderror
-
-        <x-select title="Kategori Barang" name="category_id">
-            <option value="">Silahkan Pilih</option>
-            @foreach ($categories as $category)
-                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                    {{ $category->name }}
-                </option>
-            @endforeach
-        </x-select>
-        @error('category_id')
-            <div class="invalid-feedback d-block">{{ $message }}</div>
-        @enderror
-
-        <x-input name="image" type="file" title="Foto Barang" />
-        @error('image')
-            <div class="invalid-feedback d-block">{{ $message }}</div>
-        @enderror
-
-        <x-textarea name="description" title="Deskripsi Barang" placeholder="Deskripsi Barang">
-            {{ old('description') }}
-        </x-textarea>
-        @error('description')
-            <div class="invalid-feedback d-block">{{ $message }}</div>
-        @enderror
-
-        <div class="mt-3">
-            <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
-        </div>
-    </form>
-</x-modal>
+    <x-modal id="create-product-modal" title="Tambah Barang">
+        <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+    
+            <x-input name="name" type="text" title="Nama Produk" placeholder="Nama Produk" :value="old('name')" />
+            @error('name')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+    
+            <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="old('unit')" />
+            @error('unit')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+    
+            <x-select title="Supplier Barang" name="supplier_id">
+                <option value="">Silahkan Pilih</option>
+                @foreach ($suppliers as $supplier)
+                    <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
+                        {{ $supplier->name }}
+                    </option>
+                @endforeach
+            </x-select>
+            @error('supplier_id')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+    
+            <x-select title="Kategori Barang" name="category_id">
+                <option value="">Silahkan Pilih</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </x-select>
+            @error('category_id')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+    
+            <x-input name="image" type="file" title="Foto Barang" />
+            @error('image')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+    
+            <x-textarea name="description" title="Deskripsi Barang" placeholder="Deskripsi Barang">
+                {{ old('description') }}
+            </x-textarea>
+            @error('description')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+    
+            <div class="mt-3">
+                <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
+            </div>
+        </form>
+    </x-modal>
 @endsection
