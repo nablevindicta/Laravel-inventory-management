@@ -103,5 +103,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         Route::get('/stock-opname', 'index')->name('stockopname.index');
         Route::post('/stock-opname', 'store')->name('stockopname.store');
         Route::get('/stock-opname/pdf', 'exportPdf')->name('stockopname.pdf');
+        Route::get('/stockopname/{stockOpnameSession}/pdf', 'exportDetailPdf')->name('stockopname.pdf_detail');
     });
 });

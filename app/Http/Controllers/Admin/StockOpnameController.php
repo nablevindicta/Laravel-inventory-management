@@ -114,4 +114,23 @@ class StockOpnameController extends Controller
         $pdf = PDF::loadView('admin.stockopname.report.pdf', compact('logs', 'title'));
         return $pdf->download($fileName);
     }
+
+    public function exportDetailPdf(StockOpnameSession $stockOpnameSession)
+    {
+        // 1. Eager load relasi untuk menghindari N+1 problem di view PDF
+        $stockOpnameSession->load('logs.product');
+
+        // 2. Siapkan data untuk dikirim ke view PDF
+        $data = [
+            'session' => $stockOpnameSession
+        ];
+
+        // 3. Buat nama file yang dinamis
+        $fileName = 'Laporan Opname - ' . $stockOpnameSession->title . '.pdf';
+
+        // 4. Load view PDF dengan data, dan generate PDF untuk diunduh
+        $pdf = PDF::loadView('admin.stockopname.report.pdf_detail', $data);
+        
+        return $pdf->download($fileName);
+    }
 }
