@@ -6,10 +6,13 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Supplier;
 use App\Traits\HasImage;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use App\Models\TransactionDetail;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -20,24 +23,37 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request) // Diubah untuk menerima Request
     {
-        $products = Product::paginate(10);
+        // 1. Ambil input 'search' dari URL query string
+        $search = $request->input('search');
 
-        return view('admin.product.index', compact('products'));
-    }
-
-    /**
-     * Menampilkan formulir untuk membuat produk baru.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
+        // Ambil data suppliers dan categories untuk modal
         $suppliers = Supplier::get();
         $categories = Category::get();
 
-        return view('admin.product.create', compact('suppliers', 'categories'));
+        // 2. Mulai query builder untuk model Product dengan eager loading
+        $query = Product::with(['category', 'supplier']);
+
+        // 3. Jika ada input pencarian, tambahkan kondisi WHERE
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')      // Cari berdasarkan nama produk
+                ->orWhere('code', 'like', '%' . $search . '%')      // Cari berdasarkan kode produk
+                ->orWhereHas('supplier', function ($subQ) use ($search) { // Cari berdasarkan nama supplier
+                    $subQ->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('category', function ($subQ) use ($search) { // Cari berdasarkan nama kategori
+                    $subQ->where('name', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        // 4. Eksekusi query dengan paginasi dan tambahkan parameter search ke link paginasi
+        $products = $query->latest()->paginate(10)->appends($request->query());
+
+        // 5. Kirim semua data yang dibutuhkan ke view
+        return view('admin.product.index', compact('products', 'suppliers', 'categories', 'search'));
     }
 
     /**
@@ -51,6 +67,19 @@ class ProductController extends Controller
         // Unggah gambar hanya jika ada file yang dikirim
         $image = $request->hasFile('image') ? $this->uploadImage($request, 'public/products/', 'image') : null;
 
+        // Ambil data kategori yang dipilih
+        $category = Category::findOrFail($request->category_id);
+        
+        // Hitung jumlah produk yang sudah ada di kategori ini
+        $productCount = Product::where('category_id', $category->id)->count();
+        $newNumber = $productCount + 1;
+
+        // Ambil 3 huruf pertama dari nama kategori
+        $categoryCode = strtoupper(substr($category->name, 0, 15));
+        
+        // Buat kode barang otomatis
+        $productCode = "{$categoryCode}-1.1.7.{$newNumber}";
+
         Product::create([
             'category_id' => $request->category_id,
             'supplier_id' => $request->supplier_id,
@@ -59,24 +88,13 @@ class ProductController extends Controller
             'unit' => $request->unit,
             'description' => $request->description,
             'quantity' => 0,
+            'code' => $productCode,
         ]);
 
         return redirect(route('admin.product.index'))->with('toast_success', 'Barang berhasil ditambahkan');
     }
-
-    /**
-     * Menampilkan formulir untuk mengedit produk yang ditentukan.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        $suppliers = Supplier::get();
-        $categories = Category::get();
-
-        return view('admin.product.edit', compact('product', 'suppliers', 'categories'));
-    }
+    
+    // ... sisa method (update, destroy, dll) tidak perlu diubah ...
 
     /**
      * Memperbarui produk yang ditentukan dalam penyimpanan.
@@ -85,8 +103,6 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-
-
     public function update(ProductRequest $request, Product $product)
     {
         // Siapkan data untuk di-update
@@ -96,7 +112,6 @@ class ProductController extends Controller
             'name' => $request->name,
             'unit' => $request->unit,
             'description' => $request->description,
-            'quantity' => $request->quantity,
         ];
 
         // Periksa apakah ada file gambar baru yang diunggah
@@ -113,7 +128,7 @@ class ProductController extends Controller
         // Perbarui data produk
         $product->update($data);
 
-        return redirect(route('admin.product.index'))->with('toast_success', 'Barang Berhasil Diubah');
+        return redirect(route('admin.product.index'))->with('toast_success', 'Data Barang Berhasil Diubah');
     }
 
     /**
@@ -122,33 +137,27 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Transaction $transaction)
-{
-    DB::transaction(function () use ($transaction) {
-        // Cek apakah transaksi memiliki detail
-        if ($transaction->details->isNotEmpty()) {
-            // Jika ada detail, proses pembaruan stok
-            $transactionDetail = $transaction->details->first();
-            $product = $transactionDetail->product;
-            
-            // Lakukan penyesuaian stok berdasarkan tipe transaksi
-            if ($transaction->type === 'in') {
-                $product->quantity -= $transactionDetail->quantity;
-            } elseif ($transaction->type === 'out') {
-                $product->quantity += $transactionDetail->quantity;
-            }
-            
-            // Simpan perubahan stok
-            $product->save();
+    public function destroy(Product $product)
+    {
+        // Gunakan DB Transaction untuk memastikan semua operasi berhasil atau gagal bersamaan
+        try {
+            DB::transaction(function () use ($product) {
+                // 1. Hapus semua detail transaksi yang terkait dengan produk ini
+                TransactionDetail::where('product_id', $product->id)->delete();
+                
+                // 2. Hapus file gambar dari penyimpanan
+                if ($product->getOriginal('image')) {
+                    Storage::disk('local')->delete('public/products/' . $product->getOriginal('image'));
+                }
 
-            // Hapus detail transaksi
-            $transactionDetail->delete();
+                // 3. Hapus produk itu sendiri
+                $product->delete();
+            });
+
+            return back()->with('toast_success', 'Barang Berhasil Dihapus');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete product: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus barang: ' . $e->getMessage()]);
         }
-        
-        // Hapus transaksi utama (header)
-        $transaction->delete();
-    });
-
-    return back()->with('toast_success', 'Transaksi berhasil dihapus dan stok telah disesuaikan.');
-}
+    }
 }

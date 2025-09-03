@@ -19,7 +19,7 @@ class DashboardController extends Controller
     public function __invoke(Request $request)
     {
         $categories = Category::count();
-        $vehicles = Vehicle::count();
+        // $vehicles = Vehicle::count();
         $suppliers = Supplier::count();
         $products = Product::count();
         $customers = User::count();
@@ -47,10 +47,13 @@ class DashboardController extends Controller
             ->sum('quantity');
         
         $productsOutStock = Product::where('quantity', '<=', 10)->paginate(5);
-        $orders = Order::where('status', 0)->get();
 
         // Ambil 5 produk terlaris (barang keluar terbanyak)
         $bestProduct = TransactionDetail::with('product')
+            ->whereHas('transaction', function($query) {
+                // Tambahkan filter ini untuk hanya mengambil transaksi 'out'
+                $query->where('type', 'out');
+            })
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->selectRaw('product_id, SUM(quantity) as total')
@@ -64,12 +67,11 @@ class DashboardController extends Controller
             $total = $bestProduct->map(fn($item) => (int)$item->total)->toArray();
         } else {
             $label = ['Tidak Ada Data'];
-            $total = [1]; // Agar chart tetap muncul
+            $total = [1];
         }
 
         return view('admin.dashboard', compact(
             'categories',
-            'vehicles',
             'suppliers',
             'products',
             'customers',
@@ -78,7 +80,6 @@ class DashboardController extends Controller
             'productInThisMonth',
             'productOutThisMonth',
             'productsOutStock',
-            'orders',
             'label',
             'total'
         ));

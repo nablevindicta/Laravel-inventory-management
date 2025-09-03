@@ -38,33 +38,6 @@
                 </svg>
             </x-widget>
         </div>
-        {{-- <div class="col-sm-6 col-xl-3">
-            <x-widget title="Kendaraan" :subTitle="$vehicles" class="bg-purple">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-steering-wheel" width="24"
-                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <circle cx="12" cy="12" r="9"></circle>
-                    <circle cx="12" cy="12" r="2"></circle>
-                    <line x1="12" y1="14" x2="12" y2="21"></line>
-                    <line x1="10" y1="12" x2="3.25" y2="10"></line>
-                    <line x1="14" y1="12" x2="20.75" y2="10"></line>
-                </svg>
-            </x-widget>
-        </div> --}}
-        {{-- <div class="col-sm-6 col-xl-3">
-            <x-widget title="Customer" :subTitle="$customers" class="bg-lime">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="24"
-                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
-                </svg>
-            </x-widget>
-        </div> --}}
         <div class="col-sm-6 col-xl-3">
             <x-widget title="User" :subTitle="$customers" class="bg-lime">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="24"

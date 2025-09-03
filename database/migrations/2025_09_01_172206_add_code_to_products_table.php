@@ -13,21 +13,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
-            $table->date('transaction_date');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            $table->string('code')->after('image')->nullable();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Batalkan migrasi.
      *
      * @return void
      */
     public function down()
     {
-        Schema::dropIfExists('transactions');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('code');
+        });
     }
 };

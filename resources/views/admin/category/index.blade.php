@@ -9,8 +9,8 @@
             <x-card title="DAFTAR KATEGORI" class="card-body p-0">
                 <x-table>
                     <thead>
-                        <tr>
-                            <th>#</th>
+                        <tr class="text-center">
+                            <th>No</th>
                             <th>Foto</th>
                             <th>Nama Kategori</th>
                             <th>Aksi</th>
@@ -19,13 +19,13 @@
                     <tbody>
                         @foreach ($categories as $i => $category)
                             <tr>
-                                <td>{{ $i + $categories->firstItem() }}</td>
-                                <td>
+                                <td class="text-center">{{ $i + $categories->firstItem() }}</td>
+                                <td class="text-center"> 
                                     <span class="avatar rounded avatar-md"
                                         style="background-image: url({{ $category->image }})"></span>
                                 </td>
                                 <td>{{ $category->name }}</td>
-                                <td>
+                                <td class="text-center">
                                     @can('update-category')
                                         <x-button-modal :id="$category->id" title="" icon="edit" style=""
                                             class="btn btn-info btn-sm" />

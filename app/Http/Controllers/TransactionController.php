@@ -28,19 +28,6 @@ class TransactionController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        $carts = Cart::where('user_id', Auth::id())->get();
-
-        foreach($carts as $cart){
-            TransactionDetail::create([
-                'transaction_id' => $transaction->id,
-                'product_id' => $cart->product_id,
-                'quantity' => $cart->quantity,
-            ]);
-            Product::whereId($cart->product_id)->decrement('quantity', $cart->quantity);
-        }
-
-        Cart::where('user_id', Auth::id())->delete();
-
         return redirect(route('landing'))->with('toast_success', 'Terimakasih pesanan anda akan segera di proses');
     }
 }
