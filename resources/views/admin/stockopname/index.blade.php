@@ -97,6 +97,7 @@
             <thead>
                 <tr>
                     <th>No</th>
+                    <th>Kode</th>
                     <th>Nama Barang</th>
                     <th>Stok Sistem</th>
                     <th>Stok Fisik</th>
@@ -108,6 +109,7 @@
                 @foreach ($session->logs as $log)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
+                        <td>{{ optional($log->product)->code }}</td>
                         <td>{{ optional($log->product)->name }}</td>
                         <td>{{ $log->stock_sistem }}</td>
                         <td>{{ $log->stock_fisik }}</td>

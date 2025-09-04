@@ -24,7 +24,6 @@
                             <th>Nama Barang</th>
                             <th>Nama Supplier</th>
                             <th>Kategori Barang</th>
-                            <th>Stok</th>
                             <th>Satuan</th>
                             <th>Aksi</th>
                         </tr>
@@ -38,12 +37,11 @@
                                     <span class="avatar rounded avatar-md"
                                         style="background-image: url({{ $product->image }})"></span>
                                 </td>
-                                <td>{{ $product->code }}</td>
-                                <td>{{ $product->name }}</td>
-                                <td>{{ optional($product->supplier)->name ?? '-' }}</td>
-                                <td>{{ $product->category->name }}</td>
-                                <td class="text-center">{{ $product->quantity }}</td>
-                                <td>{{ $product->unit }}</td>
+                                <td class="text-center">{{ $product->code }}</td>
+                                <td class="text-center">{{ $product->name }}</td>
+                                <td class="text-center">{{ optional($product->supplier)->name ?? '-' }}</td>
+                                <td class="text-center">{{ $product->category->name }}</td>
+                                <td class="text-center">{{ $product->unit }}</td>
                                 <td class="text-center">
                                     @can('update-product')
                                         {{-- Tombol modal edit --}}
@@ -119,12 +117,10 @@
             @error('name')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-
             <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="old('unit')" />
             @error('unit')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-
             <x-select title="Supplier Barang" name="supplier_id">
                 <option value="">Silahkan Pilih</option>
                 @foreach ($suppliers as $supplier)
@@ -136,7 +132,6 @@
             @error('supplier_id')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-
             <x-select title="Kategori Barang" name="category_id">
                 <option value="">Silahkan Pilih</option>
                 @foreach ($categories as $category)
@@ -148,19 +143,16 @@
             @error('category_id')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-
             <x-input name="image" type="file" title="Foto Barang" />
             @error('image')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-
             <x-textarea name="description" title="Deskripsi Barang" placeholder="Deskripsi Barang">
                 {{ old('description') }}
             </x-textarea>
             @error('description')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-
             <div class="mt-3">
                 <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
             </div>

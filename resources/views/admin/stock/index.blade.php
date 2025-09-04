@@ -29,11 +29,11 @@
                                     <span class="avatar rounded avatar-md"
                                         style="background-image: url({{ $product->image }})"></span>
                                 </td>
-                                <td>{{ $product->code }}</td> 
-                                <td>{{ $product->name }}</td>
-                                <td>{{ optional($product->supplier)->name ?? '-' }}</td>
-                                <td>{{ $product->category->name }}</td>
-                                <td>{{ $product->unit }}</td>
+                                <td class="text-center">{{ $product->code }}</td> 
+                                <td class="text-center">{{ $product->name }}</td>
+                                <td class="text-center">{{ optional($product->supplier)->name ?? '-' }}</td>
+                                <td class="text-center">{{ $product->category->name }}</td>
+                                <td class="text-center">{{ $product->unit }}</td>
                                 <td class="text-center">{{ $product->quantity }}</td>
                                 <td>
                                     {{-- Tombol Edit Stok --}}
@@ -79,13 +79,13 @@
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                     <small class="text-muted">
-                        Isi field di samping untuk <strong>koreksi stok manual</strong>. 
+                        Isi field diatas untuk <strong>koreksi stok manual</strong>. 
                         Tidak akan dicatat sebagai barang masuk/keluar.
                     </small>
                 </div>
 
                 <div class="mb-3">
-                    <label for="add_stock_{{ $product->id }}" class="form-label">Tambah Stok</label>
+                    <label for="add_stock_{{ $product->id }}" class="form-label">Tambah Stok (Barang Masuk)</label>
                     <input type="number"
                            name="add_stock"
                            id="add_stock_{{ $product->id }}"
@@ -100,7 +100,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="reduce_stock_{{ $product->id }}" class="form-label">Kurangi Stok</label>
+                    <label for="reduce_stock_{{ $product->id }}" class="form-label">Kurangi Stok (Barang Keluar)</label>
                     <input type="number"
                            name="reduce_stock"
                            id="reduce_stock_{{ $product->id }}"
@@ -112,6 +112,20 @@
                     @error('reduce_stock')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+
+                    <div class="mt-2">
+                        <label for="description_{{ $product->id }}" class="form-label">Deskripsi</label>
+                        <textarea 
+                            name="description" 
+                            id="description_{{ $product->id }}"
+                            class="form-control @error('description') is-invalid @enderror"
+                            rows="2"
+                            placeholder="Contoh: Digunakan oleh OB untuk kebutuhan kegiatan">{{ old('description') }}</textarea>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <small class="text-muted">Maksimal yang bisa dikurangi: {{ $product->quantity }}</small>
                 </div>
 

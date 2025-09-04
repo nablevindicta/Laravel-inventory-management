@@ -55,7 +55,8 @@
         <thead>
             <tr>
                 <th class="text-center">No</th>
-                <th>Nama Barang</th>
+                <th class="text-center">Kode</th>
+                <th class="text-center">Nama Barang</th>
                 <th class="text-center">Stok Sistem</th>
                 <th class="text-center">Stok Fisik</th>
                 <th class="text-center">Selisih</th>
@@ -66,7 +67,8 @@
             @foreach ($session->logs as $log)
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
-                    <td>{{ optional($log->product)->name ?? 'Produk Dihapus' }}</td>
+                    <td class="text-center">{{ optional($log->product)->code }}</td>
+                    <td class="text-center">{{ optional($log->product)->name ?? 'Produk Dihapus' }}</td>
                     <td class="text-center">{{ $log->stock_sistem }}</td>
                     <td class="text-center">{{ $log->stock_fisik }}</td>
                     <td class="text-center">{{ $log->selisih }}</td>

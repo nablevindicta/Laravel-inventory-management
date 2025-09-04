@@ -6,12 +6,12 @@ use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory, HasSlug;
+    use HasFactory, HasSlug, SoftDeletes;
 
-    // ✅ Lebih aman daripada $guarded = []
     protected $fillable = [
         'name',
         'image',
@@ -23,7 +23,6 @@ class Product extends Model
         'code',
     ];
 
-    // ✅ Modern attribute casting
     protected function image(): Attribute
     {
         return Attribute::make(
@@ -33,7 +32,6 @@ class Product extends Model
         );
     }
 
-    // ✅ Relasi
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -44,4 +42,9 @@ class Product extends Model
         return $this->belongsTo(Supplier::class);
     }
 
+    // 🔥 Relasi baru: cek apakah produk dipakai di transaksi
+    public function transactionDetails()
+    {
+        return $this->hasMany(\App\Models\TransactionDetail::class, 'product_id');
+    }
 }
