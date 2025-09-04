@@ -18,8 +18,11 @@
                     <div class="col-md-4">
                         <label for="month" class="form-label">Bulan</label>
                         <select name="month" id="month" class="form-select">
+                            {{-- 1. Tambahkan Opsi Placeholder --}}
+                            <option value="">Pilih Bulan</option> 
                             @foreach (range(1, 12) as $month)
-                                <option value="{{ $month }}" {{ request('month', now()->month) == $month ? 'selected' : '' }}>
+                                {{-- 2. Hapus nilai default dari request() --}}
+                                <option value="{{ $month }}" {{ request('month') == $month ? 'selected' : '' }}>
                                     {{ \Carbon\Carbon::create()->month($month)->monthName }}
                                 </option>
                             @endforeach
@@ -28,8 +31,11 @@
                     <div class="col-md-4">
                         <label for="year" class="form-label">Tahun</label>
                         <select name="year" id="year" class="form-select">
+                            {{-- 1. Tambahkan Opsi Placeholder --}}
+                            <option value="">Pilih Tahun</option>
                             @foreach (range(now()->year, 2020) as $year)
-                                <option value="{{ $year }}" {{ request('year', now()->year) == $year ? 'selected' : '' }}>
+                                {{-- 2. Hapus nilai default dari request() --}}
+                                <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
                                     {{ $year }}
                                 </option>
                             @endforeach

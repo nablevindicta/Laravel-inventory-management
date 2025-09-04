@@ -44,6 +44,7 @@ public function update(Request $request, $id)
         'add_stock' => ['nullable', 'integer', 'min:0'],
         'reduce_stock' => ['nullable', 'integer', 'min:0'],
         'corrected_stock' => ['nullable', 'integer', 'min:0'],
+    'description' => ['nullable', 'string', 'max:255'], 
     ], [
         'reduce_stock.min' => 'Jumlah yang dikurangi harus 0 atau lebih.',
         'add_stock.min' => 'Jumlah tambahan stok harus 0 atau lebih.',
@@ -72,11 +73,10 @@ public function update(Request $request, $id)
     }
 
     try {
-        DB::transaction(function () use ($product, $add, $reduce, $corrected) {
+        DB::transaction(function () use ($product, $add, $reduce, $corrected, $request) { // Tambahkan $request
             if ($corrected !== null) {
                 $product->quantity = $corrected;
                 $product->save();
-
                 return;
             }
 
@@ -93,6 +93,7 @@ public function update(Request $request, $id)
                     'user_id' => auth()->id(),
                     'transaction_date' => now(),
                     'type' => 'in',
+                    'description' => $request->description, 
                 ]);
 
                 TransactionDetail::create([
@@ -107,6 +108,8 @@ public function update(Request $request, $id)
                     'user_id' => auth()->id(),
                     'transaction_date' => now(),
                     'type' => 'out',
+                    // DESKRIPSI DISIMPAN DI SINI
+                    'description' => $request->description, 
                 ]);
 
                 TransactionDetail::create([

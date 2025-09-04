@@ -35,7 +35,7 @@
             <x-card :title="$title" class="card-body p-0">
                 <x-table>
                     <thead>
-                        <tr>
+                        <tr>    
                             <th>Tanggal</th>
                             <th>Foto</th>
                             <th>Kode</th>
@@ -43,6 +43,7 @@
                             <th>Kategori Barang</th>
                             <th>Kuantitas</th>
                             <th>Satuan Barang</th>
+                            <th>Keterangan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -84,6 +85,11 @@
                                     @foreach ($transaction->details as $details)
                                         <div>{{ $details->product->unit }}</div>
                                     @endforeach
+                                </td>
+                                <td>
+                                    @foreach ($transaction->details as $details)
+                                        <div>{{ $details->transaction->description }}</div>
+                                    @endforeach 
                                 </td>
                                 <td>
                                     <form action="{{ route('admin.transaction.destroy', $transaction->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini? Stok akan dikembalikan.');">
