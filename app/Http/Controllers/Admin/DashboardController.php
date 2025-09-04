@@ -46,7 +46,14 @@ class DashboardController extends Controller
             ->whereYear('created_at', now()->year)
             ->sum('quantity');
         
-        $productsOutStock = Product::where('quantity', '<=', 10)->paginate(5);
+        // Ambil parameter per_page dari request, default 10
+        $perPage = $request->query('per_page', 10);
+
+        $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
+
+        $productsOutStock = Product::where('quantity', '<=', 10)
+            ->with('category')
+            ->paginate($perPage);
 
         // Ambil 5 produk terlaris (barang keluar terbanyak)
         $bestProduct = TransactionDetail::with('product')

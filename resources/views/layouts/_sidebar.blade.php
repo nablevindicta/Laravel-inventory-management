@@ -115,42 +115,30 @@
                 <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Transaksi</div>
 
                 <!-- Barang Masuk -->
+                @can('view-incoming-stock') <!-- Ganti dengan permission yang sesuai di sistem kamu -->
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->fullUrlIs('*type=in') ? 'active' : '' }}"
+                    <a class="nav-link {{ request()->is('admin/transaction/product') && request('type') === 'in' ? 'active' : '' }}"
                        href="{{ route('admin.transaction.product') }}?type=in">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block me-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <circle cx="6" cy="19" r="2"></circle>
-                                <circle cx="17" cy="19" r="2"></circle>
-                                <path d="M17 17h-11v-14h-2"></path>
-                                <path d="M6 5l6.005 .429m7.138 6.573l-.143 .998h-13"></path>
-                                <path d="M15 6h6m-3 -3v6"></path>
-                            </svg>
+                        <span class="nav-link-icon me-2">
+                            <i class="ti ti-shopping-cart-plus"></i>
                         </span>
-                        <span class="nav-link-title">Barang Masuk</span>
+                        Barang Masuk
                     </a>
                 </li>
-                
+                @endcan
 
                 <!-- Barang Keluar -->
+                @can('view-outgoing-stock') <!-- Ganti dengan permission yang sesuai -->
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->fullUrlIs('*type=out') ? 'active' : '' }}"
+                    <a class="nav-link {{ request()->is('admin/transaction/product') && request('type') === 'out' ? 'active' : '' }}"
                        href="{{ route('admin.transaction.product') }}?type=out">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block me-2">
-                            <!-- Ikon untuk barang keluar, misal minus -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart-minus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <circle cx="6" cy="19" r="2"></circle>
-                                <circle cx="17" cy="19" r="2"></circle>
-                                <path d="M17 17h-11v-14h-2"></path>
-                                <path d="M6 5l6.005 .429m7.138 6.573l-.143 .998h-13"></path>
-                                <path d="M15 6h6"></path>
-                            </svg>
+                        <span class="nav-link-icon me-2">
+                            <i class="ti ti-shopping-cart-x"></i>
                         </span>
-                        <span class="nav-link-title">Barang Keluar</span>
+                        Barang Keluar
                     </a>
                 </li>
+                @endcan
 
                 <!-- Super Admin Only -->
                 @hasanyrole('Super Admin')
