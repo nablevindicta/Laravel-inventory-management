@@ -140,7 +140,7 @@
                     <label for="opname_month" class="form-label">Bulan Opname</label>
                     <select name="opname_month" id="opname_month" class="form-select">
                         @foreach (range(1, 12) as $month)
-                            <option value="{{ $month }}" {{ now()->month == $month ? 'selected' : '' }}>
+                            <opphtion value="{{ $month }}" {{ now()->month == $month ? 'selected' : '' }}>
                                 {{ \Carbon\Carbon::create()->month($month)->monthName }}
                             </option>
                         @endforeach
