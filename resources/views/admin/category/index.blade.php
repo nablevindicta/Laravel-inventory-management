@@ -3,57 +3,97 @@
 @section('content')
     <x-container>
         <div class="col-12 col-lg-8">
-            <form action="{{ route('admin.category.index') }}" method="GET">
-                <x-search name="search" :value="$search" />
-            </form>
-            <x-card title="DAFTAR KATEGORI" class="card-body p-0">
-                <x-table>
-                    <thead>
-                        <tr class="text-center">
-                            <th>No</th>
-                            <th>Foto</th>
-                            <th>Nama Kategori</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($categories as $i => $category)
-                            <tr>
-                                <td class="text-center">{{ $i + $categories->firstItem() }}</td>
-                                <td class="text-center"> 
-                                    <span class="avatar rounded avatar-md"
-                                        style="background-image: url({{ $category->image }})"></span>
-                                </td>
-                                <td>{{ $category->name }}</td>
-                                <td class="text-center">
-                                    @can('update-category')
-                                        <x-button-modal :id="$category->id" title="" icon="edit" style=""
-                                            class="btn btn-info btn-sm" />
-                                        <x-modal :id="$category->id" title="Edit - {{ $category->name }}">
-                                            <form action="{{ route('admin.category.update', $category->id) }}" method="POST"
-                                                enctype="multipart/form-data">
-                                                @csrf
-                                                @method('PUT')
-                                                <x-input name="name" type="text" title="Nama Kategori"
-                                                    placeholder="Nama Kategori" :value="$category->name" />
-                                                <x-input name="image" type="file" title="Foto Katagori" placeholder=""
-                                                    :value="$category->image" />
-                                                <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
-                                            </form>
-                                        </x-modal>
-                                    @endcan
-                                    @can('delete-category')
-                                        <x-button-delete :id="$category->id" :url="route('admin.category.destroy', $category->id)" title=""
-                                            class="btn btn-danger btn-sm" />
-                                    @endcan
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </x-table>
-            </x-card>
-            <div class="">{{ $categories->links() }}</div>
+
+            {{-- ✅ Card Daftar Kategori (termasuk form pencarian di dalamnya) --}}
+            <div class="card shadow-sm mb-4">
+                <!-- Header -->
+                <div class="card-header bg-white border-bottom d-flex align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-box-seam text-primary me-2"></i>
+                        <strong>DAFTAR KATEGORI</strong>
+                    </div>
+                    <!-- Tidak ada tombol tambah di header, karena form tambah ada di samping -->
+                </div>
+
+                <!-- Body: Pencarian + Tabel -->
+                <div class="card-body">
+
+                    {{-- ✅ FORM PENCARIAN — Layout disamakan dengan file Barang/Stok --}}
+                    <form action="{{ route('admin.category.index') }}" method="GET" id="searchForm" class="mb-3">
+                        <div class="row">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Cari:</span>
+                                    <input 
+                                        type="text" 
+                                        name="search" 
+                                        class="form-control" 
+                                        placeholder="Cari kategori..."
+                                        value="{{ $search ?? '' }}" 
+                                        id="searchInput"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    {{-- Tabel --}}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-3">
+                            <thead class="text-center">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Foto</th>
+                                    <th>Nama Kategori</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($categories as $i => $category)
+                                    <tr>
+                                        <td class="text-center">{{ $i + $categories->firstItem() }}</td>
+                                        <td class="text-center">
+                                            <span class="avatar rounded avatar-md"
+                                                style="background-image: url({{ $category->image }})"></span>
+                                        </td>
+                                        <td>{{ $category->name }}</td>
+                                        <td class="text-center">
+                                            @can('update-category')
+                                                <x-button-modal :id="$category->id" title="" icon="edit" style=""
+                                                    class="btn btn-info btn-sm" />
+                                                <x-modal :id="$category->id" title="Edit - {{ $category->name }}">
+                                                    <form action="{{ route('admin.category.update', $category->id) }}" method="POST"
+                                                        enctype="multipart/form-data">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <x-input name="name" type="text" title="Nama Kategori"
+                                                            placeholder="Nama Kategori" :value="$category->name" />
+                                                        <x-input name="image" type="file" title="Foto Kategori" placeholder=""
+                                                            :value="$category->image" />
+                                                        <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
+                                                    </form>
+                                                </x-modal>
+                                            @endcan
+                                            @can('delete-category')
+                                                <x-button-delete :id="$category->id" :url="route('admin.category.destroy', $category->id)" title=""
+                                                    class="btn btn-danger btn-sm" />
+                                            @endcan
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Pagination --}}
+            <div class="d-flex justify-content-end">
+                {{ $categories->links() }}
+            </div>
         </div>
+
+        {{-- Form Tambah Kategori (tetap di kanan) --}}
         @can('create-category')
             <div class="col-12 col-lg-4">
                 <x-card title="TAMBAH KATEGORI" class="card-body">
@@ -61,7 +101,7 @@
                         @csrf
                         <x-input name="name" type="text" title="Nama Kategori" placeholder="Nama Kategori"
                             :value="old('name')" />
-                        <x-input name="image" type="file" title="Foto Katagori" placeholder="" :value="old('image')" />
+                        <x-input name="image" type="file" title="Foto Kategori" placeholder="" :value="old('image')" />
                         <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
                     </form>
                 </x-card>
