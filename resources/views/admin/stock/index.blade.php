@@ -3,59 +3,95 @@
 @section('content')
     <x-container>
         <div class="col-12">
-            <form action="{{ route('admin.stock.index') }}" method="GET">
-                <x-search name="search" :value="$search ?? ''" />
-            </form>
-            <x-card title="DAFTAR STOK BARANG" class="card-body p-0">
-                <x-table>
-                    <thead>
-                        <tr class="text-center">
-                            <th>No</th>
-                            <th>Foto</th>
-                            <th>Kode</th> 
-                            <th>Nama Barang</th>
-                            <th>Nama Supplier</th>
-                            <th>Kategori Barang</th>
-                            <th>Satuan</th>
-                            <th>Stok</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($products as $i => $product)
-                            <tr>
-                                <td class="text-center">{{ $i + $products->firstItem() }}</td>
-                                <td class="text-center">
-                                    <span class="avatar rounded avatar-md"
-                                        style="background-image: url({{ $product->image }})"></span>
-                                </td>
-                                <td class="text-center">{{ $product->code }}</td> 
-                                <td class="text-center">{{ $product->name }}</td>
-                                <td class="text-center">{{ optional($product->supplier)->name ?? '-' }}</td>
-                                <td class="text-center">{{ $product->category->name }}</td>
-                                <td class="text-center">{{ $product->unit }}</td>
-                                <td class="text-center">{{ $product->quantity }}</td>
-                                <td>
-                                    {{-- Tombol Edit Stok --}}
-                                    <x-button-modal :id="'edit-stock-modal-' . $product->id" icon="edit" style="mr-1" title="Edit Stok"
-                                        class="btn btn-primary btn-sm text-white" />
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="text-center">Data tidak ditemukan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </x-table>
-            </x-card>
-            <div class="d-flex justify-content-end mt-3">
-                {{ $products->links() }}
+
+            <!-- Card Daftar Stok Barang -->
+            <div class="card shadow-sm mb-4">
+                <!-- Header -->
+                <div class="card-header bg-white border-bottom d-flex align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-box-seam text-primary me-2"></i>
+                        <strong>DAFTAR STOK BARANG</strong>
+                    </div>
+                    <!-- Tidak ada tombol tambah di halaman stok, biarkan kosong -->
+                </div>
+
+                <!-- Body: Pencarian + Tabel + Pagination -->
+                <div class="card-body">
+                    
+                    <!-- Form Pencarian (tetap ada untuk server-side fallback) -->
+                    <form action="{{ route('admin.stock.index') }}" method="GET" id="searchForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">Cari:</span>
+                                    <input 
+                                        type="text" 
+                                        name="search" 
+                                        class="form-control" 
+                                        placeholder="Cari barang..."
+                                        value="{{ $search ?? '' }}" 
+                                        id="searchInput"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Tabel -->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-3" id="stockTable">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>No</th>
+                                    <th>Foto</th>
+                                    <th>Kode</th> 
+                                    <th>Nama Barang</th>
+                                    <th>Nama Supplier</th>
+                                    <th>Kategori Barang</th>
+                                    <th>Satuan</th>
+                                    <th>Stok</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($products as $i => $product)
+                                    <tr class="searchable-row">
+                                        <td class="text-center">{{ $i + $products->firstItem() }}</td>
+                                        <td class="text-center">
+                                            <span class="avatar rounded avatar-md"
+                                                style="background-image: url({{ $product->image }})"></span>
+                                        </td>
+                                        <td class="text-center">{{ $product->code }}</td> 
+                                        <td class="text-center">{{ $product->name }}</td>
+                                        <td class="text-center">{{ optional($product->supplier)->name ?? '-' }}</td>
+                                        <td class="text-center">{{ $product->category->name }}</td>
+                                        <td class="text-center">{{ $product->unit }}</td>
+                                        <td class="text-center">{{ $product->quantity }}</td>
+                                        <td class="text-center">
+                                            {{-- Tombol Edit Stok --}}
+                                            <x-button-modal :id="'edit-stock-modal-' . $product->id" icon="edit" style="mr-1" title="Edit Stok"
+                                                class="btn btn-primary btn-sm text-white" />
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr id="no-data-row">
+                                        <td colspan="9" class="text-center">Data tidak ditemukan.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination (tetap tampil, tapi realtime search hanya filter di halaman ini) -->
+                    <div class="d-flex justify-content-end">
+                        {{ $products->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </x-container>
 
-    {{-- PERBAIKAN STRUKTUR: Semua modal dipindahkan ke luar dari loop tabel agar HTML valid dan lebih cepat --}}
+    {{-- Modal Edit Stok (tetap di luar loop untuk validitas HTML) --}}
     @foreach ($products as $product)
         <x-modal :id="'edit-stock-modal-' . $product->id" title="Edit Stok Produk - {{ $product->name }}" data-modal-stock>
             <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">
@@ -79,13 +115,13 @@
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                     <small class="text-muted">
-                        Isi field di samping untuk <strong>koreksi stok manual</strong>. 
+                        Isi field diatas untuk <strong>koreksi stok manual</strong>. 
                         Tidak akan dicatat sebagai barang masuk/keluar.
                     </small>
                 </div>
 
                 <div class="mb-3">
-                    <label for="add_stock_{{ $product->id }}" class="form-label">Tambah Stok</label>
+                    <label for="add_stock_{{ $product->id }}" class="form-label">Tambah Stok (Barang Masuk)</label>
                     <input type="number"
                            name="add_stock"
                            id="add_stock_{{ $product->id }}"
@@ -100,7 +136,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="reduce_stock_{{ $product->id }}" class="form-label">Kurangi Stok</label>
+                    <label for="reduce_stock_{{ $product->id }}" class="form-label">Kurangi Stok (Barang Keluar)</label>
                     <input type="number"
                            name="reduce_stock"
                            id="reduce_stock_{{ $product->id }}"
@@ -112,6 +148,20 @@
                     @error('reduce_stock')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+
+                    <div class="mt-2">
+                        <label for="description_{{ $product->id }}" class="form-label">Deskripsi</label>
+                        <textarea 
+                            name="description" 
+                            id="description_{{ $product->id }}"
+                            class="form-control @error('description') is-invalid @enderror"
+                            rows="2"
+                            placeholder="Contoh: Digunakan oleh OB untuk kebutuhan kegiatan">{{ old('description') }}</textarea>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <small class="text-muted">Maksimal yang bisa dikurangi: {{ $product->quantity }}</small>
                 </div>
 
@@ -122,22 +172,17 @@
 @endsection
 
 @push('scripts')
-{{-- PERBAIKAN STRUKTUR & JAVASCRIPT: Script dipindahkan ke luar loop dan diperbaiki agar berfungsi untuk semua modal --}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Ambil semua modal yang memiliki atribut 'data-modal-stock'
     const stockModals = document.querySelectorAll('[data-modal-stock]');
 
-    // Loop melalui setiap modal untuk menambahkan event listener
     stockModals.forEach(modal => {
         const correctInput = modal.querySelector('input[name="corrected_stock"]');
         const addInput = modal.querySelector('input[name="add_stock"]');
         const reduceInput = modal.querySelector('input[name="reduce_stock"]');
         
-        // Pastikan semua elemen input ada di dalam modal ini
         if (!correctInput || !addInput || !reduceInput) return;
 
-        // Fungsi untuk membersihkan input 'tambah' dan 'kurangi'
         const clearAddReduce = () => {
             if (correctInput.value.trim() !== '') {
                 addInput.value = '0';
@@ -145,9 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
         
-        // Fungsi untuk membersihkan input 'koreksi'
         const clearCorrect = () => {
-            // Cek jika salah satu dari add/reduce diisi dan BUKAN 0
             if (Number(addInput.value) > 0 || Number(reduceInput.value) > 0) {
                 correctInput.value = '';
             }
@@ -157,6 +200,48 @@ document.addEventListener('DOMContentLoaded', function () {
         addInput.addEventListener('input', clearCorrect);
         reduceInput.addEventListener('input', clearCorrect);
     });
+
+    // ✅ TAMBAHAN: Pencarian Realtime
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('stockTable');
+    const tbody = table.querySelector('tbody');
+    const rows = tbody.querySelectorAll('.searchable-row'); // Hanya baris data, bukan "no data"
+    const noDataRow = document.getElementById('no-data-row');
+
+    if (searchInput && rows.length) {
+        searchInput.addEventListener('keyup', function () {
+            const searchText = this.value.toLowerCase().trim();
+            let visibleRows = 0;
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                let found = false;
+
+                cells.forEach(cell => {
+                    // Abaikan kolom yang berisi tombol/modal (aksi) dan elemen avatar/image
+                    if (cell.querySelector('.avatar') || cell.querySelector('.btn')) {
+                        return;
+                    }
+                    const text = cell.textContent.toLowerCase();
+                    if (text.includes(searchText)) {
+                        found = true;
+                    }
+                });
+
+                if (found) {
+                    row.style.display = '';
+                    visibleRows++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Tampilkan/menyembunyikan baris "Data tidak ditemukan"
+            if (noDataRow) {
+                noDataRow.style.display = visibleRows > 0 ? 'none' : '';
+            }
+        });
+    }
 });
 </script>
 @endpush

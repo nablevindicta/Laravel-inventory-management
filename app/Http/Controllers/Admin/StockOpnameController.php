@@ -18,18 +18,28 @@ class StockOpnameController extends Controller
      */
     public function index(Request $request)
     {
-        $selectedMonth = $request->input('month', now()->month);
-        $selectedYear = $request->input('year', now()->year);
+        // 1. Hapus nilai default agar menjadi null saat tidak ada filter
+        $selectedMonth = $request->input('month');
+        $selectedYear = $request->input('year');
 
-        $sessions = StockOpnameSession::with('logs.product')
-            ->where('opname_year', $selectedYear)
-            ->where('opname_month', $selectedMonth)
-            ->latest()
+        // 2. Mulai query builder dasar
+        $query = StockOpnameSession::with('logs.product');
+
+        // 3. Terapkan filter HANYA JIKA bulan dan tahun dipilih oleh pengguna
+        if ($selectedMonth && $selectedYear) {
+            $query->where('opname_year', $selectedYear)
+                  ->where('opname_month', $selectedMonth);
+        }
+
+        // 4. Lanjutkan query dengan ordering dan paginasi
+        $sessions = $query->latest()
             ->paginate(10)
             ->appends($request->except('page'));
 
         $products = Product::with('category', 'supplier')->get();
 
+        // Variabel selectedMonth & selectedYear tetap dikirim ke view
+        // agar dropdown menampilkan nilai yang dipilih setelah filter dijalankan
         return view('admin.stockopname.index', compact('sessions', 'selectedMonth', 'selectedYear', 'products'));
     }
 

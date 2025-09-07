@@ -139,25 +139,35 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Gunakan DB Transaction untuk memastikan semua operasi berhasil atau gagal bersamaan
+        // Langkah 1: Cek kuantitas (stok) barang.
+        // Jika stok LEBIH DARI 0, batalkan proses.
+        if ($product->quantity > 0) {
+            // Langsung hentikan fungsi dan kembali ke halaman sebelumnya
+            // dengan membawa pesan error.
+            return back()->with('toast_error', 'Gagal! Barang tidak dapat dihapus karena stok masih tersedia.');
+        }
+
+        // Langkah 2: Jika kode berlanjut ke sini, artinya stok adalah 0.
+        // Lanjutkan proses hapus permanen.
         try {
             DB::transaction(function () use ($product) {
-                // 1. Hapus semua detail transaksi yang terkait dengan produk ini
+                // Hapus detail transaksi yang terkait (jika ada)
                 TransactionDetail::where('product_id', $product->id)->delete();
                 
-                // 2. Hapus file gambar dari penyimpanan
+                // Hapus file gambar dari penyimpanan jika ada
                 if ($product->getOriginal('image')) {
                     Storage::disk('local')->delete('public/products/' . $product->getOriginal('image'));
                 }
 
-                // 3. Hapus produk itu sendiri
-                $product->delete();
+                // Hapus data secara permanen dari database
+                $product->forceDelete();
             });
 
-            return back()->with('toast_success', 'Barang Berhasil Dihapus');
+            return back()->with('toast_success', 'Barang berhasil dihapus secara permanen.');
+
         } catch (\Exception $e) {
-            Log::error('Failed to delete product: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus barang: ' . $e->getMessage()]);
+            Log::error('Gagal menghapus permanen produk: ' . $e->getMessage());
+            return back()->with('toast_error', 'Terjadi kesalahan pada server saat mencoba menghapus barang.');
         }
     }
 }
