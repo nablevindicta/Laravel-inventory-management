@@ -4,7 +4,7 @@
     <x-container>
         <div class="col-12 col-lg-8">
 
-            {{-- ✅ Card Daftar Kategori (termasuk form pencarian di dalamnya) --}}
+            {{-- ✅ Card Daftar Kategori --}}
             <div class="card shadow-sm mb-4">
                 <!-- Header -->
                 <div class="card-header bg-white border-bottom d-flex align-items-center">
@@ -12,13 +12,12 @@
                         <i class="bi bi-box-seam text-primary me-2"></i>
                         <strong>DAFTAR KATEGORI</strong>
                     </div>
-                    <!-- Tidak ada tombol tambah di header, karena form tambah ada di samping -->
                 </div>
 
                 <!-- Body: Pencarian + Tabel -->
                 <div class="card-body">
 
-                    {{-- ✅ FORM PENCARIAN — Layout disamakan dengan file Barang/Stok --}}
+                    {{-- ✅ FORM PENCARIAN --}}
                     <form action="{{ route('admin.category.index') }}" method="GET" id="searchForm" class="mb-3">
                         <div class="row">
                             <div class="col-md-6 offset-md-6">
@@ -37,7 +36,7 @@
                         </div>
                     </form>
 
-                    {{-- Tabel --}}
+                    {{-- ✅ TABEL --}}
                     <div class="table-responsive">
                         <table class="table table-hover table-striped mb-3">
                             <thead class="text-center">
@@ -93,18 +92,29 @@
             </div>
         </div>
 
-        {{-- Form Tambah Kategori (tetap di kanan) --}}
+        {{-- ✅ Form Tambah Kategori — Sekarang pakai desain card yang sama --}}
         @can('create-category')
             <div class="col-12 col-lg-4">
-                <x-card title="TAMBAH KATEGORI" class="card-body">
-                    <form action="{{ route('admin.category.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <x-input name="name" type="text" title="Nama Kategori" placeholder="Nama Kategori"
-                            :value="old('name')" />
-                        <x-input name="image" type="file" title="Foto Kategori" placeholder="" :value="old('image')" />
-                        <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
-                    </form>
-                </x-card>
+                <div class="card shadow-sm mb-4">
+                    <!-- Header -->
+                    <div class="card-header bg-white border-bottom d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-box-seam text-primary me-2"></i>
+                            <strong>TAMBAH KATEGORI</strong>
+                        </div>
+                    </div>
+
+                    <!-- Body: Form -->
+                    <div class="card-body">
+                        <form action="{{ route('admin.category.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <x-input name="name" type="text" title="Nama Kategori" placeholder="Nama Kategori"
+                                :value="old('name')" />
+                            <x-input name="image" type="file" title="Foto Kategori" placeholder="" :value="old('image')" />
+                            <x-button-save title="Simpan" icon="save" class="btn btn-primary" />
+                        </form>
+                    </div>
+                </div>
             </div>
         @endcan
     </x-container>
