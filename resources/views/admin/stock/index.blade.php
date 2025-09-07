@@ -18,7 +18,7 @@
                 <!-- Body: Pencarian + Tabel + Pagination -->
                 <div class="card-body">
                     
-                    <!-- Form Pencarian -->
+                    <!-- Form Pencarian (tetap ada untuk server-side fallback) -->
                     <form action="{{ route('admin.stock.index') }}" method="GET" id="searchForm">
                         <div class="row mb-3">
                             <div class="col-md-6 offset-md-6">
@@ -30,7 +30,8 @@
                                         class="form-control" 
                                         placeholder="Cari barang..."
                                         value="{{ $search ?? '' }}" 
-                                        id="searchInput">
+                                        id="searchInput"
+                                        autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -54,7 +55,7 @@
                             </thead>
                             <tbody>
                                 @forelse ($products as $i => $product)
-                                    <tr>
+                                    <tr class="searchable-row">
                                         <td class="text-center">{{ $i + $products->firstItem() }}</td>
                                         <td class="text-center">
                                             <span class="avatar rounded avatar-md"
@@ -73,7 +74,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
+                                    <tr id="no-data-row">
                                         <td colspan="9" class="text-center">Data tidak ditemukan.</td>
                                     </tr>
                                 @endforelse
@@ -81,7 +82,7 @@
                         </table>
                     </div>
 
-                    <!-- Pagination -->
+                    <!-- Pagination (tetap tampil, tapi realtime search hanya filter di halaman ini) -->
                     <div class="d-flex justify-content-end">
                         {{ $products->links() }}
                     </div>
@@ -199,6 +200,48 @@ document.addEventListener('DOMContentLoaded', function () {
         addInput.addEventListener('input', clearCorrect);
         reduceInput.addEventListener('input', clearCorrect);
     });
+
+    // ✅ TAMBAHAN: Pencarian Realtime
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('stockTable');
+    const tbody = table.querySelector('tbody');
+    const rows = tbody.querySelectorAll('.searchable-row'); // Hanya baris data, bukan "no data"
+    const noDataRow = document.getElementById('no-data-row');
+
+    if (searchInput && rows.length) {
+        searchInput.addEventListener('keyup', function () {
+            const searchText = this.value.toLowerCase().trim();
+            let visibleRows = 0;
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                let found = false;
+
+                cells.forEach(cell => {
+                    // Abaikan kolom yang berisi tombol/modal (aksi) dan elemen avatar/image
+                    if (cell.querySelector('.avatar') || cell.querySelector('.btn')) {
+                        return;
+                    }
+                    const text = cell.textContent.toLowerCase();
+                    if (text.includes(searchText)) {
+                        found = true;
+                    }
+                });
+
+                if (found) {
+                    row.style.display = '';
+                    visibleRows++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Tampilkan/menyembunyikan baris "Data tidak ditemukan"
+            if (noDataRow) {
+                noDataRow.style.display = visibleRows > 0 ? 'none' : '';
+            }
+        });
+    }
 });
 </script>
 @endpush
