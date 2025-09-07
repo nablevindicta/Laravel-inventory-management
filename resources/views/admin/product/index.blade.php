@@ -79,7 +79,8 @@
                                         class="form-control" 
                                         placeholder="Cari barang..."
                                         value="{{ $search ?? '' }}" 
-                                        id="searchInput">
+                                        id="searchInput"
+                                        autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -102,7 +103,7 @@
                             </thead>
                             <tbody>
                                 @forelse ($products as $i => $product)
-                                    <tr>
+                                    <tr class="searchable-row">
                                         <td class="text-center">{{ $i + $products->firstItem() }}</td>
                                         <td class="text-center">
                                             <span class="avatar rounded avatar-md"
@@ -171,7 +172,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
+                                    <tr id="no-data-row">
                                         <td colspan="8" class="text-center">Data barang tidak ditemukan.</td>
                                     </tr>
                                 @endforelse
@@ -243,26 +244,42 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('searchInput');
-        const searchForm = document.getElementById('searchForm');
+        const table = document.getElementById('productTable'); // ✅ DIPERBAIKI: definisikan 'table'
         const tbody = table.querySelector('tbody');
-        const rows = tbody.querySelectorAll('tr');
+        const rows = tbody.querySelectorAll('.searchable-row'); // Hanya baris data
+        const noDataRow = document.getElementById('no-data-row'); // Baris "Data tidak ditemukan"
 
         searchInput.addEventListener('keyup', function () {
-            const searchText = searchInput.value.toLowerCase().trim();
+            const searchText = this.value.toLowerCase().trim();
+            let visibleRows = 0;
 
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td');
                 let found = false;
 
                 cells.forEach(cell => {
+                    // Abaikan kolom Aksi (indeks terakhir) karena berisi tombol
+                    if (cell.querySelector('.btn') || cell.querySelector('.avatar')) {
+                        return;
+                    }
                     const text = cell.textContent.toLowerCase();
                     if (text.includes(searchText)) {
                         found = true;
                     }
                 });
 
-                row.style.display = found ? '' : 'none';
+                if (found) {
+                    row.style.display = '';
+                    visibleRows++;
+                } else {
+                    row.style.display = 'none';
+                }
             });
+
+            // Tampilkan/menyembunyikan baris "Data tidak ditemukan"
+            if (noDataRow) {
+                noDataRow.style.display = visibleRows > 0 ? 'none' : '';
+            }
         });
     });
 </script>
