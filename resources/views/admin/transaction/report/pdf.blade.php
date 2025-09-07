@@ -42,31 +42,35 @@
         <thead>
             <tr>
                 <th>Tanggal</th>
+                <th>Kode Barang</th>
                 <th>Nama Barang</th>
                 <th>Kategori Barang</th>
                 <th>Kuantitas</th>
                 <th>Satuan Barang</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($transactions as $transaction)
                 @foreach ($transaction->details as $details)
                 <tr>
-                    <td>{{ $transaction->created_at->format('d-m-Y H:i') }}</td>
+                    <td>{{ $transaction->created_at->format('d-m-Y') }}</td>
+                    <td>{{ $details->product->code }}</td>
                     <td>{{ $details->product->name }}</td>
                     <td>{{ $details->product->category->name }}</td>
                     <td>{{ $details->quantity }}</td>
                     <td>{{ $details->product->unit }}</td>
+                    <td>{{ $details->transaction->description }}</td>
                 </tr>
                 @endforeach
             @endforeach
         </tbody>
-        <tfoot>
+        {{-- <tfoot>
             <tr>
                 <td colspan="3" class="text-right"><strong>Total Kuantitas:</strong></td>
                 <td colspan="2"><strong>{{ $grandQuantity }} Barang</strong></td>
             </tr>
-        </tfoot>
+        </tfoot> --}}
     </table>
 
 </body>

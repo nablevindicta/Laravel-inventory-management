@@ -18,8 +18,9 @@
                     <div class="col-md-4">
                         <label for="month" class="form-label">Bulan</label>
                         <select name="month" id="month" class="form-select">
+                            <option value="">Pilih Bulan</option> 
                             @foreach (range(1, 12) as $month)
-                                <option value="{{ $month }}" {{ request('month', now()->month) == $month ? 'selected' : '' }}>
+                                <option value="{{ $month }}" {{ request('month') == $month ? 'selected' : '' }}>
                                     {{ \Carbon\Carbon::create()->month($month)->monthName }}
                                 </option>
                             @endforeach
@@ -28,8 +29,9 @@
                     <div class="col-md-4">
                         <label for="year" class="form-label">Tahun</label>
                         <select name="year" id="year" class="form-select">
+                            <option value="">Pilih Tahun</option>
                             @foreach (range(now()->year, 2020) as $year)
-                                <option value="{{ $year }}" {{ request('year', now()->year) == $year ? 'selected' : '' }}>
+                                <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
                                     {{ $year }}
                                 </option>
                             @endforeach
@@ -45,41 +47,55 @@
             </form>
         </x-card>
 
-        <x-card title="LOG STOK OPNAME" class="card-body p-0">
-            <x-table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Judul Sesi</th>
-                        <th>Tanggal Dibuat</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{-- PERULANGAN PERTAMA: HANYA UNTUK MEMBUAT BARIS TABEL (tr) --}}
-                    @forelse ($sessions as $i => $session)
-                    <tr>
-                        <td>{{ $sessions->firstItem() + $i }}</td>
-                        <td>{{ $session->title }}</td>
-                        <td>{{ $session->created_at->format('d-m-Y H:i') }}</td>
-                        <td class="text-center">
-                            <x-button-modal :id="'detail-modal-' . $session->id" title="Detail" icon="eye" style=""
-                                class="btn btn-primary btn-sm" />
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-center">Belum ada sesi stok opname.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </x-table>
-        </x-card>
+        {{-- ✅ INI BAGIAN YANG DIUBAH — TABEL UTAMA LOG STOK OPNAME --}}
+        <div class="card shadow-sm mb-4">
+            <!-- Header -->
+            <div class="card-header bg-white border-bottom d-flex align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-box-seam text-primary me-2"></i>
+                    <strong>LOG STOK OPNAME</strong>
+                </div>
+                <!-- Tidak ada tombol tambah di header tabel ini -->
+            </div>
+
+            <!-- Body: Tabel + Pagination -->
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-3">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Judul Sesi</th>
+                                <th>Tanggal Dibuat</th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($sessions as $i => $session)
+                                <tr>
+                                    <td>{{ $sessions->firstItem() + $i }}</td>
+                                    <td>{{ $session->title }}</td>
+                                    <td>{{ $session->created_at->format('d-m-Y H:i') }}</td>
+                                    <td class="text-center">
+                                        <x-button-modal :id="'detail-modal-' . $session->id" title="Detail" icon="eye" style=""
+                                            class="btn btn-primary btn-sm" />
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">Belum ada sesi stok opname.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div class="d-flex justify-content-end mt-3">{{ $sessions->links() }}</div>
     </x-container>
     
     {{-- KUMPULAN MODAL DETAIL DIPINDAHKAN KE SINI (DI LUAR TABEL) --}}
-    {{-- PERULANGAN KEDUA: HANYA UNTUK MEMBUAT SEMUA MODAL --}}
     @foreach ($sessions as $session)
     <x-modal :id="'detail-modal-' . $session->id" title="Detail Log - {{ $session->title }}">
         <div class="d-flex justify-content-end mb-3">
