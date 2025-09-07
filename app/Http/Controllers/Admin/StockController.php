@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
@@ -26,7 +27,9 @@ class StockController extends Controller
             $query = $query->where('name', 'like', '%'.$search.'%');
         })->paginate(10)->withQueryString();
 
-        return view('admin.stock.index', compact('products', 'search'));
+        $categories = Category::all(); // atau Category::count() jika hanya butuh angka
+
+        return view('admin.stock.index', compact('products', 'search', 'categories'));
     }
 
     /**

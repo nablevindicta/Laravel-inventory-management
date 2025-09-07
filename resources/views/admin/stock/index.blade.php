@@ -3,6 +3,51 @@
 @section('content')
     <x-container>
         <div class="col-12">
+            <!-- Dua Kartu Informasi -->
+            <div class="row mb-4">
+                <!-- Card Jumlah Kategori -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="bg-primary text-white p-3 rounded me-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="icon">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5"></path>
+                                    <path d="M2 12l10 5 10-5"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="mb-1 text-muted">Kategori Barang</p>
+                                <h4 class="mb-0">{{ $categories->count() ?? 0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Card Total Stok -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="bg-warning text-white p-3 rounded me-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="icon">
+                                    <path d="M2 3h20v18H2z"></path>
+                                    <path d="M6 7h12"></path>
+                                    <path d="M6 11h12"></path>
+                                    <path d="M6 15h8"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="mb-1 text-muted">Total Stok Barang</p>
+                                <h4 class="mb-0">{{ $products->sum('quantity') ?? 0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Card Daftar Stok Barang -->
             <div class="card shadow-sm mb-4">
