@@ -21,7 +21,7 @@
             <div class="row g-3">
                 <!-- Data Barang -->
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border border-primary shadow-sm h-100">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="me-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
@@ -42,10 +42,20 @@
 
                 <!-- Total Barang Masuk -->
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border border-success shadow-sm h-100">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="me-3">
-                                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="green"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-basket-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 10l-2 -6" /><path d="M7 10l2 -6" /><path d="M12 20h-4.756a3 3 0 0 1 -2.965 -2.544l-1.255 -7.152a2 2 0 0 1 1.977 -2.304h13.999a2 2 0 0 1 1.977 2.304l-.358 2.04" /><path d="M10 14a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M19 22v-6" /><path d="M22 19l-3 -3l-3 3" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                     fill="none" stroke="green" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round" class="icon">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M17 10l-2 -6" />
+                                    <path d="M7 10l2 -6" />
+                                    <path d="M12 20h-4.756a3 3 0 0 1 -2.965 -2.544l-1.255 -7.152a2 2 0 0 1 1.977 -2.304h13.999a2 2 0 0 1 1.977 2.304l-.358 2.04" />
+                                    <path d="M10 14a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                    <path d="M19 22v-6" />
+                                    <path d="M22 19l-3 -3l-3 3" />
+                                </svg>
                             </div>
                             <div>
                                 <p class="text-muted mb-1">Total Barang Masuk</p>
@@ -57,10 +67,20 @@
 
                 <!-- Total Barang Keluar -->
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border border-danger shadow-sm h-100">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="me-3">
-                                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="red"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-basket-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 10l-2 -6" /><path d="M7 10l2 -6" /><path d="M12 20h-4.756a3 3 0 0 1 -2.965 -2.544l-1.255 -7.152a2 2 0 0 1 1.977 -2.304h13.999a2 2 0 0 1 1.977 2.304l-.349 1.989" /><path d="M10 14a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M19 16v6" /><path d="M22 19l-3 3l-3 -3" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                     fill="none" stroke="red" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round" class="icon">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M17 10l-2 -6" />
+                                    <path d="M7 10l2 -6" />
+                                    <path d="M12 20h-4.756a3 3 0 0 1 -2.965 -2.544l-1.255 -7.152a2 2 0 0 1 1.977 -2.304h13.999a2 2 0 0 1 1.977 2.304l-.349 1.989" />
+                                    <path d="M10 14a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                    <path d="M19 16v6" />
+                                    <path d="M22 19l-3 3l-3 -3" />
+                                </svg>
                             </div>
                             <div>
                                 <p class="text-muted mb-1">Total Barang Keluar</p>
@@ -77,12 +97,12 @@
         <!-- Row 2: 6 Kartu Kecil (Sejajar dengan Row 1) -->
         <div class="row mb-4 mt-5">
             <div class="col-sm-6 col-md-2">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-info shadow-sm h-100">
                     <div class="card-body d-flex align-items-center p-2">
                         <div class="me-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round" class="icon text-primary">
+                                 stroke-linejoin="round" class="icon text-info">
                                 <rect x="8" y="8" width="12" height="12" rx="2"></rect>
                                 <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
                             </svg>
@@ -96,12 +116,12 @@
             </div>
 
             <div class="col-sm-6 col-md-2">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-secondary shadow-sm h-100">
                     <div class="card-body d-flex align-items-center p-2">
                         <div class="me-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round" class="icon text-info">
+                                 stroke-linejoin="round" class="icon text-secondary">
                                 <circle cx="7" cy="17" r="2"></circle>
                                 <circle cx="17" cy="17" r="2"></circle>
                                 <path d="M5 17h-2v-11a1 1 0 0 1 1 -1h9v12m-4 0h6m4 0h2v-6h-8m0 -5h5l3 5"></path>
@@ -116,7 +136,7 @@
             </div>
 
             <div class="col-sm-6 col-md-2">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-success shadow-sm h-100">
                     <div class="card-body d-flex align-items-center p-2">
                         <div class="me-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
@@ -137,12 +157,12 @@
             </div>
 
             <div class="col-sm-6 col-md-2">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-warning shadow-sm h-100">
                     <div class="card-body d-flex align-items-center p-2">
                         <div class="me-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round" class="icon text-danger">
+                                 stroke-linejoin="round" class="icon text-warning">
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
@@ -158,7 +178,7 @@
             </div>
 
             <div class="col-sm-6 col-md-2">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-success shadow-sm h-100">
                     <div class="card-body d-flex align-items-center p-2">
                         <div class="me-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
@@ -177,7 +197,7 @@
             </div>
 
             <div class="col-sm-6 col-md-2">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border border-danger shadow-sm h-100">
                     <div class="card-body d-flex align-items-center p-2">
                         <div class="me-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
@@ -277,6 +297,12 @@
     .text-success { color: #28a745; }
     .text-danger { color: #dc3545; }
     .text-primary { color: #007bff; }
+    .text-secondary { color: #6c757d; }
+    .text-warning { color: #ffc107; }
+
+    .border-teal { border-color: #008080 !important; }
+    .border-orange { border-color: #FF8C00 !important; }
+
     .shadow-sm {
         box-shadow: 0 0.15rem 0.25rem rgba(0,0,0,0.1);
     }
