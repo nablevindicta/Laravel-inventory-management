@@ -85,6 +85,9 @@
                     </div>
                 </div>
             </div>
+            <div class="d-flex justify-content-end mt-3">
+                {{ $suppliers->links() }}
+            </div>
 
         </div>
 
