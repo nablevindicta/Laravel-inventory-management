@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Background Header Biru + Kartu Mengambang -->
-    <div class="position-relative bg-primary text-white" style="border-radius: 0 0 20px 20px; padding-top: 1.5rem; padding-bottom: 4rem;">
+    <div class="position-relative bg-success text-white" style="border-radius: 0 0 20px 20px; padding-top: 1.5rem; padding-bottom: 4rem;">
         <!-- Judul Header -->
         <div class="px-4 pb-3">
             <div class="d-flex align-items-center">

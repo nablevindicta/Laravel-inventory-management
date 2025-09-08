@@ -1,4 +1,4 @@
-@extends('layouts.master', ['title' => 'Log Stok Opname'])
+@extends('layouts.master', ['title' => 'Stok Opname'])
 
 @section('content')
     <x-container>
