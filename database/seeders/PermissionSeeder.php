@@ -31,6 +31,9 @@ class PermissionSeeder extends Seeder
             'index-transaction', 'delete-transaction', 'export-transaction-pdf',
             'index-stockopname', 'create-stockopname', 'export-stockopname-pdf',
 
+            'view-incoming-stock',
+            'view-outgoing-stock',
+
             // Kelola sistem (hanya Super Admin)
             'index-user', 'create-user', 'update-user', 'delete-user',
             'index-role', 'create-role', 'update-role', 'delete-role',
