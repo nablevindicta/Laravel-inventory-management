@@ -47,7 +47,6 @@
             </form>
         </x-card>
 
-<<<<<<< HEAD
         {{-- ✅ INI BAGIAN YANG DIUBAH — TABEL UTAMA LOG STOK OPNAME --}}
         <div class="card shadow-sm mb-4">
             <!-- Header -->
@@ -80,6 +79,10 @@
                                     <td class="text-center">
                                         <x-button-modal :id="'detail-modal-' . $session->id" title="Detail" icon="eye" style=""
                                             class="btn btn-primary btn-sm" />
+                                        @can('delete-stockopname')
+                                        <x-button-delete :id="$session->id" :url="route('admin.stockopname.destroy', $session->id)"
+                                            class="btn btn-danger btn-sm" title=""/>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty
@@ -92,43 +95,6 @@
                 </div>
             </div>
         </div>
-
-=======
-        <x-card title="LOG STOK OPNAME" class="card-body p-0">
-            <x-table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Judul Sesi</th>
-                        <th>Tanggal Dibuat</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{-- PERULANGAN PERTAMA: HANYA UNTUK MEMBUAT BARIS TABEL (tr) --}}
-                    @forelse ($sessions as $i => $session)
-                    <tr>
-                        <td>{{ $sessions->firstItem() + $i }}</td>
-                        <td>{{ $session->title }}</td>
-                        <td>{{ $session->created_at->format('d-m-Y H:i') }}</td>
-                        <td class="text-center">
-                            <x-button-modal :id="'detail-modal-' . $session->id" title="Detail" icon="eye" style=""
-                                class="btn btn-primary btn-sm" />
-                            @can('delete-stockopname')
-                            <x-button-delete :id="$session->id" :url="route('admin.stockopname.destroy', $session->id)"
-                                class="btn btn-danger btn-sm" title=""/>
-                            @endcan
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-center">Belum ada sesi stok opname.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </x-table>
-        </x-card>
->>>>>>> 773277d0f33ec6c919a4be05f29cf15c7f208c58
         <div class="d-flex justify-content-end mt-3">{{ $sessions->links() }}</div>
     </x-container>
     

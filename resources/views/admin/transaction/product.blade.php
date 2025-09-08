@@ -45,7 +45,7 @@
                 <!-- Body: Pencarian + Tabel -->
                 <div class="card-body">
 
-<<<<<<< HEAD
+
                     {{-- ✅ FORM PENCARIAN --}}
                     <form action="{{ route('admin.transaction.product') }}" method="GET" id="searchForm" class="mb-3">
                         <input type="hidden" name="type" value="{{ $type }}">
@@ -55,22 +55,6 @@
                         @if(request('end_date'))
                             <input type="hidden" name="end_date" value="{{ request('end_date') }}">
                         @endif
-=======
-                        <!-- Baris Total (dinamis) -->
-                        <tr>
-                            <td colspan="8" class="font-weight-bold text-uppercase">
-                                {{ $totalLabel }}
-                            </td>
-                            <td class="font-weight-bold text-left">
-                                <span class="text-{{ $type === 'in' ? 'success' : 'danger' }}">
-                                    {{ $grandQuantity }} Barang
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </x-table>
-            </x-card>
->>>>>>> 773277d0f33ec6c919a4be05f29cf15c7f208c58
 
                         <div class="row">
                             <div class="col-md-6 offset-md-6">
