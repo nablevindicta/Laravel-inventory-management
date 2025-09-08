@@ -160,8 +160,8 @@
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                     <small class="text-muted">
-                        Isi field diatas untuk <strong>koreksi stok manual</strong>. 
-                        Tidak akan dicatat sebagai barang masuk/keluar.
+                        Isi kolom diatas untuk <strong>koreksi stok manual</strong>. 
+                        Tidak akan dicatat sebagai barang masuk/keluar (diisi apabila ada kesalahan input).
                     </small>
                 </div>
 
