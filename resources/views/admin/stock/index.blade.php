@@ -193,7 +193,8 @@
                     @error('reduce_stock')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-
+                    
+                    <small class="text-muted">Maksimal yang bisa dikurangi: {{ $product->quantity }}</small>
                     <div class="mt-2">
                         <label for="description_{{ $product->id }}" class="form-label">Deskripsi</label>
                         <textarea 
@@ -206,8 +207,6 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <small class="text-muted">Maksimal yang bisa dikurangi: {{ $product->quantity }}</small>
                 </div>
 
                 <x-button-save title="Simpan Perubahan" icon="save" class="btn btn-primary" />
