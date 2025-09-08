@@ -60,17 +60,7 @@
                 </li>
 
                 <!-- Menu -->
-                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Menu</div>
-
-                @can('index-product')
-                    <li class="nav-item">
-                        <a class="nav-link {{ Route::is('admin.product*') ? 'active' : '' }}"
-                           href="{{ route('admin.product.index') }}">
-                            <span class="nav-link-icon me-2"><i class="ti ti-package"></i></span>
-                            Barang
-                        </a>
-                    </li>
-                @endcan
+                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Data Master</div>
 
                 @can('index-category')
                     <li class="nav-item">
@@ -92,8 +82,18 @@
                     </li>
                 @endcan
 
+                @can('index-product')
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('admin.product*') ? 'active' : '' }}"
+                           href="{{ route('admin.product.index') }}">
+                            <span class="nav-link-icon me-2"><i class="ti ti-package"></i></span>
+                            Barang
+                        </a>
+                    </li>
+                @endcan
+
                 <!-- Stok -->
-                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Stok</div>
+                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Manajemen Stok</div>
 
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.stock.*') ? 'active' : '' }}"
