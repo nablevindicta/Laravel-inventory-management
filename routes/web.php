@@ -50,6 +50,7 @@ Route::post('/logout', function () {
 // ========================================================================
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'role:Admin|Super Admin']], function () {
+    
     Route::get('/dashboard', DashboardController::class)
         ->name('dashboard')
         ->middleware('permission:index-dashboard');

@@ -3,7 +3,7 @@
 @section('content')
     <x-container>
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h5">Daftar Sesi Stok Opname</h2>
+            <h2 class="h5"></h2>
             <div>
                 {{-- Tombol "Mulai Stok Opname" diubah menjadi modal --}}
                 <x-button-modal id="create-opname-modal" title="Mulai Stok Opname" icon="plus" 
@@ -53,7 +53,7 @@
             <div class="card-header bg-white border-bottom d-flex align-items-center">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-box-seam text-primary me-2"></i>
-                    <strong>LOG STOK OPNAME</strong>
+                    <strong>DAFTAR SESI STOK OPNAME</strong>
                 </div>
                 <!-- Tidak ada tombol tambah di header tabel ini -->
             </div>
