@@ -3,12 +3,11 @@
 @section('content')
     <x-container>
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h5"></h2>
+            
             <div>
                 {{-- Tombol "Mulai Stok Opname" diubah menjadi modal --}}
                 <x-button-modal id="create-opname-modal" title="Mulai Stok Opname" icon="plus" 
                     class="btn btn-primary mr-2" style="" />
-                <a href="{{ route('admin.stockopname.pdf', ['month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}" class="btn btn-success mr-2"> <i class="fas fa-file-pdf"></i> Export PDF</a>
             </div>
         </div>
 

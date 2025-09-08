@@ -30,6 +30,7 @@ class PermissionSeeder extends Seeder
             'index-order', 'create-order', 'update-order', 'delete-order',
             'index-transaction', 'delete-transaction', 'export-transaction-pdf',
             'index-stockopname', 'create-stockopname', 'export-stockopname-pdf',
+            'delete-stockopname',
 
             'view-incoming-stock',
             'view-outgoing-stock',
