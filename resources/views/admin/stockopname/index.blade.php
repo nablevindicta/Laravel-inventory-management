@@ -8,7 +8,7 @@
                 {{-- Tombol "Mulai Stok Opname" diubah menjadi modal --}}
                 <x-button-modal id="create-opname-modal" title="Mulai Stok Opname" icon="plus" 
                     class="btn btn-primary mr-2" style="" />
-                <a href="{{ route('admin.stockopname.pdf', ['month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}" class="btn btn-success mr-2">Export PDF</a>
+                <a href="{{ route('admin.stockopname.pdf', ['month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}" class="btn btn-success mr-2"> <i class="fas fa-file-pdf"></i> Export PDF</a>
             </div>
         </div>
 
@@ -71,6 +71,10 @@
                         <td class="text-center">
                             <x-button-modal :id="'detail-modal-' . $session->id" title="Detail" icon="eye" style=""
                                 class="btn btn-primary btn-sm" />
+                            @can('delete-stockopname')
+                            <x-button-delete :id="$session->id" :url="route('admin.stockopname.destroy', $session->id)"
+                                class="btn btn-danger btn-sm" title=""/>
+                            @endcan
                         </td>
                     </tr>
                     @empty
@@ -140,7 +144,7 @@
                     <label for="opname_month" class="form-label">Bulan Opname</label>
                     <select name="opname_month" id="opname_month" class="form-select">
                         @foreach (range(1, 12) as $month)
-                            <opphtion value="{{ $month }}" {{ now()->month == $month ? 'selected' : '' }}>
+                            <option value="{{ $month }}" {{ now()->month == $month ? 'selected' : '' }}>
                                 {{ \Carbon\Carbon::create()->month($month)->monthName }}
                             </option>
                         @endforeach

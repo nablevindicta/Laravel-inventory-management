@@ -1,5 +1,3 @@
-<div class="table-responsive">
-    <table class="table table-vcenter card-table">
-        {{ $slot }}
-    </table>
-</div>
+<table {{ $attributes->merge(['class' => 'table table-striped table-hover align-middle mb-0']) }}>
+    {{ $slot }}
+</table>

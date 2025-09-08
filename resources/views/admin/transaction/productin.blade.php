@@ -1,4 +1,4 @@
-@extends('layouts.master', ['title' => 'Barang Masuk'])
+{{-- @extends('layouts.master', ['title' => 'Barang Masuk'])
 
 @section('content')
     <x-container>
@@ -41,7 +41,7 @@
                     <tbody>
                         @foreach ($transactions as $transaction)
                             <tr>
-                                <td>{{ $transaction->created_at->format('d-m-Y H:i') }}</td>
+                                <td>{{ $transaction->created_at->format('d-m-Y H:i') }}</td> 
                                 <td>
                                     @foreach ($transaction->details as $details)
                                         <div class="mb-2">
@@ -92,4 +92,4 @@
             <div class="d-flex justify-content-end">{{ $transactions->links() }}</div>
         </div>
     </x-container>
-@endsection
+@endsection --}}

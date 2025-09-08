@@ -89,7 +89,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
 
     Route::controller(TransactionController::class)->group(function () {
         Route::get('/transaction/product', 'product')->name('transaction.product');
-        // Route::get('/transaction/productin', 'productin')->name('transaction.productin');
         Route::delete('/transaction/{transaction}', 'destroy')->name('transaction.destroy');
         Route::get('/transaction/{type}/pdf', 'exportPdf')->name('transaction.pdf');
     });
@@ -104,5 +103,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
         Route::post('/stock-opname', 'store')->name('stockopname.store');
         Route::get('/stock-opname/pdf', 'exportPdf')->name('stockopname.pdf');
         Route::get('/stockopname/{stockOpnameSession}/pdf', 'exportDetailPdf')->name('stockopname.pdf_detail');
+        Route::delete('/stockopname/{stockOpnameSession}','destroy')->name('stockopname.destroy');
     });
 });

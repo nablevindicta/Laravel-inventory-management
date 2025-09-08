@@ -78,7 +78,7 @@ class ProductController extends Controller
         $categoryCode = strtoupper(substr($category->name, 0, 15));
         
         // Buat kode barang otomatis
-        $productCode = "{$categoryCode}-1.1.7.{$newNumber}";
+        $productCode = "{$categoryCode} / 1.1.7.{$newNumber}";
 
         Product::create([
             'category_id' => $request->category_id,

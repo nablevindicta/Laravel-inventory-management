@@ -103,6 +103,20 @@ class StockOpnameController extends Controller
         }
     }
 
+    public function destroy(StockOpnameSession $stockOpnameSession)
+    {
+        // Gunakan transaction untuk memastikan semua data terhapus dengan aman
+        DB::transaction(function () use ($stockOpnameSession) {
+            // 1. Hapus semua log yang terkait dengan sesi ini terlebih dahulu
+            $stockOpnameSession->logs()->delete();
+
+            // 2. Setelah semua log terhapus, hapus sesi utamanya
+            $stockOpnameSession->delete();
+        });
+
+        return back()->with('toast_success', 'Sesi stok opname berhasil dihapus.');
+    }
+
 
     /**
      * Mengekspor log stok opname ke PDF dengan filter bulan dan tahun.

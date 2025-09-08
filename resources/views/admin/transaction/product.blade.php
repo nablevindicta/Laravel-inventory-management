@@ -5,7 +5,7 @@
         <div class="col-12">
 
             <form action="{{ route('admin.transaction.product') }}" method="GET" class="mb-4">
-                <input type="hidden" name="type" value="{{ $type }}"> <!-- Pertahankan type saat filter -->
+                <input type="hidden" name="type" value="{{ $type }}">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4">
                         <label for="start_date" class="form-label">Tanggal Mulai</label>
@@ -17,10 +17,9 @@
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">Filter</button>
-                    </div>
+                    </div> 
                     <div class="col-md-2">
-                        <!-- Export PDF sesuai type -->
-                        <a href="{{ route('admin.transaction.pdf', ['type' => $type] + request()->query()) }}" class="btn btn-primary w-100 mb-2">Export PDF</a>
+                        <a href="{{ route('admin.transaction.pdf', ['type' => $type] + request()->query()) }}" class="btn btn-success w-100 mb-2"> <i class="fas fa-file-pdf"></i> Export PDF</a>
                         <a href="{{ route('admin.transaction.product') }}?type={{ $type }}" class="btn btn-secondary w-100">Reset</a>
                     </div>
                 </div>
@@ -103,10 +102,10 @@
 
                         <!-- Baris Total (dinamis) -->
                         <tr>
-                            <td colspan="5" class="font-weight-bold text-uppercase">
+                            <td colspan="8" class="font-weight-bold text-uppercase">
                                 {{ $totalLabel }}
                             </td>
-                            <td class="font-weight-bold text-right">
+                            <td class="font-weight-bold text-left">
                                 <span class="text-{{ $type === 'in' ? 'success' : 'danger' }}">
                                     {{ $grandQuantity }} Barang
                                 </span>
