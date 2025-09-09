@@ -41,11 +41,11 @@
                         <table class="table table-hover table-striped mb-3">
                             <thead class="text-center">
                                 <tr>
-                                    <th>No</th>
-                                    <th>Nama Supplier</th>
-                                    <th>No Hp</th>
-                                    <th>Alamat</th>
-                                    <th class="text-center">Aksi</th>
+                                    <th style="width: 5%;">No</th>
+                                    <th style="width: 20%;">Nama Supplier</th>
+                                    <th style="width: 15%;">No Hp</th>
+                                    <th>Alamat</th> {{-- Kita biarkan kolom ini tanpa lebar agar fleksibel --}}
+                                    <th style="width: 15%;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>

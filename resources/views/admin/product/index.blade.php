@@ -119,12 +119,25 @@
                                                 <x-button-modal :id="'edit-product-modal-' . $product->id" title="" icon="edit"
                                                     class="btn btn-info btn-sm me-1" style="" />
 
+                                                {{-- GANTI SELURUH BLOK MODAL EDIT ANDA DENGAN KODE INI --}}
+
                                                 <x-modal :id="'edit-product-modal-' . $product->id" title="Edit Produk - {{ $product->name }}">
                                                     <form action="{{ route('admin.product.update', $product->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf @method('PUT')
+                                                        @csrf
+                                                        @method('PUT')
+
+                                                        {{-- BAGIAN BARU UNTUK PREVIEW GAMBAR --}}
+                                                        <div class="mb-4 text-center">
+                                                            <label class="form-label d-block">Gambar Saat Ini</label>
+                                                            {{-- Tampilkan gambar yang ada, atau gambar placeholder jika tidak ada --}}
+                                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="img-fluid rounded" style="max-height: 200px; border: 1px solid #ddd; padding: 4px;">
+                                                        </div>
+                                                        <hr>
+                                                        
                                                         <x-input name="name" type="text" title="Nama Produk" placeholder="Nama Produk" :value="$product->name" />
+                                                        
                                                         <div class="row">
-                                                            <div class="col-6">
+                                                            <div class="col-md-6">
                                                                 <x-select title="Kategori Produk" name="category_id">
                                                                     <option value="">Silahkan Pilih</option>
                                                                     @foreach ($categories as $category)
@@ -134,7 +147,7 @@
                                                                     @endforeach
                                                                 </x-select>
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-md-6">
                                                                 <x-select title="Supplier Produk" name="supplier_id">
                                                                     <option value="">Silahkan Pilih</option>
                                                                     @foreach ($suppliers as $supplier)
@@ -145,21 +158,21 @@
                                                                 </x-select>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-6">
-                                                                <x-input name="image" type="file" title="Foto Produk" :value="$product->image" />
-                                                                @if ($product->image)
-                                                                    <small class="text-muted">Gambar saat ini:</small><br>
-                                                                    <img src="{{ asset('storage/' . $product->image) }}" width="50" class="mt-1">
-                                                                @endif
+
+                                                        <div class="row mt-3">
+                                                            <div class="col-md-6">
+                                                                {{-- Input file sekarang terpisah dari preview --}}
+                                                                <x-input name="image" type="file" title="Ganti Foto Produk (Opsional)" />
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-md-6">
                                                                 <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="$product->unit" />
                                                             </div>
                                                         </div>
+
                                                         <x-textarea name="description" title="Deskripsi Produk" placeholder="Deskripsi Produk">
                                                             {{ $product->description }}
                                                         </x-textarea>
+                                                        
                                                         <x-button-save title="Simpan" icon="save" class="btn btn-primary mt-3" />
                                                     </form>
                                                 </x-modal>

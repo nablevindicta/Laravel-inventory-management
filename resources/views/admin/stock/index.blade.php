@@ -138,80 +138,101 @@
 
     {{-- Modal Edit Stok (tetap di luar loop untuk validitas HTML) --}}
     @foreach ($products as $product)
-        <x-modal :id="'edit-stock-modal-' . $product->id" title="Edit Stok Produk - {{ $product->name }}" data-modal-stock>
-            <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">
-                @csrf
-                @method('PUT')
+        {{-- Ganti <x-modal> untuk edit stok Anda dengan kode ini --}}
 
-                <div class="mb-3">
-                    <label class="form-label">Stok Saat Ini</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-primary text-white">
-                            {{ $product->quantity }}
-                        </span>
-                        <input type="number"
-                               name="corrected_stock"
-                               class="form-control @error('corrected_stock') is-invalid @enderror"
-                               min="0"
-                               value=""
-                               placeholder="Masukkan stok yang benar">
-                    </div>
-                    @error('corrected_stock')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
-                    <small class="text-muted">
-                        Isi kolom diatas untuk <strong>koreksi stok manual</strong>. 
-                        Tidak akan dicatat sebagai barang masuk/keluar (diisi apabila ada kesalahan input).
-                    </small>
+    <x-modal :id="'edit-stock-modal-' . $product->id" title="Edit Stok Produk" data-modal-stock>
+        <form action="{{ route('admin.stock.update', $product->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            {{-- DITAMBAHKAN: Bagian untuk menampilkan info & gambar produk --}}
+            <div class="mb-3 pb-3 border-bottom d-flex align-items-center">
+                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="avatar avatar-lg rounded me-3">
+                <div>
+                    <h5 class="mb-0">{{ $product->name }}</h5>
+                    <small class="text-muted">{{ $product->code }}</small>
                 </div>
+            </div>
 
-                <div class="mb-3">
-                    <label for="add_stock_{{ $product->id }}" class="form-label">Tambah Stok (Barang Masuk)</label>
+            {{-- Sisa form Anda (tidak ada perubahan di sini) --}}
+            <div class="mb-3">
+                <label class="form-label">Stok Saat Ini</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-primary text-white">
+                        {{ $product->quantity }}
+                    </span>
                     <input type="number"
-                           name="add_stock"
-                           id="add_stock_{{ $product->id }}"
-                           class="form-control @error('add_stock') is-invalid @enderror"
-                           min="0"
-                           value="{{ old('add_stock', 0) }}"
-                           placeholder="Masukkan jumlah untuk ditambahkan">
-                    @error('add_stock')
+                        name="corrected_stock"
+                        class="form-control @error('corrected_stock') is-invalid @enderror"
+                        min="0"
+                        value=""
+                        placeholder="Masukkan stok yang benar">
+                </div>
+                @error('corrected_stock')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
+                <small class="text-muted">
+                    Isi kolom diatas untuk <strong>koreksi stok manual</strong>. 
+                    Tidak akan dicatat sebagai barang masuk/keluar (diisi apabila ada kesalahan input).
+                </small>
+            </div>
+
+            <div class="mb-3">
+                <label for="add_stock_{{ $product->id }}" class="form-label">Tambah Stok (Barang Masuk)</label>
+                <input type="number"
+                    name="add_stock"
+                    id="add_stock_{{ $product->id }}"
+                    class="form-control @error('add_stock') is-invalid @enderror"
+                    min="0"
+                    value="{{ old('add_stock', 0) }}"
+                    placeholder="Masukkan jumlah untuk ditambahkan">
+                @error('add_stock')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+                <div class="mt-2">
+                    <label for="add_description_{{ $product->id }}" class="form-label">Deskripsi Penambahan</label>
+                    <textarea 
+                        name="description" 
+                        id="add_description_{{ $product->id }}"
+                        class="form-control"
+                        rows="2"
+                        placeholder="Contoh: Penerimaan barang dari Supplier ABC">{{ old('description') }}</textarea>
+                </div>
+                <small class="text-muted">Stok akan bertambah. Harus 0 atau lebih.</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="reduce_stock_{{ $product->id }}" class="form-label">Kurangi Stok (Barang Keluar)</label>
+                <input type="number"
+                    name="reduce_stock"
+                    id="reduce_stock_{{ $product->id }}"
+                    class="form-control @error('reduce_stock') is-invalid @enderror"
+                    min="0"
+                    max="{{ $product->quantity }}"
+                    value="{{ old('reduce_stock', 0) }}"
+                    placeholder="Masukkan jumlah untuk dikurangi">
+                @error('reduce_stock')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+                
+                <small class="text-muted">Maksimal yang bisa dikurangi: {{ $product->quantity }}</small>
+                <div class="mt-2">
+                    <label for="description_{{ $product->id }}" class="form-label">Deskripsi</label>
+                    <textarea 
+                        name="description" 
+                        id="description_{{ $product->id }}"
+                        class="form-control @error('description') is-invalid @enderror"
+                        rows="2"
+                        placeholder="Contoh: Digunakan oleh OB untuk kebutuhan kegiatan">{{ old('description') }}</textarea>
+                    @error('description')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                    <small class="text-muted">Stok akan bertambah. Harus 0 atau lebih.</small>
                 </div>
+            </div>
 
-                <div class="mb-3">
-                    <label for="reduce_stock_{{ $product->id }}" class="form-label">Kurangi Stok (Barang Keluar)</label>
-                    <input type="number"
-                           name="reduce_stock"
-                           id="reduce_stock_{{ $product->id }}"
-                           class="form-control @error('reduce_stock') is-invalid @enderror"
-                           min="0"
-                           max="{{ $product->quantity }}"
-                           value="{{ old('reduce_stock', 0) }}"
-                           placeholder="Masukkan jumlah untuk dikurangi">
-                    @error('reduce_stock')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    
-                    <small class="text-muted">Maksimal yang bisa dikurangi: {{ $product->quantity }}</small>
-                    <div class="mt-2">
-                        <label for="description_{{ $product->id }}" class="form-label">Deskripsi</label>
-                        <textarea 
-                            name="description" 
-                            id="description_{{ $product->id }}"
-                            class="form-control @error('description') is-invalid @enderror"
-                            rows="2"
-                            placeholder="Contoh: Digunakan oleh OB untuk kebutuhan kegiatan">{{ old('description') }}</textarea>
-                        @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <x-button-save title="Simpan Perubahan" icon="save" class="btn btn-primary" />
-            </form>
-        </x-modal>
+            <x-button-save title="Simpan Perubahan" icon="save" class="btn btn-primary" />
+        </form>
+    </x-modal>
     @endforeach
 @endsection
 
