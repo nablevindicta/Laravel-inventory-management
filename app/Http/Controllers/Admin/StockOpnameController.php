@@ -105,16 +105,35 @@ class StockOpnameController extends Controller
 
     public function destroy(StockOpnameSession $stockOpnameSession)
     {
-        // Gunakan transaction untuk memastikan semua data terhapus dengan aman
+        // (Saran Performa) Muat relasi logs dan product di awal untuk efisiensi
+        $stockOpnameSession->load('logs.product');
+
+        // Gunakan transaction untuk memastikan semua proses aman
         DB::transaction(function () use ($stockOpnameSession) {
-            // 1. Hapus semua log yang terkait dengan sesi ini terlebih dahulu
+            
+            // LANGKAH 1: KEMBALIKAN STOK SEMUA PRODUK
+            // Loop melalui setiap log di dalam sesi yang akan dihapus
+            foreach ($stockOpnameSession->logs as $log) {
+                
+                // Cek jika produk dari log ini masih ada di database
+                if ($log->product) {
+                    
+                    // Kembalikan 'quantity' produk ke nilai 'stock_sistem'
+                    // yang tercatat saat opname dilakukan (nilai sebelum diubah).
+                    $log->product->update(['quantity' => $log->stock_sistem]);
+                }
+            }
+
+            // LANGKAH 2: HAPUS LOG DAN SESI
+            // Hapus semua record log dari sesi ini
             $stockOpnameSession->logs()->delete();
 
-            // 2. Setelah semua log terhapus, hapus sesi utamanya
+            // Setelah stok dikembalikan dan log dihapus, hapus sesi utamanya
             $stockOpnameSession->delete();
         });
 
-        return back()->with('toast_success', 'Sesi stok opname berhasil dihapus.');
+        // Berikan pesan yang jelas kepada pengguna
+        return back()->with('toast_success', 'Sesi stok opname berhasil dihapus dan stok barang telah dikembalikan.');
     }
 
 
