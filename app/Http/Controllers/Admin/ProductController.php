@@ -23,37 +23,36 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) // Diubah untuk menerima Request
+    public function index(Request $request)
     {
-        // 1. Ambil input 'search' dari URL query string
+        // 1. Ambil input pencarian
         $search = $request->input('search');
 
-        // Ambil data suppliers dan categories untuk modal
-        $suppliers = Supplier::get();
-        $categories = Category::get();
+        // Mengambil data untuk modal (kategori dan supplier)
+        $categories = Category::all();
+        $suppliers = Supplier::all();
 
-        // 2. Mulai query builder untuk model Product dengan eager loading
-        $query = Product::with(['category', 'supplier']);
-
-        // 3. Jika ada input pencarian, tambahkan kondisi WHERE
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')      // Cari berdasarkan nama produk
-                ->orWhere('code', 'like', '%' . $search . '%')      // Cari berdasarkan kode produk
-                ->orWhereHas('supplier', function ($subQ) use ($search) { // Cari berdasarkan nama supplier
-                    $subQ->where('name', 'like', '%' . $search . '%');
-                })
-                ->orWhereHas('category', function ($subQ) use ($search) { // Cari berdasarkan nama kategori
-                    $subQ->where('name', 'like', '%' . $search . '%');
+        // 2. Query DIUBAH menggunakan gaya when() seperti di SupplierController
+        $products = Product::with(['category', 'supplier'])
+            ->when($search, function ($query, $keyword) {
+                // Logika pencarian canggih Anda tetap dipertahankan di sini
+                return $query->where(function ($q) use ($keyword) {
+                    $q->where('name', 'like', '%' . $keyword . '%')
+                      ->orWhere('code', 'like', '%' . $keyword . '%')
+                      ->orWhereHas('supplier', function ($subQ) use ($keyword) {
+                          $subQ->where('name', 'like', '%' . $keyword . '%');
+                      })
+                      ->orWhereHas('category', function ($subQ) use ($keyword) {
+                          $subQ->where('name', 'like', '%' . $keyword . '%');
+                      });
                 });
-            });
-        }
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends($request->query()); // 3. Menggunakan withQueryString() agar sama persis
 
-        // 4. Eksekusi query dengan paginasi dan tambahkan parameter search ke link paginasi
-        $products = $query->latest()->paginate(10)->appends($request->query());
-
-        // 5. Kirim semua data yang dibutuhkan ke view
-        return view('admin.product.index', compact('products', 'suppliers', 'categories', 'search'));
+        // 4. Kirim data ke view
+        return view('admin.product.index', compact('products', 'search', 'categories', 'suppliers'));
     }
 
     /**
@@ -78,7 +77,7 @@ class ProductController extends Controller
         $categoryCode = strtoupper(substr($category->name, 0, 15));
         
         // Buat kode barang otomatis
-        $productCode = "{$categoryCode}-1.1.7.{$newNumber}";
+        $productCode = "{$categoryCode} / 1.1.7.{$newNumber}";
 
         Product::create([
             'category_id' => $request->category_id,

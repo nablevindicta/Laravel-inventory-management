@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Background Header Biru + Kartu Mengambang -->
-    <div class="position-relative bg-primary text-white" style="border-radius: 0 0 20px 20px; padding-top: 1.5rem; padding-bottom: 4rem;">
+    <div class="position-relative bg-success text-white" style="border-radius: 0 0 20px 20px; padding-top: 1.5rem; padding-bottom: 4rem;">
         <!-- Judul Header -->
         <div class="px-4 pb-3">
             <div class="d-flex align-items-center">
@@ -225,25 +225,33 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center">
-                            <label class="me-2">Tampilkan</label>
-                            <select id="perPageSelect" class="form-select form-select-sm w-auto" onchange="changePerPage()">
-                                <option value="10" {{ request('per_page') == '10' ? 'selected' : '' }}>10</option>
-                                <option value="25" {{ request('per_page') == '25' ? 'selected' : '' }}>25</option>
-                                <option value="50" {{ request('per_page') == '50' ? 'selected' : '' }}>50</option>
-                            </select>
-                            <span class="ms-2">data</span>
+                {{-- Kode yang Sudah Diperbaiki --}}
+                <form action="{{ route('admin.dashboard') }}" method="GET"> {{-- Sesuaikan nama route jika berbeda --}}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <label class="me-2">Tampilkan</label>
+                                <select name="per_page" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                                    <option value="10" {{ request('per_page', 10) == '10' ? 'selected' : '' }}>10</option>
+                                    <option value="25" {{ request('per_page') == '25' ? 'selected' : '' }}>25</option>
+                                    <option value="50" {{ request('per_page') == '50' ? 'selected' : '' }}>50</option>
+                                </select>
+                                <span class="ms-2">data</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="input-group input-group-sm">
+                                <input 
+                                    type="text" 
+                                    name="search" 
+                                    class="form-control" 
+                                    placeholder="Cari barang..." 
+                                    value="{{ $search ?? '' }}">
+                                <button class="btn btn-primary" type="submit">Cari</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6 text-end">
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text">Cari:</span>
-                            <input type="text" id="searchInput" class="form-control" placeholder="Cari barang...">
-                        </div>
-                    </div>
-                </div>
+                </form>
 
                 <div class="table-responsive">
                     <table id="lowStockTable" class="table table-hover table-striped">
@@ -260,7 +268,7 @@
                         <tbody>
                             @foreach ($productsOutStock as $index => $product)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $productsOutStock->firstItem() + $index }}</td>
                                     <td>{{ $product->code }}</td>
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->category->name }}</td>
@@ -332,35 +340,6 @@
         }
     }
 </style>
-@endpush
-
-@push('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('searchInput');
-        const table = document.getElementById('lowStockTable');
-        const tbody = table.querySelector('tbody');
-        const rows = tbody.querySelectorAll('tr');
-
-        searchInput.addEventListener('keyup', function () {
-            const searchText = searchInput.value.toLowerCase().trim();
-
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                let found = false;
-
-                cells.forEach(cell => {
-                    const text = cell.textContent.toLowerCase();
-                    if (text.includes(searchText)) {
-                        found = true;
-                    }
-                });
-
-                row.style.display = found ? '' : 'none';
-            });
-        });
-    });
-</script>
 @endpush
 
 @push('js')

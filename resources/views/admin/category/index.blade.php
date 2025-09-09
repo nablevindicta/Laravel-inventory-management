@@ -65,6 +65,11 @@
                                                         enctype="multipart/form-data">
                                                         @csrf
                                                         @method('PUT')
+                                                        <div class="mb-4 text-center">
+                                                            <span class="avatar rounded avatar-md"
+                                                                style="background-image: url('{{ asset($category->image) }}'); width: 200px; height: 200px;"></span>
+                                                        </div>        
+                                                        <hr>
                                                         <x-input name="name" type="text" title="Nama Kategori"
                                                             placeholder="Nama Kategori" :value="$category->name" />
                                                         <x-input name="image" type="file" title="Foto Kategori" placeholder=""

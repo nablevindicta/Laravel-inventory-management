@@ -119,12 +119,24 @@
                                                 <x-button-modal :id="'edit-product-modal-' . $product->id" title="" icon="edit"
                                                     class="btn btn-info btn-sm me-1" style="" />
 
+                                                {{-- GANTI SELURUH BLOK MODAL EDIT ANDA DENGAN KODE INI --}}
+
                                                 <x-modal :id="'edit-product-modal-' . $product->id" title="Edit Produk - {{ $product->name }}">
                                                     <form action="{{ route('admin.product.update', $product->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf @method('PUT')
+                                                        @csrf
+                                                        @method('PUT')
+
+                                                        {{-- BAGIAN BARU UNTUK PREVIEW GAMBAR --}}
+                                                        <div class="mb-4 text-center">
+                                                            <span class="avatar rounded avatar-md"
+                                                                style="background-image: url('{{ asset($product->image) }}'); width: 200px; height: 200px;"></span>
+                                                        </div>
+                                                        <hr>
+                                                        
                                                         <x-input name="name" type="text" title="Nama Produk" placeholder="Nama Produk" :value="$product->name" />
+                                                        
                                                         <div class="row">
-                                                            <div class="col-6">
+                                                            <div class="col-md-6">
                                                                 <x-select title="Kategori Produk" name="category_id">
                                                                     <option value="">Silahkan Pilih</option>
                                                                     @foreach ($categories as $category)
@@ -134,7 +146,7 @@
                                                                     @endforeach
                                                                 </x-select>
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-md-6">
                                                                 <x-select title="Supplier Produk" name="supplier_id">
                                                                     <option value="">Silahkan Pilih</option>
                                                                     @foreach ($suppliers as $supplier)
@@ -145,21 +157,21 @@
                                                                 </x-select>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-6">
-                                                                <x-input name="image" type="file" title="Foto Produk" :value="$product->image" />
-                                                                @if ($product->image)
-                                                                    <small class="text-muted">Gambar saat ini:</small><br>
-                                                                    <img src="{{ asset('storage/' . $product->image) }}" width="50" class="mt-1">
-                                                                @endif
+
+                                                        <div class="row mt-3">
+                                                            <div class="col-md-6">
+                                                                {{-- Input file sekarang terpisah dari preview --}}
+                                                                <x-input name="image" type="file" title="Ganti Foto Produk (Opsional)" />
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-md-6">
                                                                 <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="$product->unit" />
                                                             </div>
                                                         </div>
+
                                                         <x-textarea name="description" title="Deskripsi Produk" placeholder="Deskripsi Produk">
                                                             {{ $product->description }}
                                                         </x-textarea>
+                                                        
                                                         <x-button-save title="Simpan" icon="save" class="btn btn-primary mt-3" />
                                                     </form>
                                                 </x-modal>
@@ -239,48 +251,3 @@
         </form>
     </x-modal>
 @endsection
-
-@push('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('searchInput');
-        const table = document.getElementById('productTable'); // ✅ DIPERBAIKI: definisikan 'table'
-        const tbody = table.querySelector('tbody');
-        const rows = tbody.querySelectorAll('.searchable-row'); // Hanya baris data
-        const noDataRow = document.getElementById('no-data-row'); // Baris "Data tidak ditemukan"
-
-        searchInput.addEventListener('keyup', function () {
-            const searchText = this.value.toLowerCase().trim();
-            let visibleRows = 0;
-
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                let found = false;
-
-                cells.forEach(cell => {
-                    // Abaikan kolom Aksi (indeks terakhir) karena berisi tombol
-                    if (cell.querySelector('.btn') || cell.querySelector('.avatar')) {
-                        return;
-                    }
-                    const text = cell.textContent.toLowerCase();
-                    if (text.includes(searchText)) {
-                        found = true;
-                    }
-                });
-
-                if (found) {
-                    row.style.display = '';
-                    visibleRows++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Tampilkan/menyembunyikan baris "Data tidak ditemukan"
-            if (noDataRow) {
-                noDataRow.style.display = visibleRows > 0 ? 'none' : '';
-            }
-        });
-    });
-</script>
-@endpush

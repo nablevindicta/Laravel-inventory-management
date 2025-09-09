@@ -18,8 +18,11 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request)
     {
+        // DITAMBAHKAN: Mengambil input pencarian dari request
+        $search = $request->input('search');
+
+        // Bagian ini tidak berubah
         $categories = Category::count();
-        // $vehicles = Vehicle::count();
         $suppliers = Supplier::count();
         $products = Product::count();
         $customers = User::count();
@@ -48,17 +51,29 @@ class DashboardController extends Controller
         
         // Ambil parameter per_page dari request, default 10
         $perPage = $request->query('per_page', 10);
-
         $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
 
-        $productsOutStock = Product::where('quantity', '<=', 10)
-            ->with('category')
-            ->paginate($perPage);
+        // --- QUERY UNTUK TABEL STOK RENDAH DIMODIFIKASI DI SINI ---
+        
+        // 1. Mulai query dasar
+        $lowStockQuery = Product::with('category')->where('quantity', '<=', 10);
 
-        // Ambil 5 produk terlaris (barang keluar terbanyak)
+        // 2. Terapkan filter pencarian secara kondisional
+        if ($search) {
+            $lowStockQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('code', 'like', '%' . $search . '%');
+            });
+        }
+        
+        // 3. Lakukan paginasi dan tambahkan semua parameter request ke link paginasi
+        $productsOutStock = $lowStockQuery->latest()->paginate($perPage)->appends($request->query());
+        
+        // --- Akhir Modifikasi ---
+
+        // Bagian ini tidak berubah
         $bestProduct = TransactionDetail::with('product')
             ->whereHas('transaction', function($query) {
-                // Tambahkan filter ini untuk hanya mengambil transaksi 'out'
                 $query->where('type', 'out');
             })
             ->whereMonth('created_at', now()->month)
@@ -88,7 +103,8 @@ class DashboardController extends Controller
             'productOutThisMonth',
             'productsOutStock',
             'label',
-            'total'
+            'total',
+            'search' // DITAMBAHKAN: Kirim variabel search ke view
         ));
     }
 }

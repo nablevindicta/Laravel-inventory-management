@@ -11,11 +11,29 @@
 
 </head>
 
+<style>
+    /* Target semua link menu di dalam sidebar vertikal ini */
+    .navbar-vertical .nav-link {
+        font-size: 1.1rem; /* Ukuran font default biasanya sekitar 0.875rem */
+    }
+    
+    /* Target ikon di dalam link menu agar ukurannya juga menyesuaikan */
+    .navbar-vertical .nav-link-icon i {
+        font-size: 1.25rem; /* Perbesar sedikit ikonnya */
+    }
+
+    /* Target judul grup menu */
+    .navbar-vertical .hr-text {
+        font-size: 0.85rem; /* Sedikit lebih besar dari default */
+    }
+</style>
+
+
 <aside class="navbar navbar-vertical navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <!-- Logo / Brand -->
         <a href="{{ route('admin.dashboard') }}" class="navbar-brand">
-            <h3 class="mb-0 fw-bold">INVENTORY</h3>
+            <h2 class="mb-0 fw-bold text-center">INVENTORY<br>GUDANG</h2>
         </a>
 
         <!-- Toggle untuk mobile -->
@@ -24,7 +42,7 @@
         </button>
 
         <!-- User & Logout (Mobile View) -->
-        <div class="navbar-nav flex-row d-lg-none">
+        <div class="navbar-nav flex-row d-lg-none text-size">
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link d-flex align-items-center text-reset p-0" data-bs-toggle="dropdown">
                     <span class="avatar me-2" style="background-image: url({{ Auth::user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }})"></span>
@@ -54,23 +72,13 @@
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.dashboard') ? 'active' : '' }}"
                        href="{{ route('admin.dashboard') }}">
-                        <span class="nav-link-icon me-2"><i class="ti ti-dashboard"></i></span>
+                        <span class="nav-link-icon me-2" ><i class="ti ti-dashboard"></i></span>
                         Dashboard
                     </a>
                 </li>
 
                 <!-- Menu -->
-                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Menu</div>
-
-                @can('index-product')
-                    <li class="nav-item">
-                        <a class="nav-link {{ Route::is('admin.product*') ? 'active' : '' }}"
-                           href="{{ route('admin.product.index') }}">
-                            <span class="nav-link-icon me-2"><i class="ti ti-package"></i></span>
-                            Barang
-                        </a>
-                    </li>
-                @endcan
+                <div class="hr-text hr-text-left ml-2 mb-2 mt-4">Data Master</div>
 
                 @can('index-category')
                     <li class="nav-item">
@@ -92,8 +100,18 @@
                     </li>
                 @endcan
 
+                @can('index-product')
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('admin.product*') ? 'active' : '' }}"
+                           href="{{ route('admin.product.index') }}">
+                            <span class="nav-link-icon me-2"><i class="ti ti-package"></i></span>
+                            Barang
+                        </a>
+                    </li>
+                @endcan
+
                 <!-- Stok -->
-                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Stok</div>
+                <div class="hr-text hr-text-left ml-2 mb-2 mt-4">Manajemen Stok</div>
 
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.stock.*') ? 'active' : '' }}"
@@ -112,7 +130,7 @@
                 </li>
 
                 <!-- Transaksi -->
-                <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Transaksi</div>
+                <div class="hr-text hr-text-left ml-2 mb-2 mt-4">Transaksi</div>
 
                 <!-- Barang Masuk -->
                 @can('view-incoming-stock') <!-- Ganti dengan permission yang sesuai di sistem kamu -->
@@ -156,7 +174,7 @@
             </ul>
 
             <!-- Profil & Logout (Desktop - Sticky di bawah) -->
-            <div class="mt-auto pt-3 border-top border-light">
+            <div class="mt-auto pt-3 b">
                 <div class="d-flex align-items-center p-3 text-white">
                     <span class="avatar me-3" style="background-image: url({{ Auth::user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }})"></span>
                     <div class="flex-fill">
