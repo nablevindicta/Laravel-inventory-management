@@ -47,7 +47,7 @@ public function update(Request $request, $id)
         'add_stock' => ['nullable', 'integer', 'min:0'],
         'reduce_stock' => ['nullable', 'integer', 'min:0'],
         'corrected_stock' => ['nullable', 'integer', 'min:0'],
-    'description' => ['nullable', 'string', 'max:255'], 
+        'description' => ['nullable', 'string', 'max:255'], 
     ], [
         'reduce_stock.min' => 'Jumlah yang dikurangi harus 0 atau lebih.',
         'add_stock.min' => 'Jumlah tambahan stok harus 0 atau lebih.',

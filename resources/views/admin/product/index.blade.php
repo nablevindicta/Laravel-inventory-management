@@ -128,9 +128,8 @@
 
                                                         {{-- BAGIAN BARU UNTUK PREVIEW GAMBAR --}}
                                                         <div class="mb-4 text-center">
-                                                            <label class="form-label d-block">Gambar Saat Ini</label>
-                                                            {{-- Tampilkan gambar yang ada, atau gambar placeholder jika tidak ada --}}
-                                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="img-fluid rounded" style="max-height: 200px; border: 1px solid #ddd; padding: 4px;">
+                                                            <span class="avatar rounded avatar-md"
+                                                                style="background-image: url('{{ asset($product->image) }}'); width: 200px; height: 200px;"></span>
                                                         </div>
                                                         <hr>
                                                         
@@ -252,48 +251,3 @@
         </form>
     </x-modal>
 @endsection
-
-@push('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('searchInput');
-        const table = document.getElementById('productTable'); // ✅ DIPERBAIKI: definisikan 'table'
-        const tbody = table.querySelector('tbody');
-        const rows = tbody.querySelectorAll('.searchable-row'); // Hanya baris data
-        const noDataRow = document.getElementById('no-data-row'); // Baris "Data tidak ditemukan"
-
-        searchInput.addEventListener('keyup', function () {
-            const searchText = this.value.toLowerCase().trim();
-            let visibleRows = 0;
-
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                let found = false;
-
-                cells.forEach(cell => {
-                    // Abaikan kolom Aksi (indeks terakhir) karena berisi tombol
-                    if (cell.querySelector('.btn') || cell.querySelector('.avatar')) {
-                        return;
-                    }
-                    const text = cell.textContent.toLowerCase();
-                    if (text.includes(searchText)) {
-                        found = true;
-                    }
-                });
-
-                if (found) {
-                    row.style.display = '';
-                    visibleRows++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Tampilkan/menyembunyikan baris "Data tidak ditemukan"
-            if (noDataRow) {
-                noDataRow.style.display = visibleRows > 0 ? 'none' : '';
-            }
-        });
-    });
-</script>
-@endpush

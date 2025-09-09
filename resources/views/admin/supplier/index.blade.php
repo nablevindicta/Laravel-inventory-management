@@ -55,7 +55,7 @@
                                         <td>{{ $supplier->name }}</td>
                                         <td>{{ $supplier->telp }}</td>
                                         <td>{{ $supplier->address }}</td>
-                                        <td class="text-center">
+                                        <td>
                                             @can('update-supplier')
                                                 <x-button-modal :id="$supplier->id" title="" icon="edit" style=""
                                                     class="btn btn-info btn-sm" />
