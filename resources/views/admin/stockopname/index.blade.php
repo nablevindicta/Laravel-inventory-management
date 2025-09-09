@@ -98,40 +98,49 @@
                 <i class="fas fa-file-pdf"></i> Export PDF
             </a>
         </div>
-        <x-table>
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Kode</th>
-                    <th>Nama Barang</th>
-                    <th>Stok Sistem</th>
-                    <th>Stok Fisik</th>
-                    <th>Selisih</th>
-                    <th>Keterangan</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($session->logs as $log)
+        
+        {{-- DIBUNGKUS DENGAN DIV UNTUK SCROLL --}}
+        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <x-table>
+                {{-- DITAMBAHKAN STYLE AGAR HEADER TETAP TERLIHAT SAAT SCROLL --}}
+                <thead style="position: sticky; top: 0; z-index: 1; background-color: white;">
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ optional($log->product)->code }}</td>
-                        <td>{{ optional($log->product)->name }}</td>
-                        <td>{{ $log->stock_sistem }}</td>
-                        <td>{{ $log->stock_fisik }}</td>
-                        <td>{{ $log->selisih }}</td>
-                        <td>
-                            @if ($log->keterangan === 'Kelebihan')
-                                <span class="badge bg-success">{{ $log->keterangan }}</span>
-                            @elseif ($log->keterangan === 'Kekurangan')
-                                <span class="badge bg-danger">{{ $log->keterangan }}</span>
-                            @else
-                                <span class="badge bg-secondary">{{ $log->keterangan }}</span>
-                            @endif
-                        </td>
+                        <th>No</th>
+                        <th>Kode</th>
+                        <th>Nama Barang</th>
+                        <th>Stok Sistem</th>
+                        <th>Stok Fisik</th>
+                        <th>Selisih</th>
+                        <th>Keterangan</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </x-table>
+                </thead>
+                <tbody>
+                    @forelse ($session->logs as $log)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ optional($log->product)->code }}</td>
+                            <td>{{ optional($log->product)->name }}</td>
+                            <td>{{ $log->stock_sistem }}</td>
+                            <td>{{ $log->stock_fisik }}</td>
+                            <td>{{ $log->selisih }}</td>
+                            <td>
+                                @if ($log->keterangan === 'Kelebihan')
+                                    <span class="badge bg-success">{{ $log->keterangan }}</span>
+                                @elseif ($log->keterangan === 'Kekurangan')
+                                    <span class="badge bg-danger">{{ $log->keterangan }}</span>
+                                @else
+                                    <span class="badge bg-secondary">{{ $log->keterangan }}</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center">Tidak ada data log untuk sesi ini.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </x-table>
+        </div>
     </x-modal>
     @endforeach
 
