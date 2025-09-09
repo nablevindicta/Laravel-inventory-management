@@ -174,7 +174,7 @@
             </ul>
 
             <!-- Profil & Logout (Desktop - Sticky di bawah) -->
-            <div class="mt-auto pt-3 border-top border-light">
+            <div class="mt-auto pt-3 b">
                 <div class="d-flex align-items-center p-3 text-white">
                     <span class="avatar me-3" style="background-image: url({{ Auth::user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }})"></span>
                     <div class="flex-fill">

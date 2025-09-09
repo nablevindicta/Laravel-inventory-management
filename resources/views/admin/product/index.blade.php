@@ -128,9 +128,8 @@
 
                                                         {{-- BAGIAN BARU UNTUK PREVIEW GAMBAR --}}
                                                         <div class="mb-4 text-center">
-                                                            <label class="form-label d-block">Gambar Saat Ini</label>
-                                                            {{-- Tampilkan gambar yang ada, atau gambar placeholder jika tidak ada --}}
-                                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="img-fluid rounded" style="max-height: 200px; border: 1px solid #ddd; padding: 4px;">
+                                                            <span class="avatar rounded avatar-md"
+                                                                style="background-image: url('{{ asset($product->image) }}'); width: 200px; height: 200px;"></span>
                                                         </div>
                                                         <hr>
                                                         

@@ -146,14 +146,12 @@
             @method('PUT')
 
             {{-- DITAMBAHKAN: Bagian untuk menampilkan info & gambar produk --}}
-            <div class="mb-3 pb-3 border-bottom d-flex align-items-center">
-                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="avatar avatar-lg rounded me-3">
-                <div>
+            <div class="mb-4 text-center">
+                <span class="avatar rounded avatar-md"
+                    style="background-image: url('{{ asset($product->image) }}'); width: 200px; height: 200px;"></span>
                     <h5 class="mb-0">{{ $product->name }}</h5>
-                    <small class="text-muted">{{ $product->code }}</small>
-                </div>
-            </div>
-
+            </div>        
+            <hr>
             {{-- Sisa form Anda (tidak ada perubahan di sini) --}}
             <div class="mb-3">
                 <label class="form-label">Stok Saat Ini</label>
@@ -189,15 +187,6 @@
                 @error('add_stock')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
-                <div class="mt-2">
-                    <label for="add_description_{{ $product->id }}" class="form-label">Deskripsi Penambahan</label>
-                    <textarea 
-                        name="description" 
-                        id="add_description_{{ $product->id }}"
-                        class="form-control"
-                        rows="2"
-                        placeholder="Contoh: Penerimaan barang dari Supplier ABC">{{ old('description') }}</textarea>
-                </div>
                 <small class="text-muted">Stok akan bertambah. Harus 0 atau lebih.</small>
             </div>
 
