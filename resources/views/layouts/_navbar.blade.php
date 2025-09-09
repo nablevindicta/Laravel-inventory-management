@@ -12,9 +12,9 @@
                         <div class="mt-1 small text-muted">{{ Auth::user()->roles->pluck('name')[0] }}</div>
                     </div>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="{{ route('logout') }}"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <div class="dropdown-menu dropdown-menu-left">
+                    <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24"
                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -22,8 +22,7 @@
                             <path d="M7 6a7.75 7.75 0 1 0 10 0"></path>
                             <line x1="12" y1="4" x2="12" y2="12"></line>
                         </svg>
-                        Logout
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        <span>Logout</span> <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>
                     </a>

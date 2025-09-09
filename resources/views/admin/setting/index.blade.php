@@ -13,7 +13,7 @@
                 </div>
             @endif
 
-            <x-card title="PROFILE" class="card-body">
+            <x-card title="PROFIL SAYA" class="card-body">
                 <form action="{{ route('admin.setting.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')

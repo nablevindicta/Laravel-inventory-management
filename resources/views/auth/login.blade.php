@@ -79,9 +79,8 @@
                 <form action="{{ route('login') }}" method="POST">
                     @csrf
                     <div class="text-center mb-4">
-                        <img src="{{ asset('logo.png') }}" alt="logo" height="40" class="mb-2">
                         <h3 class="mb-3 font-weight-medium">
-                            Selamat Datang 
+                            Selamat Datang
                         </h3>
                     </div>
                     <div class="mb-3">

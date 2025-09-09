@@ -41,11 +41,11 @@
                         <table class="table table-hover table-striped mb-3">
                             <thead class="text-center">
                                 <tr>
-                                    <th>No</th>
-                                    <th>Nama Supplier</th>
-                                    <th>No Hp</th>
-                                    <th>Alamat</th>
-                                    <th class="text-center">Aksi</th>
+                                    <th style="width: 5%;">No</th>
+                                    <th style="width: 20%;">Nama Supplier</th>
+                                    <th style="width: 15%;">No Hp</th>
+                                    <th>Alamat</th> {{-- Kita biarkan kolom ini tanpa lebar agar fleksibel --}}
+                                    <th style="width: 15%;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,7 +55,7 @@
                                         <td>{{ $supplier->name }}</td>
                                         <td>{{ $supplier->telp }}</td>
                                         <td>{{ $supplier->address }}</td>
-                                        <td class="text-center">
+                                        <td>
                                             @can('update-supplier')
                                                 <x-button-modal :id="$supplier->id" title="" icon="edit" style=""
                                                     class="btn btn-info btn-sm" />
@@ -84,6 +84,9 @@
                         </table>
                     </div>
                 </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                {{ $suppliers->links() }}
             </div>
 
         </div>

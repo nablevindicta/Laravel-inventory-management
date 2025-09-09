@@ -1,17 +1,7 @@
-@extends('layouts.master', ['title' => 'Log Stok Opname'])
+@extends('layouts.master', ['title' => 'Stok Opname'])
 
 @section('content')
     <x-container>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h5">Daftar Sesi Stok Opname</h2>
-            <div>
-                {{-- Tombol "Mulai Stok Opname" diubah menjadi modal --}}
-                <x-button-modal id="create-opname-modal" title="Mulai Stok Opname" icon="plus" 
-                    class="btn btn-primary mr-2" style="" />
-                <a href="{{ route('admin.stockopname.pdf', ['month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}" class="btn btn-success mr-2">Export PDF</a>
-            </div>
-        </div>
-
         <x-card title="Filter Data" class="card-body mb-3">
             <form action="{{ route('admin.stockopname.index') }}" method="GET">
                 <div class="row g-3 align-items-end">
@@ -50,12 +40,13 @@
         {{-- ✅ INI BAGIAN YANG DIUBAH — TABEL UTAMA LOG STOK OPNAME --}}
         <div class="card shadow-sm mb-4">
             <!-- Header -->
-            <div class="card-header bg-white border-bottom d-flex align-items-center">
+            <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-box-seam text-primary me-2"></i>
-                    <strong>LOG STOK OPNAME</strong>
+                    <strong>DAFTAR SESI STOK OPNAME</strong>
                 </div>
-                <!-- Tidak ada tombol tambah di header tabel ini -->
+                <x-button-modal id="create-opname-modal" title="Mulai Stok Opname" icon="plus" 
+                    class="btn btn-primary btn-sm" style="" />
             </div>
 
             <!-- Body: Tabel + Pagination -->
@@ -79,6 +70,10 @@
                                     <td class="text-center">
                                         <x-button-modal :id="'detail-modal-' . $session->id" title="Detail" icon="eye" style=""
                                             class="btn btn-primary btn-sm" />
+                                        @can('delete-stockopname')
+                                        <x-button-delete :id="$session->id" :url="route('admin.stockopname.destroy', $session->id)"
+                                            class="btn btn-danger btn-sm" title=""/>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty
@@ -91,7 +86,6 @@
                 </div>
             </div>
         </div>
-
         <div class="d-flex justify-content-end mt-3">{{ $sessions->links() }}</div>
     </x-container>
     
@@ -168,42 +162,49 @@
                 </div>
             </div>
             
-            {{-- Tabel Daftar Barang untuk Stok Fisik --}}
-            <x-table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Barang</th>
-                        <th>Kategori</th>
-                        <th>Stok Sistem</th>
-                        <th>Stok Fisik</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($products as $i => $product)
-                    <tr>
-                        <td>{{ $i + 1 }}</td>
-                        <td>{{ $product->name }}</td>
-                        <td>{{ optional($product->category)->name }}</td>
-                        <td>{{ $product->quantity }}</td>
-                        <td>
-                            <input
-                                type="number"
-                                name="stock_fisik[{{ $product->id }}]"
-                                value="{{ old('stock_fisik.' . $product->id, $product->quantity) }}"
-                                class="form-control @error('stock_fisik.' . $product->id) is-invalid @enderror"
-                                min="0"
-                                required
-                            >
-                            @error('stock_fisik.' . $product->id)
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </x-table>
-            <div class="mt-4 p-4">
+            {{-- Tabel Daftar Barang untuk Stok Fisik dengan SCROLL --}}
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <x-table>
+                    <thead style="position: sticky; top: 0; z-index: 1; background-color: white;">
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Barang</th>
+                            <th>Kategori</th>
+                            <th>Stok Sistem</th>
+                            <th>Stok Fisik</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- Pastikan variabel $products tersedia di halaman ini --}}
+                        @forelse ($products as $i => $product)
+                        <tr>
+                            <td>{{ $i + 1 }}</td>
+                            <td>{{ $product->name }}</td>
+                            <td>{{ optional($product->category)->name }}</td>
+                            <td>{{ $product->quantity }}</td>
+                            <td>
+                                <input
+                                    type="number"
+                                    name="stock_fisik[{{ $product->id }}]"
+                                    value="{{ old('stock_fisik.' . $product->id, $product->quantity) }}"
+                                    class="form-control @error('stock_fisik.' . $product->id) is-invalid @enderror"
+                                    min="0"
+                                    required
+                                >
+                                @error('stock_fisik.' . $product->id)
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center">Tidak ada produk untuk ditampilkan.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </x-table>
+            </div>
+            <div class="mt-4 pt-3 border-top">
                 <button type="submit" class="btn btn-primary">Simpan Stok Opname</button>
             </div>
         </form>
