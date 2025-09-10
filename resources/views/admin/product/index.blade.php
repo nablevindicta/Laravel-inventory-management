@@ -41,7 +41,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="mb-1 text-muted">Total Produk</p>
+                                <p class="mb-1 text-muted">Total Barang</p>
                                 <h4 class="mb-0">{{ $products->total() ?? 0 }}</h4>
                             </div>
                         </div>
