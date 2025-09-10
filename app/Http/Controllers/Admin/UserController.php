@@ -66,4 +66,22 @@ class UserController extends Controller
 
         return back()->with('toast_success', 'Role User Berhasil Diubah');
     }
+    
+    /**
+     * Remove the specified user from storage.
+     */
+    public function destroy(User $user)
+    {
+        // Hanya Super Admin yang bisa hapus user
+        $this->authorize('delete-user'); // Pastikan permission 'delete-user' ada
+
+        // Cegah menghapus diri sendiri (opsional tapi sangat disarankan)
+        if ($user->id === auth()->id()) {
+            return back()->with('toast_error', 'Anda tidak bisa menghapus akun sendiri.');
+        }
+
+        $user->delete();
+
+        return back()->with('toast_success', 'User berhasil dihapus.');
+    }
 }
