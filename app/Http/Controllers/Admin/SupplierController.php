@@ -6,6 +6,7 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SupplierRequest;
+use Illuminate\Support\Facades\Log;
 
 class SupplierController extends Controller
 {
@@ -60,8 +61,20 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
-        $supplier->delete();
+        // 1. Cek apakah ada produk yang menggunakan supplier ini
+        if ($supplier->products()->count() > 0) {
+            // 2. Jika ada, batalkan penghapusan dan kirim pesan error
+            return back()->with('toast_error', 'Supplier tidak dapat dihapus karena masih digunakan oleh beberapa produk.');
+        }
 
-        return back()->with('toast_success', 'Supplier Berhasil Dihapus');
+        // 3. Jika tidak ada produk terkait, lanjutkan proses penghapusan
+        try {
+            $supplier->delete();
+            return back()->with('toast_success', 'Supplier berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Catat error untuk debugging
+            Log::error('Gagal menghapus supplier: ' . $e->getMessage());
+            return back()->with('toast_error', 'Terjadi kesalahan saat menghapus supplier.');
+        }
     }
 }

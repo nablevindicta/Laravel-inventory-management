@@ -160,13 +160,13 @@
 
                 <!-- Super Admin Only -->
                 @hasanyrole('Super Admin')
-                    <div class="hr-text hr-text-left ml-2 mb-2 mt-2">Admin</div>
+                    <div class="hr-text hr-text-left ml-2 mb-2 mt-4">Manajemen User</div>
 
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.user*') ? 'active' : '' }}"
                            href="{{ route('admin.user.index') }}">
                             <span class="nav-link-icon me-2"><i class="ti ti-users"></i></span>
-                            Manajemen User
+                            User
                         </a>
                     </li>
                 @endhasanyrole

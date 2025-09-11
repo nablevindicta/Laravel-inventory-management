@@ -121,7 +121,7 @@
 
                                                 {{-- GANTI SELURUH BLOK MODAL EDIT ANDA DENGAN KODE INI --}}
 
-                                                <x-modal :id="'edit-product-modal-' . $product->id" title="Edit Produk - {{ $product->name }}">
+                                                <x-modal :id="'edit-product-modal-' . $product->id" title="Edit Barang - {{ $product->name }}">
                                                     <form action="{{ route('admin.product.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                                                         @csrf
                                                         @method('PUT')
@@ -133,11 +133,11 @@
                                                         </div>
                                                         <hr>
                                                         
-                                                        <x-input name="name" type="text" title="Nama Produk" placeholder="Nama Produk" :value="$product->name" />
+                                                        <x-input name="name" type="text" title="Nama Barang" placeholder="Nama Barang" :value="$product->name" />
                                                         
                                                         <div class="row">
                                                             <div class="col-md-6">
-                                                                <x-select title="Kategori Produk" name="category_id">
+                                                                <x-select title="Kategori Barang" name="category_id">
                                                                     <option value="">Silahkan Pilih</option>
                                                                     @foreach ($categories as $category)
                                                                         <option value="{{ $category->id }}" @selected($product->category_id == $category->id)>
@@ -147,7 +147,7 @@
                                                                 </x-select>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <x-select title="Supplier Produk" name="supplier_id">
+                                                                <x-select title="Supplier Barang" name="supplier_id">
                                                                     <option value="">Silahkan Pilih</option>
                                                                     @foreach ($suppliers as $supplier)
                                                                         <option value="{{ $supplier->id }}" @selected($product->supplier_id == $supplier->id)>
@@ -161,14 +161,14 @@
                                                         <div class="row mt-3">
                                                             <div class="col-md-6">
                                                                 {{-- Input file sekarang terpisah dari preview --}}
-                                                                <x-input name="image" type="file" title="Ganti Foto Produk (Opsional)" />
+                                                                <x-input name="image" type="file" title="Ganti Foto Barang (Opsional)" />
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="$product->unit" />
+                                                                <x-input name="unit" type="text" title="Satuan Barang" placeholder="Satuan Barang" :value="$product->unit" />
                                                             </div>
                                                         </div>
 
-                                                        <x-textarea name="description" title="Deskripsi Produk" placeholder="Deskripsi Produk">
+                                                        <x-textarea name="description" title="Deskripsi Barang" placeholder="Deskripsi Barang">
                                                             {{ $product->description }}
                                                         </x-textarea>
                                                         
@@ -205,11 +205,11 @@
     <x-modal id="create-product-modal" title="Tambah Barang">
         <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <x-input name="name" type="text" title="Nama Produk" placeholder="Nama Produk" :value="old('name')" />
+            <x-input name="name" type="text" title="Nama Barang" placeholder="Nama Barang" :value="old('name')" />
             @error('name')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-            <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="old('unit')" />
+            <x-input name="unit" type="text" title="Satuan Barang" placeholder="Satuan Barang" :value="old('unit')" />
             @error('unit')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
@@ -239,7 +239,7 @@
             @error('image')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
-            <x-textarea name="description" title="Deskripsi Barang" placeholder="Deskripsi Barang">
+            <x-textarea name="description" title="Deskripsi" placeholder="Deskripsi Barang">
                 {{ old('description') }}
             </x-textarea>
             @error('description')
