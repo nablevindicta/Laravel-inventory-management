@@ -21,6 +21,7 @@ class Product extends Model
         'unit',
         'quantity',
         'code',
+        'registered_at',
     ];
 
     protected function image(): Attribute

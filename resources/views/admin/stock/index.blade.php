@@ -51,70 +51,97 @@
 
             <!-- Card Daftar Stok Barang -->
             <div class="card shadow-sm mb-4">
-                <!-- Header -->
-                <div class="card-header bg-white border-bottom d-flex align-items-center">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-box-seam text-primary me-2"></i>
-                        <strong>DAFTAR STOK BARANG</strong>
-                    </div>
-                    <!-- Tidak ada tombol tambah di halaman stok, biarkan kosong -->
-                </div>
-
-                <!-- Body: Pencarian + Tabel + Pagination -->
                 <div class="card-body">
-                    
-                    <!-- Form Pencarian (tetap ada untuk server-side fallback) -->
-                    <form action="{{ route('admin.stock.index') }}" method="GET" id="searchForm">
-                        <div class="row mb-3">
-                            <div class="col-md-6 offset-md-6">
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">Cari:</span>
-                                    <input 
-                                        type="text" 
-                                        name="search" 
-                                        class="form-control" 
-                                        placeholder="Cari barang..."
-                                        value="{{ $search ?? '' }}" 
-                                        id="searchInput"
-                                        autocomplete="off">
-                                </div>
+                    <form action="{{ route('admin.stock.index') }}" method="GET">
+                        <div class="row g-3 align-items-end">
+                            
+                            {{-- Filter Kategori --}}
+                            <div class="col-md-3">
+                                <label for="category" class="form-label">Kategori</label>
+                                <select name="category" id="category" class="form-select">
+                                    <option value="">Semua Kategori</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" {{ $filterCategory == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
+
+                            {{-- Filter Tahun --}}
+                            <div class="col-md-3">
+                                <label for="year" class="form-label">Tahun Registrasi</label>
+                                <select name="year" id="year" class="form-select">
+                                    <option value="">Semua Tahun</option>
+                                    @foreach ($years as $year)
+                                        <option value="{{ $year }}" {{ $filterYear == $year ? 'selected' : '' }}>
+                                            {{ $year }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- Input Pencarian Teks --}}
+                            <div class="col-md-4">
+                                <label for="search" class="form-label">Cari Nama/Kode</label>
+                                <input type="text" name="search" id="search" class="form-control" 
+                                       placeholder="Cari..." value="{{ $search ?? '' }}">
+                            </div>
+
+                            {{-- Tombol Aksi --}}
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">Filter</button>
+                                <a href="{{ route('admin.stock.index') }}" class="btn btn-secondary w-100 mt-2">Reset</a>
+                            </div>
+
                         </div>
                     </form>
+                </div>
+            </div>
 
-                    <!-- Tabel -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom d-flex align-items-center">
+                    <i class="bi bi-box-seam text-primary me-2"></i>
+                    <strong>DAFTAR STOK BARANG</strong>
+                </div>
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped mb-3" id="stockTable">
+                        <table class="table table-hover table-striped mb-0">
                             <thead>
                                 <tr class="text-center">
                                     <th>No</th>
+                                    <th>Tanggal</th>
                                     <th>Foto</th>
                                     <th>Kode</th> 
                                     <th>Nama Barang</th>
-                                    <th>Nama Supplier</th>
                                     <th>Kategori Barang</th>
-                                    <th>Satuan</th>
                                     <th>Stok</th>
+                                    <th>Satuan</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($products as $i => $product)
                                     <tr class="searchable-row">
-                                        <td class="text-center">{{ $i + $products->firstItem() }}</td>
+                                        <td class="text-center">{{ $products->firstItem() + $i }}</td>
+                                        <td class="text-center">
+                                            @if($product->registered_at)
+                                                {{ \Carbon\Carbon::parse($product->registered_at)->format('d-m-Y') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                         <td class="text-center">
                                             <span class="avatar rounded avatar-md"
                                                 style="background-image: url({{ $product->image }})"></span>
                                         </td>
-                                        <td class="text-center">{{ $product->code }}</td> 
-                                        <td class="text-center">{{ $product->name }}</td>
-                                        <td class="text-center">{{ optional($product->supplier)->name ?? '-' }}</td>
-                                        <td class="text-center">{{ $product->category->name }}</td>
-                                        <td class="text-center">{{ $product->unit }}</td>
+                                        <td>{{ $product->code }}</td> 
+                                        <td>{{ $product->name }}</td>
+                                        <td>{{ $product->category->name }}</td>
                                         <td class="text-center">{{ $product->quantity }}</td>
+                                        <td class="text-center">{{ $product->unit }}</td>
                                         <td class="text-center">
-                                            {{-- Tombol Edit Stok --}}
-                                            <x-button-modal :id="'edit-stock-modal-' . $product->id" icon="edit" style="mr-1" title="Edit Stok"
+                                            <x-button-modal :id="'edit-stock-modal-' . $product->id" icon="edit" title="Edit Stok" style="mr-1"
                                                 class="btn btn-primary btn-sm text-white" />
                                         </td>
                                     </tr>
@@ -125,11 +152,6 @@
                                 @endforelse
                             </tbody>
                         </table>
-                    </div>
-
-                    <!-- Pagination (tetap tampil, tapi realtime search hanya filter di halaman ini) -->
-                    <div class="d-flex justify-content-end">
-                        {{ $products->links() }}
                     </div>
                 </div>
             </div>
@@ -150,7 +172,12 @@
                 <span class="avatar rounded avatar-md"
                     style="background-image: url('{{ asset($product->image) }}'); width: 200px; height: 200px;"></span>
                     <h5 class="mb-0">{{ $product->name }}</h5>
-            </div>        
+            </div>
+            <div class="mb-3">
+                <label for="transaction_date_{{ $product->id }}" class="form-label">Tanggal Transaksi</label>
+                <input type="date" name="transaction_date" id="transaction_date_{{ $product->id }}" class="form-control" value="{{ date('Y-m-d') }}">
+            </div>
+                
             <hr>
             {{-- Sisa form Anda (tidak ada perubahan di sini) --}}
             <div class="mb-3">

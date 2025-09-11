@@ -68,23 +68,58 @@
                 <div class="card-body">
                     
                     <!-- Form Pencarian -->
-                    <form action="{{ route('admin.product.index') }}" method="GET" id="searchForm">
-                        <div class="row mb-3">
-                            <div class="col-md-6 offset-md-6">
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">Cari:</span>
-                                    <input 
-                                        type="text" 
-                                        name="search" 
-                                        class="form-control" 
-                                        placeholder="Cari barang..."
-                                        value="{{ $search ?? '' }}" 
-                                        id="searchInput"
-                                        autocomplete="off">
+                    {{-- HAPUS FORM PENCARIAN LAMA ANDA, LALU LETAKKAN KODE INI DI ATAS CARD DAFTAR BARANG --}}
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <form action="{{ route('admin.product.index') }}" method="GET">
+                            <div class="row g-3 align-items-end">
+                                
+                                {{-- Filter Kategori --}}
+                                <div class="col-md-3">
+                                    <label for="category" class="form-label">Kategori</label>
+                                    <select name="category" id="category" class="form-select">
+                                        <option value="">Semua Kategori</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}" {{ $filterCategory == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
+
+                                {{-- Filter Tahun --}}
+                                <div class="col-md-3">
+                                    <label for="year" class="form-label">Tahun Pendaftaran Barang</label>
+                                    <select name="year" id="year" class="form-select">
+                                        <option value="">Semua Tahun</option>
+                                        @foreach ($years as $year)
+                                            <option value="{{ $year }}" {{ $filterYear == $year ? 'selected' : '' }}>
+                                                {{ $year }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                {{-- Input Pencarian Teks --}}
+                                <div class="col-md-4">
+                                    <label for="search" class="form-label">Cari Nama/Kode</label>
+                                    <input type="text" name="search" id="search" class="form-control" 
+                                        placeholder="Cari..." value="{{ $search ?? '' }}">
+                                </div>
+
+                                {{-- Tombol Aksi --}}
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-filter me-1"></i> Filter
+                                    </button>
+                                    <a href="{{ route('admin.product.index') }}" class="btn btn-secondary w-100 mt-2">Reset</a>
+                                </div>
+
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+                </div>
 
                     <!-- Tabel -->
                     <div class="table-responsive">
@@ -92,6 +127,7 @@
                             <thead>
                                 <tr class="text-center">
                                     <th>No</th>
+                                    <th>Tahun</th>
                                     <th>Foto</th>
                                     <th>Kode</th>
                                     <th>Nama Barang</th>
@@ -105,6 +141,8 @@
                                 @forelse ($products as $i => $product)
                                     <tr class="searchable-row">
                                         <td class="text-center">{{ $i + $products->firstItem() }}</td>
+
+                                        <td class="text-center">{{ $product->registered_at }}</td>
                                         <td class="text-center">
                                             <span class="avatar rounded avatar-md"
                                                 style="background-image: url({{ $product->image }})"></span>
@@ -158,13 +196,17 @@
                                                             </div>
                                                         </div>
 
+                                                        {{-- Kode yang Sudah Diperbaiki --}}
                                                         <div class="row mt-3">
-                                                            <div class="col-md-6">
-                                                                {{-- Input file sekarang terpisah dari preview --}}
-                                                                <x-input name="image" type="file" title="Ganti Foto Barang (Opsional)" />
+                                                            <div class="col-md-4">
+                                                                <x-input name="image" type="file" title="Ganti Foto (Opsional)" />
                                                             </div>
-                                                            <div class="col-md-6">
-                                                                <x-input name="unit" type="text" title="Satuan Barang" placeholder="Satuan Barang" :value="$product->unit" />
+                                                            <div class="col-md-4">
+                                                                <x-input name="unit" type="text" title="Satuan" placeholder="Satuan Produk" :value="$product->unit" />
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                {{-- TAMBAHKAN INPUT TANGGAL DI SINI --}}
+                                                                <x-input name="registered_at" type="date" title="Tgl. Registrasi" :value="$product->registered_at" />
                                                             </div>
                                                         </div>
 
@@ -185,7 +227,7 @@
                                     </tr>
                                 @empty
                                     <tr id="no-data-row">
-                                        <td colspan="8" class="text-center">Data barang tidak ditemukan.</td>
+                                        <td colspan="9" class="text-center">Data barang tidak ditemukan.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -205,6 +247,7 @@
     <x-modal id="create-product-modal" title="Tambah Barang">
         <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
+            <x-input name="registered_at" type="date" title="Tanggal" :value="date('Y-m-d')" />
             <x-input name="name" type="text" title="Nama Barang" placeholder="Nama Barang" :value="old('name')" />
             @error('name')
                 <div class="invalid-feedback d-block">{{ $message }}</div>

@@ -27,8 +27,8 @@
                                     <input type="text" name="name" class="form-control" placeholder="Masukkan nama" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" name="email" class="form-control" placeholder="Masukkan email" required>
+                                    <label class="form-label">NIP/</label>
+                                    <input type="email" name="email" class="form-control" placeholder="Masukkan NIP anda" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Password</label>

@@ -21,16 +21,53 @@ class StockController extends Controller
     
     public function index(Request $request)
     {
-        $search = $request->search;
+        // 1. Ambil semua input filter dari request
+        $search = $request->input('search');
+        $filterCategory = $request->input('category');
+        $filterYear = $request->input('year');
 
-        $products = Product::when($search, function($query) use($search){
-            $query = $query->where('name', 'like', '%'.$search.'%');
-        })->paginate(10)->withQueryString();
+        // Mengambil data untuk dropdown filter dan modal
+        $categories = Category::orderBy('name')->get();
+        
+        // Ambil daftar tahun unik dari data produk untuk dropdown filter tahun
+        $years = Product::selectRaw('YEAR(registered_at) as year')
+                    ->whereNotNull('registered_at')
+                    ->distinct()
+                    ->orderBy('year', 'desc')
+                    ->pluck('year');
 
-        $categories = Category::all(); // atau Category::count() jika hanya butuh angka
+        // 2. Modifikasi query untuk menerapkan semua filter
+        $products = Product::with('category') // Relasi supplier tidak perlu di-load lagi
+            ->when($search, function ($query, $keyword) {
+                // Filter berdasarkan kata kunci pencarian
+                return $query->where(function ($q) use ($keyword) {
+                    $q->where('name', 'like', '%' . $keyword . '%')
+                      ->orWhere('code', 'like', '%' . $keyword . '%');
+                });
+            })
+            ->when($filterCategory, function ($query, $categoryId) {
+                // Filter berdasarkan kategori
+                return $query->where('category_id', $categoryId);
+            })
+            ->when($filterYear, function ($query, $year) {
+                // Filter berdasarkan tahun registrasi
+                return $query->whereYear('registered_at', $year);
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends($request->except('page'));
 
-        return view('admin.stock.index', compact('products', 'search', 'categories'));
+        // 3. Kirim semua data yang dibutuhkan ke view
+        return view('admin.stock.index', compact(
+            'products', 
+            'search', 
+            'categories', 
+            'years',
+            'filterCategory',
+            'filterYear'
+        ));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -48,6 +85,8 @@ public function update(Request $request, $id)
         'reduce_stock' => ['nullable', 'integer', 'min:0'],
         'corrected_stock' => ['nullable', 'integer', 'min:0'],
         'description' => ['nullable', 'string', 'max:255'], 
+        'transaction_date' => ['required', 'date'], 
+
     ], [
         'reduce_stock.min' => 'Jumlah yang dikurangi harus 0 atau lebih.',
         'add_stock.min' => 'Jumlah tambahan stok harus 0 atau lebih.',
@@ -77,6 +116,9 @@ public function update(Request $request, $id)
 
     try {
         DB::transaction(function () use ($product, $add, $reduce, $corrected, $request) { // Tambahkan $request
+
+            $transactionDate = $request->input('transaction_date');
+
             if ($corrected !== null) {
                 $product->quantity = $corrected;
                 $product->save();
@@ -94,7 +136,7 @@ public function update(Request $request, $id)
             if ($add > 0) {
                 $transaction = Transaction::create([
                     'user_id' => auth()->id(),
-                    'transaction_date' => now(),
+                    'transaction_date' => $transactionDate,
                     'type' => 'in',
                     'description' => $request->description, 
                 ]);
@@ -109,10 +151,11 @@ public function update(Request $request, $id)
             if ($reduce > 0) {
                 $transaction = Transaction::create([
                     'user_id' => auth()->id(),
-                    'transaction_date' => now(),
+                    'transaction_date' => $transactionDate,
                     'type' => 'out',
                     // DESKRIPSI DISIMPAN DI SINI
                     'description' => $request->description, 
+                    
                 ]);
 
                 TransactionDetail::create([

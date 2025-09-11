@@ -20,6 +20,8 @@ class ProductRequest extends FormRequest
             'unit'        => 'required|string',
             'supplier_id' => 'required|exists:suppliers,id', // <-- Ubah 'nullable' menjadi 'required'
             // 'quantity'    => 'required|numeric|min:0',
+            'registered_at' => 'nullable|date', // <-- Pastikan aturan ini ada
+
         ];
 
         if ($this->isMethod('POST')) {

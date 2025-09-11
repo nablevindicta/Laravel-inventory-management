@@ -90,8 +90,8 @@
                             <tbody>
                                 @foreach ($transactions as $transaction)
                                     <tr>
-                                        <td data-timestamp="{{ $transaction->created_at->toISOString() }}">
-                                            {{ $transaction->created_at->format('d-m-Y H:i') }}
+                                        <td data-timestamp="{{ \Carbon\Carbon::parse($transaction->transaction_date)->toISOString() }}">
+                                            {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}
                                         </td>
 
                                         <td>
@@ -177,28 +177,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // 1. Konversi waktu lokal
-            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const formatOptions = {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-                timeZone: userTimeZone
-            };
 
-            document.querySelectorAll('td[data-timestamp]').forEach(function (td) {
-                const isoTime = td.getAttribute('data-timestamp');
-                const date = new Date(isoTime);
-
-                if (isNaN(date.getTime())) {
-                    console.error('Invalid date:', isoTime);
-                    return;
-                }
-
-                td.textContent = new Intl.DateTimeFormat('id-ID', formatOptions).format(date);
-            });
 
             // 2. Pencarian realtime di tabel (client-side)
             const searchInput = document.getElementById('searchInput');

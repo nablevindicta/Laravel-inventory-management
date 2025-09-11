@@ -84,9 +84,9 @@
                         </h3>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">NIP / Username</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror"
-                            placeholder="masukan email anda" name="email">
+                            placeholder="masukan NIP atau username anda" name="email">
                         @error('email')
                             <div class="invalid-feedback">
                                 {{ $message }}
