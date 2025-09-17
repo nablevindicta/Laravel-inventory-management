@@ -37,7 +37,7 @@ class StockController extends Controller
                     ->pluck('year');
 
         // 2. Modifikasi query untuk menerapkan semua filter
-        $products = Product::with('category') // Relasi supplier tidak perlu di-load lagi
+        $products = Product::with('category') 
             ->when($search, function ($query, $keyword) {
                 // Filter berdasarkan kata kunci pencarian
                 return $query->where(function ($q) use ($keyword) {
@@ -115,7 +115,7 @@ public function update(Request $request, $id)
     }
 
     try {
-        DB::transaction(function () use ($product, $add, $reduce, $corrected, $request) { // Tambahkan $request
+        DB::transaction(function () use ($product, $add, $reduce, $corrected, $request) { 
 
             $transactionDate = $request->input('transaction_date');
 

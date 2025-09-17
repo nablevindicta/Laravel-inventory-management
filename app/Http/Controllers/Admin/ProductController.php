@@ -23,7 +23,6 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // app/Http/Controllers/Admin/ProductController.php
 
     public function index(Request $request)
     {
@@ -36,7 +35,7 @@ class ProductController extends Controller
         $categories = Category::orderBy('name')->get();
         $suppliers = Supplier::orderBy('name')->get();
         
-        // DITAMBAHKAN: Ambil daftar tahun unik dari data produk untuk dropdown filter tahun
+        // Ambil daftar tahun unik dari data produk untuk dropdown filter tahun
         $years = Product::selectRaw('YEAR(registered_at) as year')
                     ->whereNotNull('registered_at')
                     ->distinct()
@@ -70,9 +69,9 @@ class ProductController extends Controller
             'search', 
             'categories', 
             'suppliers',
-            'years', // DITAMBAHKAN
-            'filterCategory', // DITAMBAHKAN
-            'filterYear' // DITAMBAHKAN
+            'years', 
+            'filterCategory', 
+            'filterYear' 
         ));
     }
 
@@ -82,7 +81,6 @@ class ProductController extends Controller
      * @param  \App\Http\Requests\ProductRequest  $request
      * @return \Illuminate\Http\Response
      */
-    // Di dalam file app/Http/Controllers/Admin/ProductController.php
 
     public function store(ProductRequest $request)
     {
@@ -114,7 +112,6 @@ class ProductController extends Controller
         return redirect(route('admin.product.index'))->with('toast_success', 'Barang berhasil ditambahkan');
     }
     
-    // ... sisa method (update, destroy, dll) tidak perlu diubah ...
 
     /**
      * Memperbarui produk yang ditentukan dalam penyimpanan.

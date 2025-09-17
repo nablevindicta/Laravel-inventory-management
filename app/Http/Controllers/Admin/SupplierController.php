@@ -72,7 +72,6 @@ class SupplierController extends Controller
             $supplier->delete();
             return back()->with('toast_success', 'Supplier berhasil dihapus.');
         } catch (\Exception $e) {
-            // Catat error untuk debugging
             Log::error('Gagal menghapus supplier: ' . $e->getMessage());
             return back()->with('toast_error', 'Terjadi kesalahan saat menghapus supplier.');
         }

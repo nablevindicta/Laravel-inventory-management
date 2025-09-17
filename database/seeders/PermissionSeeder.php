@@ -89,7 +89,7 @@ class PermissionSeeder extends Seeder
         $adminUser = \App\Models\User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
-                'name' => 'Admin User',
+                'name' => 'Admin',
                 'password' => Hash::make('password'),
                 'department' => 'Umum',
             ]

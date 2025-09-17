@@ -18,9 +18,8 @@ class ProductRequest extends FormRequest
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'unit'        => 'required|string',
-            'supplier_id' => 'required|exists:suppliers,id', // <-- Ubah 'nullable' menjadi 'required'
-            // 'quantity'    => 'required|numeric|min:0',
-            'registered_at' => 'nullable|date', // <-- Pastikan aturan ini ada
+            'supplier_id' => 'required|exists:suppliers,id',
+            'registered_at' => 'nullable|date', 
 
         ];
 
