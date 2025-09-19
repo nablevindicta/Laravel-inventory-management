@@ -32,7 +32,7 @@ password : password
 - Mengelola User (Super Admin & Admin)
 - Mengelola Transaksi (Super Admin & Admin)
 - Mengelola Roles & Permission (Super Admin)
-- Halaman Dashboard dengan berbagai fitur seperti : (Super Admin & Admin) 
+- Halaman Dashboard dengan berbagai fitur : (Super Admin & Admin) 
 - List Transaksi (Super Admin & Admin)
 - Search Data
 - Responsive
