@@ -1,8 +1,6 @@
 ## Inventory Management System
 Latar belakang pembuatan aplikasi ini adalah pada tempat penelitian saya, untuk melakukan sebuah transaksi peminjaman dan juga pengambilan barang harus melakukan pengecekan barang di gudang terlebih dahulu, oleh karena itu saya mencoba untuk membangung sebuah aplikasi yang diharapkan mampu mempercepat dan mempermudah transaski dan juga pengelolaan barang.
 
-![Imgur](https://imgur.com/mVyzQ6V.png)
-
 ## Cara Instalasi Project
 
 Pastikan git cli sudah terinstall, kemudian jalankan perintah dibawah
@@ -16,12 +14,18 @@ Pastikan git cli sudah terinstall, kemudian jalankan perintah dibawah
 
 ## Akun Super Admin
 ```
-email : admin@gmail.com
+email : superadmin@example.com
+password : password
+```
+
+## Akun Admin
+```
+email : admin@example.com
 password : password
 ```
 
 ## Fitur Aplikasi 
-- Terdapat 3 role yaitu : super admin, admin, dan customer
+- Terdapat 2 role yaitu : super admin dan admin
 - Mengelola Kategori (Super Admin & Admin)
 - Mengelola Supplier (Super Admin & Admin)
 - Mengelola Barang (Super Admin & Admin)
@@ -29,23 +33,7 @@ password : password
 - Mengelola Transaksi (Super Admin & Admin)
 - Mengelola Roles & Permission (Super Admin)
 - Halaman Dashboard dengan berbagai fitur seperti : (Super Admin & Admin) 
-   - Barang paling populer
-   - Notifikasi permintaan barang yang belum di verifikasi
-   - List barang dengan stok kurang dari 10
-   - Jumlah Kategori
-   - Jumlah Supplier
-   - Jumlah Barang
-   - Jumlah Kendaraan
-   - Jumlah Customer
-   - Jumlah Permintaan Barang
-   - Jumlah Barang Keluar
-   - Jumlah Barang Keluar Bulan Ini
-- Permintaan Barang (All Role)
-- Peminjaman Kendaraan (All Role)
-- Pengembalian Kendaraan (All Role)
-- Keranjang (All Role)
-- Mengubah Akun (All Role)
-- List Transaksi (All Role)
+- List Transaksi (Super Admin & Admin)
 - Search Data
 - Responsive
 
