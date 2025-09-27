@@ -8,8 +8,8 @@
                     <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <x-input name="name" type="text" title="Nama Produk" placeholder="Nama Produk" :value="old('name')" />
-                        <x-input name="unit" type="text" title="Satuan Produk" placeholder="Satuan Produk" :value="old('unit')" />
+                        <x-input name="name" type="text" title="Nama Barang" placeholder="Nama Barang" :value="old('name')" />
+                        <x-input name="unit" type="text" title="Satuan Barang" placeholder="Satuan Barang" :value="old('unit')" />
 
                         <x-select title="Supplier Barang" name="supplier_id">
                             <option value="">Silahkan Pilih</option>

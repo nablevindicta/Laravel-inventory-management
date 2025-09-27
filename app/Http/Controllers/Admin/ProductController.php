@@ -23,36 +23,56 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index(Request $request)
     {
-        // 1. Ambil input pencarian
+        // 1. Ambil semua input filter dari request
         $search = $request->input('search');
+        $filterCategory = $request->input('category');
+        $filterYear = $request->input('year');
 
-        // Mengambil data untuk modal (kategori dan supplier)
-        $categories = Category::all();
-        $suppliers = Supplier::all();
+        // Mengambil data untuk dropdown filter dan modal
+        $categories = Category::orderBy('name')->get();
+        $suppliers = Supplier::orderBy('name')->get();
+        
+        // Ambil daftar tahun unik dari data produk untuk dropdown filter tahun
+        $years = Product::selectRaw('YEAR(registered_at) as year')
+                    ->whereNotNull('registered_at')
+                    ->distinct()
+                    ->orderBy('year', 'desc')
+                    ->pluck('year');
 
-        // 2. Query DIUBAH menggunakan gaya when() seperti di SupplierController
+        // 2. Modifikasi query untuk menerapkan semua filter
         $products = Product::with(['category', 'supplier'])
             ->when($search, function ($query, $keyword) {
-                // Logika pencarian canggih Anda tetap dipertahankan di sini
+                // Filter berdasarkan kata kunci pencarian
                 return $query->where(function ($q) use ($keyword) {
                     $q->where('name', 'like', '%' . $keyword . '%')
-                      ->orWhere('code', 'like', '%' . $keyword . '%')
-                      ->orWhereHas('supplier', function ($subQ) use ($keyword) {
-                          $subQ->where('name', 'like', '%' . $keyword . '%');
-                      })
-                      ->orWhereHas('category', function ($subQ) use ($keyword) {
-                          $subQ->where('name', 'like', '%' . $keyword . '%');
-                      });
+                    ->orWhere('code', 'like', '%' . $keyword . '%');
                 });
+            })
+            ->when($filterCategory, function ($query, $categoryId) {
+                // DITAMBAHKAN: Filter berdasarkan kategori
+                return $query->where('category_id', $categoryId);
+            })
+            ->when($filterYear, function ($query, $year) {
+                // DITAMBAHKAN: Filter berdasarkan tahun registrasi
+                return $query->whereYear('registered_at', $year);
             })
             ->latest()
             ->paginate(10)
-            ->appends($request->query()); // 3. Menggunakan withQueryString() agar sama persis
+            ->appends($request->except('page'));
 
-        // 4. Kirim data ke view
-        return view('admin.product.index', compact('products', 'search', 'categories', 'suppliers'));
+        // 3. Kirim semua data yang dibutuhkan ke view
+        return view('admin.product.index', compact(
+            'products', 
+            'search', 
+            'categories', 
+            'suppliers',
+            'years', 
+            'filterCategory', 
+            'filterYear' 
+        ));
     }
 
     /**
@@ -61,39 +81,37 @@ class ProductController extends Controller
      * @param  \App\Http\Requests\ProductRequest  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(ProductRequest $request)
     {
-        // Unggah gambar hanya jika ada file yang dikirim
-        $image = $request->hasFile('image') ? $this->uploadImage($request, 'public/products/', 'image') : null;
+        // 1. Ambil semua data yang sudah lolos validasi dari ProductRequest
+        $data = $request->validated();
 
-        // Ambil data kategori yang dipilih
-        $category = Category::findOrFail($request->category_id);
-        
-        // Hitung jumlah produk yang sudah ada di kategori ini
+        // 2. Logika untuk upload gambar (jika ada)
+        if ($request->hasFile('image')) {
+            // Gunakan trait HasImage yang sudah Anda miliki
+            $image = $this->uploadImage($request, 'public/products/', 'image');
+            $data['image'] = $image->hashName();
+        }
+
+        // 3. Logika untuk membuat kode produk otomatis
+        $category = Category::findOrFail($data['category_id']);
         $productCount = Product::where('category_id', $category->id)->count();
         $newNumber = $productCount + 1;
-
-        // Ambil 3 huruf pertama dari nama kategori
         $categoryCode = strtoupper(substr($category->name, 0, 15));
-        
-        // Buat kode barang otomatis
         $productCode = "{$categoryCode} / 1.1.7.{$newNumber}";
+        
+        $data['code'] = $productCode;
 
-        Product::create([
-            'category_id' => $request->category_id,
-            'supplier_id' => $request->supplier_id,
-            'name' => $request->name,
-            'image' => $image ? $image->hashName() : null,
-            'unit' => $request->unit,
-            'description' => $request->description,
-            'quantity' => 0,
-            'code' => $productCode,
-        ]);
+        // 4. Set stok awal menjadi 0
+        $data['quantity'] = 0;
+
+        // 5. Simpan ke database menggunakan data yang sudah bersih dan lengkap
+        Product::create($data);
 
         return redirect(route('admin.product.index'))->with('toast_success', 'Barang berhasil ditambahkan');
     }
     
-    // ... sisa method (update, destroy, dll) tidak perlu diubah ...
 
     /**
      * Memperbarui produk yang ditentukan dalam penyimpanan.
@@ -111,6 +129,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'unit' => $request->unit,
             'description' => $request->description,
+            'registered_at' => $request->registered_at,
         ];
 
         // Periksa apakah ada file gambar baru yang diunggah

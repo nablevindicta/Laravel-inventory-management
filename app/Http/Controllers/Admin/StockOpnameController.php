@@ -38,8 +38,6 @@ class StockOpnameController extends Controller
 
         $products = Product::with('category', 'supplier')->get();
 
-        // Variabel selectedMonth & selectedYear tetap dikirim ke view
-        // agar dropdown menampilkan nilai yang dipilih setelah filter dijalankan
         return view('admin.stockopname.index', compact('sessions', 'selectedMonth', 'selectedYear', 'products'));
     }
 
@@ -54,7 +52,6 @@ class StockOpnameController extends Controller
             'stock_fisik.*' => 'required|numeric|min:0',
         ]);
         
-        // ✅ Pindahkan redirect ke luar closure
         try {
             DB::transaction(function () use ($validated, $request) {
                 $session = StockOpnameSession::create([
@@ -91,7 +88,6 @@ class StockOpnameController extends Controller
                 }
             });
 
-            // ✅ Redirect sekarang berada di luar transaction
             return redirect()->route('admin.stockopname.index', [
                 'month' => $validated['opname_month'],
                 'year' => $validated['opname_year']
@@ -105,7 +101,6 @@ class StockOpnameController extends Controller
 
     public function destroy(StockOpnameSession $stockOpnameSession)
     {
-        // (Saran Performa) Muat relasi logs dan product di awal untuk efisiensi
         $stockOpnameSession->load('logs.product');
 
         // Gunakan transaction untuk memastikan semua proses aman
@@ -132,7 +127,6 @@ class StockOpnameController extends Controller
             $stockOpnameSession->delete();
         });
 
-        // Berikan pesan yang jelas kepada pengguna
         return back()->with('toast_success', 'Sesi stok opname berhasil dihapus dan stok barang telah dikembalikan.');
     }
 

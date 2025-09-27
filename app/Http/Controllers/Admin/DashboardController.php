@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
-use App\Models\Order;
 use App\Models\Product;
-use App\Models\Vehicle;
 use App\Models\Category;
 use App\Models\Supplier;
 use App\Models\Transaction;
@@ -18,10 +16,9 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request)
     {
-        // DITAMBAHKAN: Mengambil input pencarian dari request
+
         $search = $request->input('search');
 
-        // Bagian ini tidak berubah
         $categories = Category::count();
         $suppliers = Supplier::count();
         $products = Product::count();
@@ -53,7 +50,7 @@ class DashboardController extends Controller
         $perPage = $request->query('per_page', 10);
         $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
 
-        // --- QUERY UNTUK TABEL STOK RENDAH DIMODIFIKASI DI SINI ---
+        // --- QUERY UNTUK TABEL STOK RENDAH  ---
         
         // 1. Mulai query dasar
         $lowStockQuery = Product::with('category')->where('quantity', '<=', 10);
@@ -69,9 +66,7 @@ class DashboardController extends Controller
         // 3. Lakukan paginasi dan tambahkan semua parameter request ke link paginasi
         $productsOutStock = $lowStockQuery->latest()->paginate($perPage)->appends($request->query());
         
-        // --- Akhir Modifikasi ---
 
-        // Bagian ini tidak berubah
         $bestProduct = TransactionDetail::with('product')
             ->whereHas('transaction', function($query) {
                 $query->where('type', 'out');
@@ -104,7 +99,7 @@ class DashboardController extends Controller
             'productsOutStock',
             'label',
             'total',
-            'search' // DITAMBAHKAN: Kirim variabel search ke view
+            'search' 
         ));
     }
 }
