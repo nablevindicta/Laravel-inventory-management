@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
-                                    <input type="email" name="email" class="form-control" placeholder="Masukkan email" required>
+                                    <input type="email" name="email" class="form-control" placeholder="Masukkan Email anda" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Password</label>
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            {{-- ✅ INI BAGIAN YANG DIUBAH — TABEL UTAMA USER --}}
+            {{-- TABEL UTAMA USER --}}
             <div class="card shadow-sm mb-4">
                 <!-- Header -->
                 <div class="card-header bg-white border-bottom d-flex align-items-center">

@@ -27,13 +27,13 @@ class UserController extends Controller
     public function store(Request $request)
     {
         // Hanya Super Admin yang bisa tambah user
-        $this->authorize('create-user'); // Pastikan permission 'create-user' ada
+        $this->authorize('create-user'); 
 
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
-            'role' => 'required|string|exists:roles,name', // Validasi: nama role harus ada
+            'role' => 'required|string|exists:roles,name', // nama role harus ada
         ]);
 
         $user = User::create([
@@ -43,7 +43,6 @@ class UserController extends Controller
             'department' => $request->department ?? 'Umum', // default
         ]);
 
-        // Assign role berdasarkan nama
         $user->assignRole($request->role);
 
         return redirect()->route('admin.user.index')->with('toast_success', 'User berhasil ditambahkan.');
@@ -73,9 +72,8 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         // Hanya Super Admin yang bisa hapus user
-        $this->authorize('delete-user'); // Pastikan permission 'delete-user' ada
+        $this->authorize('delete-user'); 
 
-        // Cegah menghapus diri sendiri (opsional tapi sangat disarankan)
         if ($user->id === auth()->id()) {
             return back()->with('toast_error', 'Anda tidak bisa menghapus akun sendiri.');
         }

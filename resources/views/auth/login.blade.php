@@ -86,7 +86,7 @@
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror"
-                            placeholder="masukan email anda" name="email">
+                            placeholder="masukan Email anda" name="email">
                         @error('email')
                             <div class="invalid-feedback">
                                 {{ $message }}
