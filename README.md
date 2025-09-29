@@ -1,5 +1,5 @@
-(assets/distanhorti_logo.png) 
-***
+<img width="1919" height="1079" alt="Dashboard" src="https://github.com/user-attachments/assets/385d05ca-6781-49cc-a716-a54d82d2c7d6" />
+
 ## Inventory Management
 
 Aplikasi Inventory Management ini dikembangkan untuk mengatasi inefisiensi dalam pengelolaan dan pengambilan barang di tempat penelitian, khususnya Dinas Tanaman Pangan dan Hortikultura Provinsi Jawa Barat (DISTANHORTI).
