@@ -1,5 +1,7 @@
-## Inventory Management System
-Latar belakang pembuatan aplikasi ini adalah pada tempat penelitian saya, untuk melakukan sebuah transaksi peminjaman dan juga pengambilan barang harus melakukan pengecekan barang di gudang terlebih dahulu, oleh karena itu saya mencoba untuk membangung sebuah aplikasi yang diharapkan mampu mempercepat dan mempermudah transaski dan juga pengelolaan barang.
+## Inventory Management
+
+Aplikasi Inventory Management ini dikembangkan untuk mengatasi inefisiensi dalam pengelolaan dan pengambilan barang di tempat penelitian, khususnya Dinas Tanaman Pangan dan Hortikultura Provinsi Jawa Barat (DISTANHORTI).
+Latar belakang utama pembuatan sistem ini adalah untuk menghilangkan proses manual yang mengharuskan pengecekan fisik di gudang setiap kali ada kebutuhan pengambilan barang.
 
 ## Cara Instalasi Project
 
@@ -37,5 +39,3 @@ password : password
 - Search Data
 - Responsive
 
-## License
-Aplikasi ini bersifat open source dapat digunakan oleh siapa pun dengan syarat tidak untuk di perjual belikan.
